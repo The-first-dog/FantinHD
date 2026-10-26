@@ -104,7 +104,7 @@ if (modal) {
 
 const filters = [...document.querySelectorAll("[data-filter]")];
 const cards = [...document.querySelectorAll(".game-card")];
-const count = document.querySelector("#visible-count");
+const count = document.querySelector("#filter-status");
 const empty = document.querySelector("#no-results");
 filters.forEach(button => {
   button.addEventListener("click", () => {
@@ -117,7 +117,7 @@ filters.forEach(button => {
       card.hidden = !match;
       if (match) visible++;
     });
-    if (count) count.textContent = String(visible);
+    if (count) count.textContent = visible + " projets affichés.";
     if (empty) empty.classList.toggle("show", visible === 0);
   });
 });
