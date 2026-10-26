@@ -72,13 +72,13 @@
           <p class="section-header__aside">Des jeux disponibles, d'autres en développement, et quelques surprises encore gardées secrètes.</p>
         </div>
         <div class="filters" role="group" aria-label="Filtrer la liste des jeux">
-          <button class="filter" data-filter="all" type="button" aria-pressed="true">Tous <span class="filter-count" id="visible-count">5</span></button>
+          <button class="filter" data-filter="all" type="button" aria-pressed="true">Tous <span class="filter-count">5</span></button>
           <button class="filter" data-filter="available" type="button" aria-pressed="false">Disponibles</button>
           <button class="filter" data-filter="development" type="button" aria-pressed="false">En développement</button>
           <button class="filter" data-filter="pc" type="button" aria-pressed="false">PC</button>
           <button class="filter" data-filter="mobile" type="button" aria-pressed="false">Mobile</button>
         </div>
-        <div class="game-grid" id="game-grid">
+        <p class="sr-only" id="filter-status" role="status"></p>\n        <div class="game-grid" id="game-grid">
           <article class="game-card reveal" data-categories="available mobile" aria-labelledby="title-farkle">
             <button class="game-card__image" type="button" data-game="farkle" aria-label="En savoir plus sur Farkle">
               <img src="assets/farkle.svg" alt="Illustration conceptuelle de dés sur une table médiévale" width="1200" height="820" loading="lazy">
