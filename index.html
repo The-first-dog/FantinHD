@@ -1,224 +1,72 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#0a0a0a">
-  <meta name="description" content="FantinHD, développeur indépendant de jeux PC et mobile. Découvrez Farkle, Clean Glass, 3.2M, 2:00:00 et les projets à venir.">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="FantinHD — Jeux vidéo indépendants">
-  <meta property="og:description" content="De petites idées, de nouveaux univers. Découvrez les jeux de FantinHD, sur PC et mobile.">
-  <meta property="og:url" content="https://the-first-dog.github.io/FantinHD/">
-  <meta name="color-scheme" content="dark">
-  <title>FantinHD — Jeux vidéo indépendants</title>
-  <link rel="icon" href="assets/fantinhd-mark.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css">
-  <script src="app.js" defer></script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080808">
+<meta name="description" content="FantinHD — développeur indépendant de jeux vidéo. Découvrez Farkle, Clean Glass, 3.2M, 2:00:00 et les projets PC et mobile à venir.">
+<meta property="og:title" content="FantinHD — Jeux indépendants"><meta property="og:description" content="Des idées à explorer. Des jeux à partager.">
+<title>FantinHD — Jeux indépendants</title>
+<link rel="stylesheet" href="styles.css"><script defer src="app.js"></script>
 </head>
 <body>
-  <a class="sr-only" href="#main">Aller au contenu</a>
-  <header class="site-header">
-    <div class="shell header-inner">
-      <a class="brand" href="#accueil" aria-label="FantinHD, accueil">
-        <img src="assets/fantinhd-mark.svg" width="28" height="28" alt="" aria-hidden="true">
-        <span>FantinHD</span>
-      </a>
-      <nav class="desktop-nav" aria-label="Navigation principale">
-        <a href="#accueil" class="active">Accueil</a>
-        <a href="#jeux">Les jeux</a>
-        <a href="#apropos">À propos</a>
-        <a href="#journal">En ce moment</a>
-      </nav>
-      <div class="header-end"><a href="https://github.com/The-first-dog" rel="noopener noreferrer" target="_blank">GitHub ↗</a></div>
-      <button id="menu-toggle" class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav">MENU ☰</button>
+<a href="#main" class="skip">Passer au contenu</a>
+<header class="header">
+  <div class="container header__row">
+    <a href="#accueil" class="brand" aria-label="FantinHD, accueil">Fantin<strong>HD</strong><span>.</span></a>
+    <nav class="nav" aria-label="Navigation principale"><a href="#accueil">Accueil</a><a href="#jeux">Jeux</a><a href="#apropos">À propos</a><a href="#actualites">Actualités</a></nav>
+    <a class="header__link" href="https://play.google.com/store/apps/dev?id=8088754359282570640" target="_blank" rel="noopener noreferrer">Google Play ↗</a>
+    <button class="menu-button" id="menu-button" type="button" aria-expanded="false" aria-controls="mobile-nav">Menu <span aria-hidden="true">☰</span></button>
+  </div>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Navigation mobile" hidden><a href="#accueil">Accueil</a><a href="#jeux">Jeux</a><a href="#apropos">À propos</a><a href="#actualites">Actualités</a><a href="https://play.google.com/store/apps/dev?id=8088754359282570640" target="_blank" rel="noopener noreferrer">Google Play ↗</a></nav>
+</header>
+<main id="main">
+  <section id="accueil" class="hero">
+    <div class="hero__visual media-host" data-photo="assets/images/hero.jpg" aria-hidden="true"></div>
+    <div class="container hero__inner">
+      <span class="eyebrow hero__eyebrow">Développeur indépendant / PC & Mobile</span>
+      <h1 class="hero__logo">Fantin<span>HD</span><i>.</i></h1>
+      <p class="hero__tagline">Des idées à explorer. Des jeux à partager.</p>
+      <a href="#jeux" class="hero__discover">Découvrir mes jeux <span aria-hidden="true">↓</span></a>
     </div>
-    <nav id="mobile-nav" class="mobile-nav" aria-label="Navigation mobile">
-      <a href="#accueil">Accueil</a>
-      <a href="#jeux">Les jeux</a>
-      <a href="#apropos">À propos</a>
-      <a href="#journal">En ce moment</a>
-      <a href="https://github.com/The-first-dog" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-    </nav>
-  </header>
-
-  <main id="main">
-    <section class="hero" id="accueil" aria-labelledby="hero-title">
-      <div class="hero-visual" aria-hidden="true">
-        <div class="hero-visual__tile"><img src="assets/farkle.svg" alt="" width="1200" height="820" fetchpriority="high"></div>
-        <div class="hero-visual__tile"><img src="assets/20000.svg" alt="" width="1200" height="820"></div>
-        <div class="hero-visual__tile"><img src="assets/3200000.svg" alt="" width="1200" height="820"></div>
-        <div class="hero-visual__tile"><img src="assets/clean-glass.svg" alt="" width="1200" height="820"></div>
+    <div class="hero__bottom container"><span>FantinHD — France</span><span>Création indépendante</span></div>
+  </section>
+  <section id="jeux" class="games-section">
+    <div class="container">
+      <div class="section-heading reveal"><p class="eyebrow">01 / Jeux & projets</p><h2>Nos <strong>projets</strong></h2><p>Des expériences sur PC et mobile, des premiers essais aux jeux disponibles.</p></div>
+      <div class="filters" role="group" aria-label="Filtrer les jeux">
+        <button class="filter active" type="button" data-filter="all" aria-pressed="true">Tous</button>
+        <button class="filter" type="button" data-filter="available" aria-pressed="false">Disponibles</button>
+        <button class="filter" type="button" data-filter="development" aria-pressed="false">En développement</button>
+        <button class="filter" type="button" data-filter="pc" aria-pressed="false">PC</button>
+        <button class="filter" type="button" data-filter="mobile" aria-pressed="false">Mobile</button>
       </div>
-      <div class="shell hero-content">
-        <div class="hero__index">Développeur indépendant <span aria-hidden="true">/</span> PC &amp; Mobile</div>
-        <h1 id="hero-title">Des idées.<br>Des jeux.<br><span class="hollow">Des univers.</span></h1>
-        <p>Je crée des jeux vidéo indépendants, un projet après l'autre. Des expériences simples ou ambitieuses, toujours avec l'envie d'essayer quelque chose de nouveau.</p>
-        <a class="primary-link" href="#jeux">Découvrir les jeux <span class="arrow" aria-hidden="true">↗</span></a>
-      </div>
-      <div class="shell hero__bottom"><span>FantinHD © <span class="sr-only">—</span> Création indépendante</span><span class="scroll-line" aria-hidden="true"></span><span>Défiler pour explorer ↓</span></div>
-    </section>
-
-    <div class="intro-strip">
-      <div class="shell">
-        <div class="eyebrow">Une même envie</div>
-        <h2>Des jeux de dés aux expériences les plus inattendues. Aucun univers ne ressemble au précédent.</h2>
+      <p id="filter-announcement" class="sr-only" role="status" aria-live="polite"></p>
+      <div class="games" id="games-list"></div>
+    </div>
+  </section>
+  <section id="apropos" class="about">
+    <div class="container about__layout">
+      <div class="reveal"><p class="eyebrow">02 / À propos</p><h2>Tout commence<br>par une <em>idée.</em></h2></div>
+      <div class="about__copy reveal"><p>FantinHD, c'est mon nom de développeur. Je crée des jeux indépendants sur PC et mobile, sans me limiter à un genre ou une mécanique.</p><p>Chaque projet est l'occasion de tester une nouvelle idée, de la construire et de la partager.</p><a href="#jeux" class="inline-link">Explorer mes jeux <span aria-hidden="true">↗</span></a></div>
+    </div>
+  </section>
+  <section id="actualites" class="journal">
+    <div class="container"><div class="section-heading section-heading--left reveal"><p class="eyebrow">03 / Dans l'atelier</p><h2>En ce moment</h2><p>Les projets en cours et les prochaines expériences.</p></div>
+      <div class="journal__list">
+        <button class="journal__item reveal" type="button" data-game="depth"><span>01</span><strong>3.2M <small>— Toujours plus profond</small></strong><em>Mobile / En cours</em><b aria-hidden="true">↗</b></button>
+        <button class="journal__item reveal" type="button" data-game="timer"><span>02</span><strong>2:00:00 <small>— Le temps fait partie du jeu</small></strong><em>PC / En cours</em><b aria-hidden="true">↗</b></button>
+        <button class="journal__item reveal" type="button" data-game="secret"><span>03</span><strong>Et après ? <small>— Projets non annoncés</small></strong><em>Confidentiel</em><b aria-hidden="true">↗</b></button>
       </div>
     </div>
-
-    <section class="section" id="jeux" aria-labelledby="games-title">
-      <div class="shell">
-        <div class="section-header reveal">
-          <div><div class="eyebrow">01 / Les projets</div><h2 class="section-title" id="games-title">Mes jeux<span aria-hidden="true">.</span></h2></div>
-          <p class="section-header__aside">Des jeux disponibles, d'autres en développement, et quelques surprises encore gardées secrètes.</p>
-        </div>
-        <div class="filters" role="group" aria-label="Filtrer la liste des jeux">
-          <button class="filter" data-filter="all" type="button" aria-pressed="true">Tous <span class="filter-count">5</span></button>
-          <button class="filter" data-filter="available" type="button" aria-pressed="false">Disponibles</button>
-          <button class="filter" data-filter="development" type="button" aria-pressed="false">En développement</button>
-          <button class="filter" data-filter="pc" type="button" aria-pressed="false">PC</button>
-          <button class="filter" data-filter="mobile" type="button" aria-pressed="false">Mobile</button>
-        </div>
-        <p class="sr-only" id="filter-status" role="status"></p>\n        <div class="game-grid" id="game-grid">
-          <article class="game-card reveal" data-categories="available mobile" aria-labelledby="title-farkle">
-            <button class="game-card__image" type="button" data-game="farkle" aria-label="En savoir plus sur Farkle">
-              <img src="assets/farkle.svg" alt="Illustration conceptuelle de dés sur une table médiévale" width="1200" height="820" loading="lazy">
-              <span class="view-corner" aria-hidden="true">↗</span>
-            </button>
-            <div class="game-card__body">
-              <div class="game-card__meta"><span>01 — Mobile / Jeu de dés</span><span class="status">Disponible</span></div>
-              <div class="game-card__titlebar"><h3 class="game-card__title" id="title-farkle">Farkle</h3><button class="card-more" data-game="farkle" type="button" aria-label="Détails de Farkle">↗</button></div>
-              <p class="game-card__desc">Joue avec le hasard. Lance les dés, prends des risques et essaie de garder tes points.</p>
-              <a class="game-card__action" href="https://play.google.com/store/apps/details?id=com.FantinHD.Farkle" target="_blank" rel="noopener noreferrer">Google Play <span aria-hidden="true">↗</span></a>
-            </div>
-          </article>
-          <article class="game-card reveal" data-categories="available mobile" aria-labelledby="title-clean">
-            <button class="game-card__image" type="button" data-game="clean" aria-label="En savoir plus sur Clean Glass">
-              <img src="assets/clean-glass.svg" alt="Illustration conceptuelle de vitres ensoleillées et d'une raclette" width="1200" height="820" loading="lazy">
-              <span class="view-corner" aria-hidden="true">↗</span>
-            </button>
-            <div class="game-card__body">
-              <div class="game-card__meta"><span>02 — Mobile / Relaxant</span><span class="status">Disponible</span></div>
-              <div class="game-card__titlebar"><h3 class="game-card__title" id="title-clean">Clean Glass</h3><button class="card-more" data-game="clean" type="button" aria-label="Détails de Clean Glass">↗</button></div>
-              <p class="game-card__desc">Un jeu de nettoyage satisfaisant et relaxant. À chaque passage, une vitre plus nette.</p>
-              <a class="game-card__action" href="https://play.google.com/store/apps/details?id=com.FantinHD.CleanGlass" target="_blank" rel="noopener noreferrer">Google Play <span aria-hidden="true">↗</span></a>
-            </div>
-          </article>
-          <article class="game-card reveal" data-categories="development mobile" aria-labelledby="title-depth">
-            <button class="game-card__image" type="button" data-game="depth" aria-label="En savoir plus sur 3.2M">
-              <img src="assets/3200000.svg" alt="Illustration conceptuelle d'une bille qui descend entre des blocs" width="1200" height="820" loading="lazy">
-              <span class="view-corner" aria-hidden="true">↗</span>
-            </button>
-            <div class="game-card__body">
-              <div class="game-card__meta"><span>03 — Mobile / Arcade idle</span><span class="status status--dev">En développement</span></div>
-              <div class="game-card__titlebar"><h3 class="game-card__title" id="title-depth">3.2M</h3><button class="card-more" data-game="depth" type="button" aria-label="Détails de 3.2M">↗</button></div>
-              <p class="game-card__desc">Une descente à travers 3 200 000 blocs. Des billes, des améliorations et du chemin à parcourir.</p>
-              <button class="game-card__action" type="button" data-game="depth">Découvrir le projet <span aria-hidden="true">↗</span></button>
-            </div>
-          </article>
-          <article class="game-card reveal" data-categories="development pc" aria-labelledby="title-timer">
-            <button class="game-card__image" type="button" data-game="timer" aria-label="En savoir plus sur 2:00:00">
-              <img src="assets/20000.svg" alt="Illustration conceptuelle d'un long couloir blanc et d'une roue" width="1200" height="820" loading="lazy">
-              <span class="view-corner" aria-hidden="true">↗</span>
-            </button>
-            <div class="game-card__body">
-              <div class="game-card__meta"><span>04 — PC / Expérimental</span><span class="status status--dev">En développement</span></div>
-              <div class="game-card__titlebar"><h3 class="game-card__title" id="title-timer">2:00:00</h3><button class="card-more" data-game="timer" type="button" aria-label="Détails de 2:00:00">↗</button></div>
-              <p class="game-card__desc">Une expérience minimaliste qui joue avec le temps, l'attente et une roue finale.</p>
-              <button class="game-card__action" type="button" data-game="timer">Découvrir le projet <span aria-hidden="true">↗</span></button>
-            </div>
-          </article>
-          <article class="game-card secret reveal" data-categories="development pc mobile" aria-labelledby="title-secret">
-            <button class="game-card__image" type="button" data-game="secret" aria-label="Découvrir le projet confidentiel">
-              <img src="assets/secret.svg" alt="Affiche discrète avec un point d'interrogation" width="1200" height="820" loading="lazy">
-              <span class="view-corner" aria-hidden="true">↗</span>
-            </button>
-            <div class="game-card__body">
-              <div class="game-card__meta"><span>05 — Projet non annoncé</span><span class="status status--secret">Confidentiel</span></div>
-              <div class="game-card__titlebar"><h3 class="game-card__title" id="title-secret">À découvrir</h3><button class="card-more" data-game="secret" type="button" aria-label="Informations sur les projets secrets">↗</button></div>
-              <p class="game-card__desc">D'autres choses se préparent. Je préfère garder le mystère pour le moment.</p>
-              <button class="game-card__action" type="button" data-game="secret">En savoir plus <span aria-hidden="true">↗</span></button>
-            </div>
-          </article>
-        </div>
-        <p class="hidden-count" id="no-results" role="status">Aucun projet dans cette catégorie pour le moment.</p>
-        <p class="muted" style="font-size:12px;line-height:1.6;margin-top:54px">Les images présentées ici sont des illustrations conceptuelles provisoires, pas des captures d'écran des jeux.</p>
-      </div>
-    </section>
-
-    <section class="feature-band" id="apropos" aria-labelledby="about-title">
-      <div class="shell feature-band__grid">
-        <div class="reveal">
-          <div class="eyebrow">02 / À propos</div>
-          <h2 id="about-title">Faire des jeux.<br>Apprendre.<br>Recommencer.</h2>
-          <p>FantinHD, c'est mon nom de développeur. Je construis des expériences indépendantes sur PC et mobile, guidé par la curiosité et l'envie de créer.</p>
-        </div>
-        <div class="feature-band__aside reveal">
-          <div class="eyebrow">Une personne, plusieurs projets</div>
-          <p>Pas de genre imposé ni de recette unique. Je passe d'un jeu de dés à un jeu mobile de progression, puis à des expériences plus étranges. L'important, c'est de donner vie à une bonne idée.</p>
-          <a class="text-link" href="#jeux">Explorer les jeux <span class="arrow" aria-hidden="true">↗</span></a>
-        </div>
-      </div>
-    </section>
-
-    <section class="section news-section" id="journal" aria-labelledby="news-title">
-      <div class="shell">
-        <div class="news-header section-header reveal">
-          <div><div class="eyebrow">03 / Dans l'atelier</div><h2 class="section-title" id="news-title">En ce moment.</h2></div>
-          <p class="section-header__aside">Quelques nouvelles des projets en cours. Pas de date de sortie annoncée tant qu'elle n'est pas fixée.</p>
-        </div>
-        <div class="news-list">
-          <button type="button" class="news-item reveal" data-game="depth">
-            <span class="news-item__index">01</span>
-            <span class="news-item__title">3.2M — Toujours plus profond</span>
-            <span class="news-item__desc">La progression, les blocs et les différentes familles de billes continuent de prendre forme.</span>
-            <span class="news-item__arrow" aria-hidden="true">↗</span>
-          </button>
-          <button type="button" class="news-item reveal" data-game="timer">
-            <span class="news-item__index">02</span>
-            <span class="news-item__title">2:00:00 — Le temps compte</span>
-            <span class="news-item__desc">Une expérience PC où le temps qui passe fait partie du jeu.</span>
-            <span class="news-item__arrow" aria-hidden="true">↗</span>
-          </button>
-          <button type="button" class="news-item reveal" data-game="secret">
-            <span class="news-item__index">03</span>
-            <span class="news-item__title">Et après ?</span>
-            <span class="news-item__desc">Quelques idées restent volontairement hors champ, en attendant leur annonce.</span>
-            <span class="news-item__arrow" aria-hidden="true">↗</span>
-          </button>
-        </div>
-      </div>
-    </section>
-  </main>
-  <footer class="footer">
-    <div class="shell">
-      <div class="footer-top">
-        <div><div class="eyebrow">FantinHD / Jeux vidéo indépendants</div><p class="muted">PC · Mobile · France</p></div>
-        <nav class="footer-nav" aria-label="Liens externes">
-          <a href="https://play.google.com/store/apps/details?id=com.FantinHD.Farkle" rel="noopener noreferrer" target="_blank">Farkle ↗</a>
-          <a href="https://play.google.com/store/apps/details?id=com.FantinHD.CleanGlass" rel="noopener noreferrer" target="_blank">Clean Glass ↗</a>
-          <a href="https://github.com/The-first-dog" rel="noopener noreferrer" target="_blank">GitHub ↗</a>
-          <a href="#accueil">Retour en haut ↑</a>
-        </nav>
-      </div>
-      <div class="footer-big" aria-label="FantinHD">FantinHD.</div>
-      <div class="footer-bottom"><span>© <span id="year">2026</span> FantinHD. Tous droits réservés.</span><span>Une création indépendante.</span></div>
-    </div>
-  </footer>
-
-  <dialog class="modal" id="game-dialog" aria-labelledby="modal-title">
-    <div class="modal-head">
-      <span class="eyebrow" id="modal-type">Projet / FantinHD</span>
-      <button class="modal-close" type="button" aria-label="Fermer la fiche">×</button>
-    </div>
-    <img class="modal-cover" id="modal-cover" src="assets/secret.svg" alt="" width="1200" height="820">
-    <div class="modal-body">
-      <h2 id="modal-title">Projet</h2>
-      <p class="modal-intro" id="modal-lead"></p>
-      <p class="modal-description" id="modal-description"></p>
-      <div class="modal-tags" id="modal-tags"></div>
-      <p class="modal-note" id="modal-note"></p>
-      <div class="modal-actions"><a class="primary-link" id="modal-link" href="#" target="_blank" rel="noopener noreferrer" hidden>Voir le jeu ↗</a><button class="text-link modal-back" type="button" onclick="document.getElementById('game-dialog').close()">Retour aux jeux ↑</button></div>
-    </div>
-  </dialog>
-</body>
-</html>
+  </section>
+</main>
+<footer class="footer">
+  <div class="container"><div class="footer__top"><p>Des jeux indépendants,<br>une idée à la fois.</p><nav aria-label="Liens externes"><a href="#jeux">Jeux</a><a href="#apropos">À propos</a><a href="https://play.google.com/store/apps/dev?id=8088754359282570640" target="_blank" rel="noopener noreferrer">Google Play ↗</a><a href="https://github.com/The-first-dog" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav></div>
+  <a class="footer__logo" href="#accueil">FantinHD.</a><div class="footer__bottom"><span>© <span id="year">2026</span> FantinHD. Tous droits réservés.</span><span>Développeur indépendant · France</span><a href="#accueil">Retour en haut ↑</a></div></div>
+</footer>
+<dialog id="game-dialog" class="dialog" aria-labelledby="dialog-title">
+  <div class="dialog__top"><span id="dialog-category"></span><button class="dialog__close" type="button" aria-label="Fermer">×</button></div>
+  <div class="dialog__picture media-host" id="dialog-picture"></div>
+  <div class="dialog__body"><h2 id="dialog-title"></h2><p class="dialog__lead" id="dialog-lead"></p><p class="dialog__description" id="dialog-description"></p><div id="dialog-tags" class="dialog__tags"></div><a id="dialog-link" class="dialog__link" target="_blank" rel="noopener noreferrer" hidden>Voir le jeu ↗</a></div>
+</dialog>
+</body></html>
