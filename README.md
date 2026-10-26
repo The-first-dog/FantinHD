@@ -1,49 +1,51 @@
-# FantinHD
+# FantinHD — Site officiel
 
-Site officiel de **FantinHD**, développeur indépendant de jeux vidéo sur PC et mobile.
+Site vitrine du développeur indépendant **FantinHD**, inspiré de la sobriété et de la mise en valeur des jeux du site [Embark Studios](https://www.embark-studios.com/). Le code et le contenu de ce site sont propres à FantinHD ; aucune image d'Embark n'est réutilisée.
 
-**Site public (si GitHub Pages est activé) :** https://the-first-dog.github.io/FantinHD/
+- **Site :** https://the-first-dog.github.io/FantinHD/ (GitHub Pages doit être activé)
+- **Dépôt :** https://github.com/The-first-dog/FantinHD
 
-## Les jeux présentés
+## Ajouter les images
 
-| Jeu | Plateforme | État | Lien |
-| --- | --- | --- | --- |
-| Farkle — Medieval Dice Game | Android | Disponible | [Google Play](https://play.google.com/store/apps/details?id=com.FantinHD.Farkle) |
-| Clean Glass | Android | Disponible | [Google Play](https://play.google.com/store/apps/details?id=com.FantinHD.CleanGlass) |
-| 3.2M (3 200 000) | Mobile | En développement | À venir |
-| 2:00:00 | PC | En développement | À venir |
-| Projet non annoncé | — | Confidentiel | À venir |
+Tu n'as **rien à modifier dans le code** pour ajouter les photos. Va dans [`assets/images/`](assets/images/README.md), puis **Add file → Upload files** sur GitHub.
 
-## Site / direction artistique
+| Fichier à déposer | Emplacement | Résolution recommandée |
+| --- | --- | --- |
+| `hero.jpg` | `assets/images/hero.jpg` | 2560 × 1440 px |
+| `farkle.jpg` | `assets/images/farkle.jpg` | 1600 × 1000 px |
+| `clean-glass.jpg` | `assets/images/clean-glass.jpg` | 1600 × 1000 px |
+| `3-2m.jpg` | `assets/images/3-2m.jpg` | 1600 × 1000 px |
+| `2-00-00.jpg` | `assets/images/2-00-00.jpg` | 1600 × 1000 px |
 
-Une identité éditoriale originale pour FantinHD, inspirée de l'approche **sobre, immersive et centrée sur les jeux** d'[Embark Studios](https://www.embark-studios.com/). Les illustrations du site sont créées spécialement pour FantinHD : elles sont **conceptuelles et provisoires**, et ne prétendent pas représenter de vraies captures des jeux. Aucun média ni code d'Embark Studios n'est utilisé.
+`hero.jpg` est facultatif : sans lui, le grand écran d'accueil est entièrement noir avec le nom FantinHD en blanc. Les jeux confidentiels n'ont pas d'image à uploader.
 
-## Structure
+Utilise de vraies captures d'écran ou des visuels de tes jeux. Pas d'images générées artificiellement, pas de médias du site d'Embark. Le site affiche un emplacement discret tant que les photos ne sont pas présentes. Les noms de fichiers sont sensibles à la casse. Exporte au vrai format **JPEG**, ne renomme pas simplement une image PNG.
 
-- `index.html` : page d'accueil et sections des jeux, présentation, actualités.
-- `styles.css` : mise en page, couleurs, typographie, animations et responsive.
-- `app.js` : filtres, menu mobile et fenêtres de présentation des jeux.
-- `assets/*.svg` : visuels vectoriels originaux (aucune dépendance réseau).
+## Pages du site
 
-HTML5, CSS3 et JavaScript natif. Aucun framework, aucune clé API, aucun cookie de suivi.
+- Accueil noir et typographique
+- Catalogue des jeux, filtrable par plateforme ou avancement
+- Farkle et Clean Glass (disponibles sur Google Play)
+- 3.2M et 2:00:00 (en développement)
+- Projets non annoncés
+- Présentation FantinHD et actualités de développement
+- Fiches détaillées et menu mobile
 
-## Voir le site en local
+## Fichiers techniques
 
-Télécharge ce dépôt en ZIP (Code → Download ZIP), décompresse-le, puis ouvre `index.html` dans ton navigateur. Les liens et les images fonctionnent sans serveur.
+- `index.html` — structure des pages
+- `styles.css` — typographie, mise en page, animations, responsive
+- `app.js` — données des jeux, affichage des images, filtres et fiches
+- `assets/images/` — **photos à fournir**
 
-## Publication avec GitHub Pages
+Tout fonctionne en HTML/CSS/JavaScript, sans framework, sans tracking ni API privée. Tu peux télécharger le dépôt puis ouvrir directement `index.html` dans un navigateur.
 
-1. GitHub → **Settings** → **Pages**.
-2. Dans **Build and deployment**, sélectionner **Deploy from a branch**.
-3. Choisir `main` et `/(root)`, puis enregistrer.
-4. Ouvrir https://the-first-dog.github.io/FantinHD/
+## Mettre en ligne
 
-## Modifier les projets
+Settings → Pages → Build and deployment : **Deploy from a branch** → `main` → `/(root)`.
 
-Les cartes des jeux sont dans `index.html` et les contenus des fenêtres de détails dans l'objet `games` en haut de `app.js`. Les visuels peuvent être remplacés en conservant les chemins d'images ou en modifiant les attributs `src`.
+## Modifier ou ajouter un jeu
 
-Les vrais liens de téléchargement sont volontairement absents pour les jeux non publiés. Ne pas ajouter d'informations privées, de clés d'API ni de ressources internes à ce dépôt public.
+Dans `app.js`, modifie le tableau `games` et les chemins définis dans `IMAGE_FILES`.
 
----
-
-© FantinHD. Tous droits réservés.
+© FantinHD, tous droits réservés.
