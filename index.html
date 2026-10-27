@@ -112,6 +112,7 @@ import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 
 const S = {
   text:"FantinHD", palette:["#FDCB0B","#FF7A10","#F6033A","#FA4FF5","#7E1AFC","#2A0BF5"], seed:7, kern:true,
@@ -181,6 +182,21 @@ composer.addPass(new RenderPass(scene, camera));
 const bloom = new UnrealBloomPass(new THREE.Vector2(16, 16), S.bloom, S.bloomRadius, S.bloomThr);
 composer.addPass(bloom);
 composer.addPass(new OutputPass());
+// Grain très fin (± 1,5 niveau sur 255) : casse les paliers du dégradé sur les écrans
+// qui n'ajoutent pas de grain eux-mêmes. Couleurs et lumière inchangées ; le noir pur reste noir.
+composer.addPass(new ShaderPass({
+  uniforms:{ tDiffuse:{ value:null }, uGrain:{ value:3 / 255 } },
+  vertexShader:`varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }`,
+  fragmentShader:`
+    uniform sampler2D tDiffuse; uniform float uGrain; varying vec2 vUv;
+    float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
+    void main(){
+      vec4 c = texture2D(tDiffuse, vUv);
+      float l = max(c.r, max(c.g, c.b));
+      c.rgb += (h(gl_FragCoord.xy) - .5) * uGrain * step(.5 / 255., l);
+      gl_FragColor = vec4(clamp(c.rgb, 0., 1.), 1.);
+    }`
+}));
 
 const shared = {
   uMouse:{ value:new THREE.Vector2(999, 999) },
