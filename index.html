@@ -182,21 +182,19 @@ composer.addPass(new RenderPass(scene, camera));
 const bloom = new UnrealBloomPass(new THREE.Vector2(16, 16), S.bloom, S.bloomRadius, S.bloomThr);
 composer.addPass(bloom);
 composer.addPass(new OutputPass());
-// Finition : le voile très sombre du halo redescend au noir pur (le fond se fond dans la page),
-// puis un grain très fin casse les paliers de dégradé (banding).
+// Grain très fin (± 1,5 niveau sur 255) : casse les paliers du dégradé sur les écrans
+// qui n'ajoutent pas de grain eux-mêmes. Couleurs et lumière inchangées ; le noir pur reste noir.
 composer.addPass(new ShaderPass({
-  uniforms:{ tDiffuse:{ value:null }, uFloor:{ value:.045 }, uGrain:{ value:2.2 / 255 } },
+  uniforms:{ tDiffuse:{ value:null }, uGrain:{ value:3 / 255 } },
   vertexShader:`varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }`,
   fragmentShader:`
-    uniform sampler2D tDiffuse; uniform float uFloor, uGrain; varying vec2 vUv;
+    uniform sampler2D tDiffuse; uniform float uGrain; varying vec2 vUv;
     float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
     void main(){
-      vec3 c = texture2D(tDiffuse, vUv).rgb;
+      vec4 c = texture2D(tDiffuse, vUv);
       float l = max(c.r, max(c.g, c.b));
-      float k = smoothstep(uFloor * .5, uFloor * 2.5, l);
-      c *= k;
-      c += (h(gl_FragCoord.xy) - .5) * uGrain * k;
-      gl_FragColor = vec4(max(c, 0.), 1.);
+      c.rgb += (h(gl_FragCoord.xy) - .5) * uGrain * step(.5 / 255., l);
+      gl_FragColor = vec4(clamp(c.rgb, 0., 1.), 1.);
     }`
 }));
 
