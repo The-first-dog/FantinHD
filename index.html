@@ -163,10 +163,8 @@ function mixPal(t){
   const i = Math.min(Math.floor(t), P.length - 2);
   return P[i].clone().lerp(P[i + 1], t - i);
 }
-const colorOf = cell => {
-  const u = cell.c / Math.max(1, cell.gw - 1), v = Math.min(cell.r, 6) / 6;
-  return mixPal(u * 5 - v * u * 2 + (hash(S.seed, cell.i, cell.r, cell.c) - .5) * .6);
-};
+// Dégradé de gauche à droite sur tout le nom (même calcul que le mode « Dégradé » de l'outil)
+const colorOf = cell => mixPal(cell.x / Math.max(1, width - 1) * (P.length - 1) + (hash(S.seed, cell.i, cell.r, cell.c) - .5) * .5);
 
 let renderer;
 try { renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:false, powerPreference:"high-performance" }); }
