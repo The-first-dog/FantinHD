@@ -2,6 +2,8 @@
 
 Tout le contenu du site est dans ce dossier `contenu/`. Tu n'as **jamais besoin de toucher au code**.
 
+**Règle simple :** ne modifie jamais un fichier qui porte « (ne pas toucher) » dans son nom, ni `index.html`, `_config.yml` et le dossier `.github` à la racine du dépôt.
+
 Dès que tu enregistres un changement ici sur GitHub, le site se met à jour tout seul en 1 à 2 minutes. Tu peux suivre ça dans l'onglet **Actions** du dépôt : la ligne « Mettre à jour le contenu du site » doit être verte.
 
 Si elle est rouge, ouvre-la : le message dit exactement quel fichier corriger et pourquoi. Dans ce cas, le site garde son contenu précédent, rien n'est cassé.
@@ -15,7 +17,7 @@ Si elle est rouge, ouvre-la : le message dit exactement quel fichier corriger et
 | `jeux/` | **Un dossier par jeu**, avec sa fiche `jeu.json` et son affiche. |
 | `annonces/` | **Un dossier par annonce**, avec sa fiche `annonce.json` et son image. |
 | `_modeles/` | Des fichiers d'exemple à copier. Ils ne s'affichent jamais sur le site. |
-| `contenu.js` | Fichier fabriqué automatiquement. **Ne pas le modifier.** |
+| `contenu (ne pas toucher).js` | Fichier fabriqué automatiquement à partir des autres. |
 
 Pour mettre un texte en **gras**, entoure-le de deux étoiles : `**comme ça**`. Pour aller à la ligne dans un texte, écris `\n`.
 
@@ -137,4 +139,4 @@ Les réglages de chaque modèle sont aussi sauvegardés dans `outils/voxel-type/
 
 ## Vérifier sur ton PC avant de publier (facultatif)
 
-Si Node.js est installé, lance `node outils/construire-contenu.mjs` à la racine du dépôt, puis ouvre `index.html`. Sinon, publie directement : GitHub vérifie tout et t'indique les erreurs éventuelles.
+Si Node.js est installé, lance `node "outils/construire-contenu (ne pas toucher).mjs"` à la racine du dépôt, puis ouvre `index.html`. Sinon, publie directement : GitHub vérifie tout et t'indique les erreurs éventuelles.

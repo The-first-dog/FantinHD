@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /*
- * Construit contenu/contenu.js à partir des dossiers de contenu/ :
+ * Construit « contenu/contenu (ne pas toucher).js » à partir des dossiers de contenu/ :
  *   contenu/site.json                 textes généraux du site
  *   contenu/liens/<nom>.json          un fichier par lien (en-tête, menu mobile, pied de page)
  *   contenu/jeux/<dossier>/jeu.json   un dossier par jeu (+ son affiche)
  *   contenu/annonces/<dossier>/annonce.json   un dossier par annonce (+ son image)
  * Les fichiers et dossiers qui commencent par « _ » ou « . » sont ignorés (modèles, brouillons).
  *
- * Lancement : node outils/construire-contenu.mjs
+ * Lancement : node "outils/construire-contenu (ne pas toucher).mjs"
  * Sur GitHub, c'est automatique à chaque modification de contenu/ (voir .github/workflows/contenu.yml).
  * En cas d'erreur, rien n'est écrit : le site garde son contenu précédent.
  */
@@ -17,7 +17,7 @@ import { fileURLToPath } from "node:url";
 
 const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const CONTENU = path.join(RACINE, "contenu");
-const SORTIE = path.join(CONTENU, "contenu.js");
+const SORTIE = path.join(CONTENU, "contenu (ne pas toucher).js");
 const MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
 
 const erreurs = [];
@@ -121,7 +121,7 @@ if (erreurs.length){
   process.exit(1);
 }
 const donnees = { site, liens, jeux, annonces };
-const js = "// Fichier GÉNÉRÉ par outils/construire-contenu.mjs à partir du dossier contenu/.\n" +
+const js = "// Fichier GÉNÉRÉ automatiquement à partir du dossier contenu/ (NE PAS TOUCHER).\n" +
   "// Ne pas le modifier à la main : il est refait automatiquement sur GitHub.\n" +
   "window.FANTINHD_CONTENU = " + JSON.stringify(donnees, null, 1) + ";\n";
 fs.writeFileSync(SORTIE, js);

@@ -1,7 +1,7 @@
 "use strict";
 /*
  * Fantin HD — affiche le contenu du dossier contenu/ et gère les petites interactions.
- * Le contenu (textes, liens, jeux, annonces) vient de contenu/contenu.js, construit
+ * Le contenu (textes, liens, jeux, annonces) vient de « contenu/contenu (ne pas toucher).js », construit
  * automatiquement à partir des fichiers de contenu/ : voir contenu/LISEZMOI.md.
  */
 const C = window.FANTINHD_CONTENU || { site:{}, liens:[], jeux:[], annonces:[] };
