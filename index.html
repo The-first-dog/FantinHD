@@ -8,12 +8,12 @@
 <meta name="theme-color" content="#000000">
 <meta property="og:type" content="website">
 <meta property="og:title" content="FantinHD — Jeux indépendants">
-<meta property="og:description" content="Jeux PC et mobile, une idée à la fois.">
+<meta property="og:description" content="Des jeux nés d'une simple idée.">
 <meta property="og:image" content="https://the-first-dog.github.io/FantinHD/assets/logo/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;1,400&display=swap">
 <link rel="stylesheet" href="styles.css">
 <script defer src="app.js"></script>
 </head>
@@ -21,24 +21,26 @@
 <a href="#main" class="skip">Aller au contenu</a>
 
 <header class="header" id="header">
-  <div class="wrap header__row">
-    <a href="#accueil" class="header__logo" aria-label="FantinHD, retour à l'accueil"><img src="assets/logo/logo-lettres.png" alt="FantinHD" width="1200" height="207"></a>
+  <div class="header__row">
+    <button class="burger" id="menu-btn" type="button" aria-expanded="false" aria-controls="menu" aria-label="Ouvrir le menu"><span></span><span></span></button>
+    <a href="#accueil" class="header__logo" aria-label="FantinHD, accueil"><img src="assets/logo/logo-lettres-blanc.png" alt="FantinHD" width="1200" height="208"></a>
     <nav class="nav" aria-label="Navigation principale">
+      <a href="#accueil" class="is-active">Accueil</a>
       <a href="#jeux">Jeux</a>
-      <a href="#studio">Studio</a>
-      <a href="#atelier">En ce moment</a>
+      <a href="#actualites">Actualités</a>
+      <a href="#apropos">À propos</a>
     </nav>
-    <a class="header__cta" href="https://play.google.com/store/apps/dev?id=8088754359282570640" target="_blank" rel="noopener noreferrer">Google Play <span aria-hidden="true">↗</span></a>
-    <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="menu"><span class="menu-btn__label">Menu</span><span class="menu-btn__bars" aria-hidden="true"></span></button>
+    <a class="header__store" href="https://play.google.com/store/apps/dev?id=8088754359282570640" target="_blank" rel="noopener noreferrer">Google Play</a>
   </div>
 </header>
 
 <div class="menu" id="menu" hidden>
-  <nav class="wrap menu__nav" aria-label="Menu">
+  <nav aria-label="Menu">
+    <a href="#accueil">Accueil</a>
     <a href="#jeux">Jeux</a>
-    <a href="#studio">Studio</a>
-    <a href="#atelier">En ce moment</a>
-    <a href="https://play.google.com/store/apps/dev?id=8088754359282570640" target="_blank" rel="noopener noreferrer">Google Play ↗</a>
+    <a href="#actualites">Actualités</a>
+    <a href="#apropos">À propos</a>
+    <a href="https://play.google.com/store/apps/dev?id=8088754359282570640" target="_blank" rel="noopener noreferrer">Google Play</a>
   </nav>
 </div>
 
@@ -49,77 +51,56 @@
       <img class="hero__fallback" src="assets/logo/logo-complet.png" alt="Logo FantinHD : des lettres en pixels de verre colorés, avec des rayons de lumière" width="1600" height="900">
       <canvas class="hero__canvas" id="logo3d" aria-hidden="true"></canvas>
     </div>
-    <div class="wrap hero__foot">
-      <p class="hero__line">Jeux indépendants<br>sur PC et mobile.</p>
-      <a class="hero__down" href="#jeux">Voir les jeux <span aria-hidden="true">↓</span></a>
+    <p class="hero__tagline">Des jeux nés d'une simple <strong>idée</strong></p>
+  </section>
+
+  <section class="block" id="jeux" aria-labelledby="jeux-title">
+    <h2 class="title" id="jeux-title">Mes <strong>jeux</strong></h2>
+    <div class="projects" id="projects"></div>
+  </section>
+
+  <section class="block" id="actualites" aria-labelledby="news-title">
+    <h2 class="title" id="news-title">En <strong>ce moment</strong></h2>
+    <div class="news">
+      <div class="news__controls">
+        <button class="round" type="button" id="news-prev" aria-label="Actualités précédentes">←</button>
+        <button class="round" type="button" id="news-next" aria-label="Actualités suivantes">→</button>
+      </div>
+      <ul class="news__track" id="news-track"></ul>
     </div>
   </section>
 
-  <section class="games" id="jeux" aria-labelledby="jeux-title">
-    <div class="wrap">
-      <div class="section-head">
-        <h2 id="jeux-title" class="display">Jeux</h2>
-        <p class="label" id="games-count"></p>
-      </div>
-      <div class="games__grid" id="games-grid"></div>
-    </div>
+  <section class="quote" aria-label="Ma façon de travailler">
+    <p>Je fais mes jeux seul, du premier prototype à la mise en ligne.<br>Chaque projet part d'une idée simple, poussée <strong>jusqu'au bout</strong>.</p>
   </section>
 
-  <section class="studio" id="studio" aria-labelledby="studio-title">
-    <div class="wrap studio__grid">
-      <p class="label">Studio</p>
-      <div class="studio__body">
-        <h2 id="studio-title" class="statement">FantinHD, c'est mon nom de développeur. Je fais des jeux seul, sur PC et sur mobile, en partant à chaque fois d'une idée simple que je pousse jusqu'au bout.</h2>
-        <dl class="facts" id="facts"></dl>
-      </div>
-    </div>
-  </section>
-
-  <section class="atelier" id="atelier" aria-labelledby="atelier-title">
-    <div class="wrap">
-      <div class="section-head">
-        <h2 id="atelier-title" class="display">En ce moment</h2>
-        <p class="label">Ce qui avance à l'atelier</p>
-      </div>
-      <ul class="rows" id="rows"></ul>
+  <section class="about" id="apropos" aria-labelledby="about-title">
+    <div class="about__inner">
+      <h2 class="about__title" id="about-title">Un développeur,<br><strong>plusieurs mondes</strong></h2>
+      <p>FantinHD, c'est mon nom de développeur. Je crée des jeux indépendants sur PC et sur mobile, sans m'enfermer dans un genre : un jeu de dés médiéval, un jeu relaxant, une descente à travers des millions de blocs, une expérience autour du temps.</p>
+      <p>Les deux premiers sont déjà disponibles sur Google Play. Les suivants avancent, et d'autres se préparent sans encore porter de nom.</p>
+      <a class="btn-outline" href="https://play.google.com/store/apps/dev?id=8088754359282570640" target="_blank" rel="noopener noreferrer">Mes jeux sur Google Play</a>
     </div>
   </section>
 </main>
 
 <footer class="footer">
-  <div class="wrap">
-    <img class="footer__logo" src="assets/logo/logo-lettres.png" alt="FantinHD" width="1200" height="207" loading="lazy">
-    <div class="footer__grid">
-      <p class="footer__line">Des jeux indépendants,<br>une idée à la fois.</p>
-      <nav class="footer__nav" aria-label="Liens">
-        <a href="#jeux">Jeux</a>
-        <a href="#studio">Studio</a>
-        <a href="https://play.google.com/store/apps/dev?id=8088754359282570640" target="_blank" rel="noopener noreferrer">Google Play ↗</a>
-        <a href="https://github.com/The-first-dog" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-      </nav>
-    </div>
-    <div class="footer__bottom label"><span>© <span id="year">2026</span> FantinHD</span><span>Développeur indépendant · France</span><a href="#accueil">Haut de page ↑</a></div>
+  <div class="footer__top">
+    <p class="footer__legal">© <span id="year">2026</span> FantinHD. Farkle, Clean Glass, 3.2M, 2:00:00 et le logo FantinHD sont des créations de FantinHD. Tous droits réservés.</p>
+    <img class="footer__logo" src="assets/logo/logo-lettres-blanc.png" alt="FantinHD" width="1200" height="208" loading="lazy">
   </div>
+  <nav class="footer__links" aria-label="Liens">
+    <a href="https://play.google.com/store/apps/dev?id=8088754359282570640" target="_blank" rel="noopener noreferrer">Google Play</a>
+    <a href="https://github.com/The-first-dog" target="_blank" rel="noopener noreferrer">GitHub</a>
+    <a href="#accueil">Haut de page</a>
+  </nav>
 </footer>
 
 <button class="fx-toggle" id="fx-toggle" type="button" aria-pressed="true" hidden>
   <svg class="fx-on" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 3.5 L5 17 L8.6 13.6 L11 19 L13.2 18 L10.9 12.7 L15.8 12.5 Z" fill="currentColor"/><path d="M17.5 4.5 L19.5 2.5 M19 8 L21.8 8 M15 1.5 L15 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg>
-  <svg class="fx-off" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 3.5 L5 17 L8.6 13.6 L11 19 L13.2 18 L10.9 12.7 L15.8 12.5 Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="miter"/><path d="M3 21 L21 3" stroke="currentColor" stroke-width="1.6"/></svg>
+  <svg class="fx-off" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 3.5 L5 17 L8.6 13.6 L11 19 L13.2 18 L10.9 12.7 L15.8 12.5 Z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3 21 L21 3" stroke="currentColor" stroke-width="1.6"/></svg>
   <span class="fx-toggle__tip" id="fx-tip">Logo interactif : activé</span>
 </button>
-
-<dialog class="dialog" id="game-dialog" aria-labelledby="dialog-title">
-  <div class="dialog__media"><img id="dialog-img" alt=""></div>
-  <div class="dialog__body">
-    <p class="label" id="dialog-meta"></p>
-    <h2 id="dialog-title" class="dialog__title"></h2>
-    <p class="dialog__lead" id="dialog-lead"></p>
-    <p class="dialog__text" id="dialog-text"></p>
-    <ul class="tags" id="dialog-tags"></ul>
-    <a class="btn" id="dialog-link" target="_blank" rel="noopener noreferrer" hidden></a>
-  </div>
-  <button class="dialog__close" type="button" aria-label="Fermer">×</button>
-</dialog>
 
 <!-- Logo 3D interactif : mêmes réglages que l'outil Voxel Type (assets/logo/reglages-fantinhd.txt) -->
 <script type="importmap">
@@ -136,7 +117,7 @@ const S = {
   text:"FantinHD", palette:["#FDCB0B","#FF7A10","#F6033A","#FA4FF5","#7E1AFC","#2A0BF5"], seed:7, kern:true,
   gap:0.1, depth:1.6, opacity:1, border:0.13, bright:2,
   rayLen:12.3, rayInt:0.44, rayDir:237, rayTilt:0, rayWidth:0.76, raySpread:2.35, rayFall:1.87,
-  bloom:0.16, bloomRadius:0.04, bloomThr:0, exposure:1.43, margin:0.06
+  bloom:0.16, bloomRadius:0.04, bloomThr:0, exposure:1.43, margin:0.5
 };
 // Aura de la souris : rayon (en cubes) et hauteur de soulèvement
 const AURA = { radius:3.6, lift:1.7 };
