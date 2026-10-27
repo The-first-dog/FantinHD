@@ -100,7 +100,7 @@ Le lien apparaît aux endroits où tu as mis un nom : **tu ne le saisis qu'une s
 Chaque jeu a son dossier dans `contenu/jeux/` (par exemple `01-farkle/`), avec :
 
 - `jeu.json` : la fiche ;
-- `affiche.jpg` : l'affiche verticale, **2:3, 800 × 1200 px**.
+- `affiche.jpg` : l'affiche verticale, **2:3, 1200 × 1800 px**.
 
 ```json
 {

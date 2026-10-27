@@ -208,7 +208,7 @@ const DEFAULTS = {
    Chaque modèle part des réglages du logo officiel et ne change que ce qui est listé. */
 const PAL = { braise:PRESETS.braise, glace:PRESETS.glace, vitrail:PRESETS.vitrail, fantinhd:PRESETS.fantinhd, vide:PRESETS.vide };
 const ANNONCE = { mode:"logo", sway:false, lockRot:true, view:"flat", autoZoom:"global", zoomMargin:0.6, fmt:"wide", res:"1600", bg:"black" };
-const AFFICHE = { mode:"logo", sway:false, lockRot:true, view:"flat", autoZoom:"global", zoomMargin:0.3, rayLen:11, rayDir:250, fmt:"poster", res:"1200", bg:"black" };
+const AFFICHE = { mode:"logo", sway:false, lockRot:true, view:"flat", autoZoom:"global", zoomMargin:0.3, rayLen:11, rayDir:250, fmt:"poster", res:"1800", bg:"black" };
 const SCENES = {
   logo:{ nom:"Logo Fantin HD", s:{} },
   logoBlanc:{ nom:"Logo blanc sans rayons (en-tête)", s:{ rays:false, tone:"white", autoZoom:"letters", zoomMargin:0.05, fmt:"banner", res:"2400", bg:"transparent", sway:false } },
@@ -704,6 +704,16 @@ function renderAt(w, h){
   setOrtho(oldAsp);
   controls.target.copy(saved.t); perspCam.position.copy(saved.pp); orthoCam.position.copy(saved.op);
   orthoCam.zoom = saved.z; orthoCam.updateProjectionMatrix();
+  if (S.bg === "black"){
+    // Grain très fin (± 1,5 niveau) sur tout ce qui n'est pas noir pur : supprime les paliers des dégradés sombres
+    const img = ctx.getImageData(0, 0, w, h), d = img.data;
+    for (let i = 0; i < d.length; i += 4){
+      if (d[i] + d[i + 1] + d[i + 2] === 0) continue;
+      const n = (Math.random() - .5) * 3;
+      d[i] = Math.min(255, Math.max(0, Math.round(d[i] + n))); d[i + 1] = Math.min(255, Math.max(0, Math.round(d[i + 1] + n))); d[i + 2] = Math.min(255, Math.max(0, Math.round(d[i + 2] + n)));
+    }
+    ctx.putImageData(img, 0, 0);
+  }
   if (S.bg !== "black"){
     // Lumière sur fond noir → alpha = luminosité, comme un calque en mode « addition »
     const img = ctx.getImageData(0, 0, w, h), d = img.data;
@@ -804,7 +814,7 @@ async function copySettings(){
 const UI = [
   ["Modèle", [
     { k:"scene", t:"select", l:"Partir de", o:Object.entries(SCENES).map(([k, v]) => [k, v.nom]) },
-    { t:"note", x:"Choisis un modèle, change le texte en bas (| pour aller à la ligne), puis Export → Image PNG. Annonces : format 16:9, 1600 px. Affiches de jeu : format 2:3, 1200 px." }
+    { t:"note", x:"Choisis un modèle, change le texte en bas (| pour aller à la ligne), puis Export → Image PNG. Annonces : format 16:9, 1600 px. Affiches de jeu : format 2:3, 1800 px." }
   ]],
   ["Couleurs", [
     { k:"preset", t:"select", l:"Palette", o:[["fantinhd","Fantin HD"],["vitrail","Vitrail"],["glace","Glace"],["braise","Braise"],["vide","Le vide (2:00:00)"],["blanc","Blanc"],["perso","Perso"]] },
@@ -854,7 +864,7 @@ const UI = [
   ]],
   ["Export", [
     { k:"fmt", t:"select", l:"Format", o:[["screen","Comme l'écran"],["square","Carré 1:1 (icône)"],["wide","16:9 (annonce, vidéo)"],["poster","2:3 (affiche de jeu)"],["banner","3:1 (bannière)"]] },
-    { k:"res", t:"select", l:"Taille", o:[["1080","1080 px"],["2160","2160 px (4K)"],["4096","4096 px"]] },
+    { k:"res", t:"select", l:"Taille", o:[["1080","1080 px"],["1600","1600 px"],["1800","1800 px"],["2160","2160 px (4K)"],["4096","4096 px"]] },
     { k:"bg", t:"select", l:"Fond", o:[["black","Noir"],["transparent","Transparent"],["ink","Transparent, logo noir"],["white","Blanc, logo noir"]] },
     { t:"btns", b:[["Image PNG", exportPNG, true], ["Vidéo WebM", exportVideo], ["favicon.svg", exportFavicon]] },
     { t:"note", x:"La vidéo enregistre l'apparition à la taille de la fenêtre. Le favicon reprend la 1re lettre du texte, en pixels nets." },

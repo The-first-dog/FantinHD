@@ -38,7 +38,7 @@
   "sway": false,
   "speed": 1.7,
   "fmt": "poster",
-  "res": "1200",
+  "res": "1800",
   "bg": "black",
   "overrides": {}
 }
