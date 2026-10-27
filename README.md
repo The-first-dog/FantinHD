@@ -1,36 +1,44 @@
 # FantinHD — Site officiel
 
-Site vitrine de **FantinHD**, développeur indépendant de jeux PC et mobile.
+Site vitrine de **FantinHD**, développeur indépendant de jeux Android et PC.
 
 - **Site :** https://the-first-dog.github.io/FantinHD/ (GitHub Pages, branche `main`, dossier `/`)
-- **Style :** sobre et centré, inspiré de la mise en page du site d'Embark Studios (titres fins avec un mot en gras, affiches verticales, actualités en bandeau). Le code, les textes et les visuels sont propres à FantinHD.
+- **Style :** sobre et centré, inspiré de la mise en page du site d'Embark Studios. Le code, les textes et les visuels sont propres à FantinHD.
+
+## Modifier le contenu (annonces, liens, jeux, textes)
+
+Tout se passe dans le dossier [`contenu/`](contenu/LISEZMOI.md), sans toucher au code :
+
+- une annonce = un dossier dans `contenu/annonces/` ;
+- un lien (Steam, YouTube…) = un fichier dans `contenu/liens/` ;
+- un jeu = un dossier dans `contenu/jeux/` ;
+- les textes généraux sont dans `contenu/site.json`.
+
+À chaque modification de `contenu/` sur GitHub, l'action « Mettre à jour le contenu du site » reconstruit `contenu/contenu.js`, et le site se met à jour en 1 à 2 minutes. Le mode d'emploi complet est dans [`contenu/LISEZMOI.md`](contenu/LISEZMOI.md).
 
 ## L'accueil : logo 3D interactif
 
-Le logo de l'accueil est rendu en direct (Three.js, chargé depuis jsDelivr) avec **les réglages officiels** du logo, ceux de [`assets/logo/reglages-fantinhd.txt`](assets/logo/reglages-fantinhd.txt).
+Le logo est rendu en direct (Three.js, chargé depuis jsDelivr) avec les réglages officiels du logo.
 
-- Quand la souris passe sur le logo, les cubes les plus proches se soulèvent dans un rayon autour d'elle et leurs rayons s'éclairent.
-- Le bouton carré en bas à droite active ou coupe cet effet. Le choix est mémorisé dans le navigateur. Avec « réduire les animations » activé dans le système, l'effet est coupé par défaut.
-- Si la 3D ne peut pas se charger (pas de WebGL, pas d'internet), l'image `assets/logo/logo-complet.png` s'affiche à la place.
+- Les cubes proches de la souris se soulèvent et leurs rayons s'éclairent.
+- Le bouton rond en bas à droite coupe ou réactive l'effet. Le choix est mémorisé, et l'effet est coupé par défaut quand « réduire les animations » est activé dans le système.
+- Un grain très fin évite les paliers de dégradé sur les écrans qui n'en ajoutent pas.
+- Si la 3D ne peut pas se charger, l'image `assets/logo/logo-complet.png` s'affiche à la place.
 
-Réglages de l'effet : constante `AURA` dans le script en bas de `index.html` (`radius` = rayon en cubes, `lift` = hauteur).
+Réglages de l'effet : constante `AURA` dans le script en bas de `index.html`.
 
 ## Fichiers
 
-- `index.html` — structure de la page et logo 3D
-- `styles.css` — mise en page, typographie, responsive
-- `app.js` — jeux, actualités, menu mobile
-- `assets/logo/` — logo (lettres, complet, réseaux sociaux) et réglages officiels
-- `assets/images/visuels/` — affiches (2:3) et visuels (16:9) « pixels de verre » des jeux
-- `assets/images/` — [tes vraies captures, facultatives](assets/images/README.md)
-- `outils/voxel-type/` — l'outil Voxel Type et ses réglages, pour refaire le logo ou de nouveaux visuels
-
-## Modifier un jeu
-
-Dans `app.js`, tableau `games` : nom, statut, textes, lien Google Play.
-
-## Mettre en ligne
-
-Settings → Pages → Build and deployment : **Deploy from a branch** → `main` → `/(root)`.
+| Fichier | Rôle |
+| --- | --- |
+| `index.html` | Structure de la page et logo 3D |
+| `styles.css` | Mise en page, typographie, responsive |
+| `app.js` | Affiche le contenu de `contenu/`, menu mobile, actualités |
+| `contenu/` | Tout le contenu modifiable ([mode d'emploi](contenu/LISEZMOI.md)) |
+| `assets/logo/` | Logos (complet, lettres, blanc avec aura) et image de partage |
+| `outils/construire-contenu.mjs` | Construit `contenu/contenu.js` à partir de `contenu/` |
+| `outils/voxel-type/` | Outil 3D pour fabriquer le logo, les images d'annonce et les affiches (non publié sur le site) |
+| `.github/workflows/contenu.yml` | Mise à jour automatique du contenu |
+| `_config.yml` | Dossiers exclus du site publié (`outils/`, modèles) |
 
 © FantinHD, tous droits réservés.

@@ -1,8 +1,15 @@
 {
-  "text": "FantinHD",
-  "preset": "fantinhd",
-  "palette": ["#FDCB0B", "#FF7A10", "#F6033A", "#FA4FF5", "#7E1AFC", "#2A0BF5"],
-  "mode": "logo",
+  "text": "3 200 000",
+  "preset": "vitrail",
+  "palette": [
+    "#FFC83D",
+    "#FF7B1C",
+    "#FF2F45",
+    "#FF5EC9",
+    "#8B53FF",
+    "#2E46FF"
+  ],
+  "mode": "gradient",
   "tone": "color",
   "seed": 7,
   "kern": true,
@@ -26,12 +33,12 @@
   "exposure": 1.43,
   "view": "flat",
   "lockRot": true,
-  "autoZoom": "off",
-  "zoomMargin": 0.08,
-  "sway": true,
+  "autoZoom": "global",
+  "zoomMargin": 0.6,
+  "sway": false,
   "speed": 1.7,
-  "fmt": "screen",
-  "res": "2160",
-  "bg": "transparent",
+  "fmt": "wide",
+  "res": "1600",
+  "bg": "black",
   "overrides": {}
 }

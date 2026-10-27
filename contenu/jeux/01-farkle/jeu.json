@@ -1,0 +1,15 @@
+{
+  "titre": "Farkle",
+  "sous_titre": "Medieval Dice Game",
+  "statut": "Disponible sur Google Play",
+  "ordre": 1,
+  "texte": [
+    "Farkle est un **jeu de dés médiéval** : lance les dés, garde les combinaisons qui rapportent des points, puis choisis entre sécuriser ton score ou tenter un lancer de plus.",
+    "Joue en solo ou en ligne avec tes amis, grimpe au classement, et personnalise tes dés avec des skins purement cosmétiques, sans avantage de jeu."
+  ],
+  "lien": {
+    "texte": "Voir sur Google Play",
+    "url": "https://play.google.com/store/apps/details?id=com.FantinHD.Farkle"
+  },
+  "affiche": "affiche.jpg"
+}

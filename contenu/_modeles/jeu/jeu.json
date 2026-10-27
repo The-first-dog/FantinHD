@@ -1,0 +1,15 @@
+{
+  "titre": "Nom du jeu",
+  "sous_titre": "",
+  "statut": "Android · En développement",
+  "ordre": 5,
+  "texte": [
+    "Premier paragraphe, avec un **passage en gras**.",
+    "Deuxième paragraphe."
+  ],
+  "affiche": "affiche.jpg",
+  "lien": {
+    "texte": "Voir sur Google Play",
+    "url": "https://play.google.com/store/apps/details?id=..."
+  }
+}

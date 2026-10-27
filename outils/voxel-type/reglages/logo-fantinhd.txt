@@ -1,7 +1,14 @@
 {
   "text": "FantinHD",
   "preset": "fantinhd",
-  "palette": ["#FDCB0B", "#FF7A10", "#F6033A", "#FA4FF5", "#7E1AFC", "#2A0BF5"],
+  "palette": [
+    "#FDCB0B",
+    "#FF7A10",
+    "#F6033A",
+    "#FA4FF5",
+    "#7E1AFC",
+    "#2A0BF5"
+  ],
   "mode": "logo",
   "tone": "color",
   "seed": 7,
