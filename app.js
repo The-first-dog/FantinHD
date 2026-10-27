@@ -35,13 +35,14 @@ const games = [
 ];
 
 /* Actualités : uniquement les grandes étapes (sorties, grosses mises à jour, annonces),
-   de la plus récente à la plus ancienne. Dates au mois, validées par Fantin. */
+   dans l'ordre chronologique strict : à gauche la plus récente, à droite la plus ancienne.
+   Dates au mois, validées par Fantin. */
 const news = [
+  { date:"À venir", title:"2:00:00 arrive sur Steam", text:"Une expérience minimaliste autour de l'attente et du hasard, en préparation pour Steam.", img:"assets/images/visuels/2-00-00.jpg" },
   { date:"Octobre 2026", title:"Nouveau site FantinHD", text:"Le site officiel fait peau neuve, avec le logo en pixels de verre et tous les jeux au même endroit.", img:"assets/logo/og.jpg" },
   { date:"Octobre 2026", title:"3 200 000 en test fermé", text:"Le jeu prend son nom définitif et entre en test fermé sur Android.", img:"assets/images/visuels/3-2m.jpg" },
-  { date:"En développement", title:"2:00:00 arrive sur Steam", text:"Une expérience minimaliste autour de l'attente et du hasard, en préparation pour Steam.", img:"assets/images/visuels/2-00-00.jpg" },
-  { date:"Disponible", title:"Farkle se joue en ligne", text:"Multijoueur en ligne, amis, invitations et classement : défie d'autres joueurs dans la taverne.", img:"assets/images/visuels/farkle.jpg" },
   { date:"Août 2026", title:"Farkle : boutique et nouveau look", text:"Grosse mise à jour : une boutique de skins cosmétiques et une refonte visuelle façon taverne en bois.", img:"assets/images/visuels/farkle.jpg" },
+  { date:"Juin 2026", title:"Farkle se joue en ligne", text:"Multijoueur en ligne, amis, invitations et classement : défie d'autres joueurs dans la taverne.", img:"assets/images/visuels/farkle.jpg" },
   { date:"Juin 2026", title:"Farkle sort sur Google Play", text:"Le jeu de dés médiéval est disponible sur Android.", img:"assets/images/visuels/farkle.jpg" },
   { date:"Mai 2026", title:"Clean Glass sort sur Google Play", text:"Le jeu de nettoyage relaxant est disponible sur Android.", img:"assets/images/visuels/clean-glass.jpg" }
 ];
