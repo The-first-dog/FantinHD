@@ -21,27 +21,26 @@ const games = [
     link:"https://play.google.com/store/apps/details?id=com.FantinHD.CleanGlass"
   },
   {
-    name:"3.2M", sub:"", state:"Android · En développement",
+    name:"3 200 000", sub:"", state:"Android · En développement",
     intro:["Un seul objectif : ", "détruire 3 200 000 blocs", ". Pour y arriver, il faudra faire progresser ses billes et leurs effets."],
     more:"Billes spéciales, fusions, améliorations et missions quotidiennes sont en cours de préparation.",
     poster:"assets/images/visuels/affiche-3-2m.jpg", photo:"assets/images/affiche-3-2m.jpg", link:""
   },
   {
-    name:"2:00:00", sub:"", state:"PC · En développement",
-    intro:["2:00:00 est une ", "expérience minimaliste", " : une salle blanche, une roue et un bouton SPIN."],
-    more:"Un projet autour de l'attente et du hasard. Plus de détails bientôt.",
+    name:"2:00:00", sub:"", state:"Steam · En développement",
+    intro:["2:00:00 est une ", "expérience minimaliste sur PC", " : une salle blanche, une roue et un bouton SPIN."],
+    more:"Un projet autour de l'attente et du hasard, qui sortira sur Steam. Plus de détails bientôt.",
     poster:"assets/images/visuels/affiche-2-00-00.jpg", photo:"assets/images/affiche-2-00-00.jpg", link:""
   }
 ];
 
-/* Actualités : uniquement des informations publiques (mises à jour visibles sur Google Play)
-   et l'état des projets en cours. Pas de date inventée. */
+/* Actualités : à remplir avec la chronologie validée par Fantin.
+   En attendant, uniquement des faits sûrs, sans date. */
 const news = [
-  { date:"Septembre 2026", title:"Clean Glass mis à jour", text:"Une nouvelle mise à jour de Clean Glass est disponible sur Google Play.", img:"assets/images/visuels/clean-glass.jpg" },
-  { date:"Septembre 2026", title:"Farkle : dés et classement améliorés", text:"Les dés et leur sélection ont été retravaillés, et le classement a été renforcé.", img:"assets/images/visuels/farkle.jpg" },
-  { date:"Août 2026", title:"Farkle : boutique et nouveau look", text:"Une boutique de skins cosmétiques arrive, avec une refonte visuelle du jeu.", img:"assets/images/visuels/farkle.jpg" },
-  { date:"En développement", title:"3.2M", text:"3 200 000 blocs à détruire. Le projet avance sur Android.", img:"assets/images/visuels/3-2m.jpg" },
-  { date:"En développement", title:"2:00:00", text:"Une nouvelle expérience sur PC est en préparation.", img:"assets/images/visuels/2-00-00.jpg" }
+  { date:"En développement", title:"2:00:00 arrive sur Steam", text:"Une expérience minimaliste autour de l'attente et du hasard, en préparation pour Steam.", img:"assets/images/visuels/2-00-00.jpg" },
+  { date:"En développement", title:"3 200 000", text:"3 200 000 blocs à détruire. Le projet avance sur Android.", img:"assets/images/visuels/3-2m.jpg" },
+  { date:"Disponible", title:"Clean Glass", text:"Le jeu de nettoyage relaxant est disponible sur Google Play.", img:"assets/images/visuels/clean-glass.jpg" },
+  { date:"Disponible", title:"Farkle", text:"Le jeu de dés médiéval est disponible sur Google Play.", img:"assets/images/visuels/farkle.jpg" }
 ];
 
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; };
