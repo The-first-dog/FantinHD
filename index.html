@@ -1,72 +1,379 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#080808">
-<meta name="description" content="FantinHD — développeur indépendant de jeux vidéo. Découvrez Farkle, Clean Glass, 3.2M, 2:00:00 et les projets PC et mobile à venir.">
-<meta property="og:title" content="FantinHD — Jeux indépendants"><meta property="og:description" content="Des idées à explorer. Des jeux à partager.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>FantinHD — Jeux indépendants</title>
-<link rel="stylesheet" href="styles.css"><script defer src="app.js"></script>
+<meta name="description" content="FantinHD, développeur indépendant de jeux PC et mobile. Farkle et Clean Glass sur Google Play, 3.2M et 2:00:00 en développement.">
+<meta name="theme-color" content="#000000">
+<meta property="og:type" content="website">
+<meta property="og:title" content="FantinHD — Jeux indépendants">
+<meta property="og:description" content="Jeux PC et mobile, une idée à la fois.">
+<meta property="og:image" content="https://the-first-dog.github.io/FantinHD/assets/logo/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="styles.css">
+<script defer src="app.js"></script>
 </head>
 <body>
-<a href="#main" class="skip">Passer au contenu</a>
-<header class="header">
-  <div class="container header__row">
-    <a href="#accueil" class="brand" aria-label="FantinHD, accueil">Fantin<strong>HD</strong><span>.</span></a>
-    <nav class="nav" aria-label="Navigation principale"><a href="#accueil">Accueil</a><a href="#jeux">Jeux</a><a href="#apropos">À propos</a><a href="#actualites">Actualités</a></nav>
-    <a class="header__link" href="https://play.google.com/store/apps/dev?id=8088754359282570640" target="_blank" rel="noopener noreferrer">Google Play ↗</a>
-    <button class="menu-button" id="menu-button" type="button" aria-expanded="false" aria-controls="mobile-nav">Menu <span aria-hidden="true">☰</span></button>
+<a href="#main" class="skip">Aller au contenu</a>
+
+<header class="header" id="header">
+  <div class="wrap header__row">
+    <a href="#accueil" class="header__logo" aria-label="FantinHD, retour à l'accueil"><img src="assets/logo/logo-lettres.png" alt="FantinHD" width="1200" height="207"></a>
+    <nav class="nav" aria-label="Navigation principale">
+      <a href="#jeux">Jeux</a>
+      <a href="#studio">Studio</a>
+      <a href="#atelier">En ce moment</a>
+    </nav>
+    <a class="header__cta" href="https://play.google.com/store/apps/dev?id=8088754359282570640" target="_blank" rel="noopener noreferrer">Google Play <span aria-hidden="true">↗</span></a>
+    <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="menu"><span class="menu-btn__label">Menu</span><span class="menu-btn__bars" aria-hidden="true"></span></button>
   </div>
-  <nav class="mobile-nav" id="mobile-nav" aria-label="Navigation mobile" hidden><a href="#accueil">Accueil</a><a href="#jeux">Jeux</a><a href="#apropos">À propos</a><a href="#actualites">Actualités</a><a href="https://play.google.com/store/apps/dev?id=8088754359282570640" target="_blank" rel="noopener noreferrer">Google Play ↗</a></nav>
 </header>
+
+<div class="menu" id="menu" hidden>
+  <nav class="wrap menu__nav" aria-label="Menu">
+    <a href="#jeux">Jeux</a>
+    <a href="#studio">Studio</a>
+    <a href="#atelier">En ce moment</a>
+    <a href="https://play.google.com/store/apps/dev?id=8088754359282570640" target="_blank" rel="noopener noreferrer">Google Play ↗</a>
+  </nav>
+</div>
+
 <main id="main">
-  <section id="accueil" class="hero">
-    <div class="hero__visual media-host" data-photo="assets/images/hero.jpg" aria-hidden="true"></div>
-    <div class="container hero__inner">
-      <span class="eyebrow hero__eyebrow">Développeur indépendant / PC & Mobile</span>
-      <h1 class="hero__logo">Fantin<span>HD</span><i>.</i></h1>
-      <p class="hero__tagline">Des idées à explorer. Des jeux à partager.</p>
-      <a href="#jeux" class="hero__discover">Découvrir mes jeux <span aria-hidden="true">↓</span></a>
+  <section class="hero" id="accueil" aria-labelledby="hero-title">
+    <h1 id="hero-title" class="sr-only">FantinHD</h1>
+    <div class="hero__stage" id="hero-stage">
+      <img class="hero__fallback" src="assets/logo/logo-complet.png" alt="Logo FantinHD : des lettres en pixels de verre colorés, avec des rayons de lumière" width="1600" height="900">
+      <canvas class="hero__canvas" id="logo3d" aria-hidden="true"></canvas>
     </div>
-    <div class="hero__bottom container"><span>FantinHD — France</span><span>Création indépendante</span></div>
+    <div class="wrap hero__foot">
+      <p class="hero__line">Jeux indépendants<br>sur PC et mobile.</p>
+      <a class="hero__down" href="#jeux">Voir les jeux <span aria-hidden="true">↓</span></a>
+    </div>
   </section>
-  <section id="jeux" class="games-section">
-    <div class="container">
-      <div class="section-heading reveal"><p class="eyebrow">01 / Jeux & projets</p><h2>Nos <strong>projets</strong></h2><p>Des expériences sur PC et mobile, des premiers essais aux jeux disponibles.</p></div>
-      <div class="filters" role="group" aria-label="Filtrer les jeux">
-        <button class="filter active" type="button" data-filter="all" aria-pressed="true">Tous</button>
-        <button class="filter" type="button" data-filter="available" aria-pressed="false">Disponibles</button>
-        <button class="filter" type="button" data-filter="development" aria-pressed="false">En développement</button>
-        <button class="filter" type="button" data-filter="pc" aria-pressed="false">PC</button>
-        <button class="filter" type="button" data-filter="mobile" aria-pressed="false">Mobile</button>
+
+  <section class="games" id="jeux" aria-labelledby="jeux-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="jeux-title" class="display">Jeux</h2>
+        <p class="label" id="games-count"></p>
       </div>
-      <p id="filter-announcement" class="sr-only" role="status" aria-live="polite"></p>
-      <div class="games" id="games-list"></div>
+      <div class="games__grid" id="games-grid"></div>
     </div>
   </section>
-  <section id="apropos" class="about">
-    <div class="container about__layout">
-      <div class="reveal"><p class="eyebrow">02 / À propos</p><h2>Tout commence<br>par une <em>idée.</em></h2></div>
-      <div class="about__copy reveal"><p>FantinHD, c'est mon nom de développeur. Je crée des jeux indépendants sur PC et mobile, sans me limiter à un genre ou une mécanique.</p><p>Chaque projet est l'occasion de tester une nouvelle idée, de la construire et de la partager.</p><a href="#jeux" class="inline-link">Explorer mes jeux <span aria-hidden="true">↗</span></a></div>
-    </div>
-  </section>
-  <section id="actualites" class="journal">
-    <div class="container"><div class="section-heading section-heading--left reveal"><p class="eyebrow">03 / Dans l'atelier</p><h2>En ce moment</h2><p>Les projets en cours et les prochaines expériences.</p></div>
-      <div class="journal__list">
-        <button class="journal__item reveal" type="button" data-game="depth"><span>01</span><strong>3.2M <small>— Toujours plus profond</small></strong><em>Mobile / En cours</em><b aria-hidden="true">↗</b></button>
-        <button class="journal__item reveal" type="button" data-game="timer"><span>02</span><strong>2:00:00 <small>— Le temps fait partie du jeu</small></strong><em>PC / En cours</em><b aria-hidden="true">↗</b></button>
-        <button class="journal__item reveal" type="button" data-game="secret"><span>03</span><strong>Et après ? <small>— Projets non annoncés</small></strong><em>Confidentiel</em><b aria-hidden="true">↗</b></button>
+
+  <section class="studio" id="studio" aria-labelledby="studio-title">
+    <div class="wrap studio__grid">
+      <p class="label">Studio</p>
+      <div class="studio__body">
+        <h2 id="studio-title" class="statement">FantinHD, c'est mon nom de développeur. Je fais des jeux seul, sur PC et sur mobile, en partant à chaque fois d'une idée simple que je pousse jusqu'au bout.</h2>
+        <dl class="facts" id="facts"></dl>
       </div>
+    </div>
+  </section>
+
+  <section class="atelier" id="atelier" aria-labelledby="atelier-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="atelier-title" class="display">En ce moment</h2>
+        <p class="label">Ce qui avance à l'atelier</p>
+      </div>
+      <ul class="rows" id="rows"></ul>
     </div>
   </section>
 </main>
+
 <footer class="footer">
-  <div class="container"><div class="footer__top"><p>Des jeux indépendants,<br>une idée à la fois.</p><nav aria-label="Liens externes"><a href="#jeux">Jeux</a><a href="#apropos">À propos</a><a href="https://play.google.com/store/apps/dev?id=8088754359282570640" target="_blank" rel="noopener noreferrer">Google Play ↗</a><a href="https://github.com/The-first-dog" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav></div>
-  <a class="footer__logo" href="#accueil">FantinHD.</a><div class="footer__bottom"><span>© <span id="year">2026</span> FantinHD. Tous droits réservés.</span><span>Développeur indépendant · France</span><a href="#accueil">Retour en haut ↑</a></div></div>
+  <div class="wrap">
+    <img class="footer__logo" src="assets/logo/logo-lettres.png" alt="FantinHD" width="1200" height="207" loading="lazy">
+    <div class="footer__grid">
+      <p class="footer__line">Des jeux indépendants,<br>une idée à la fois.</p>
+      <nav class="footer__nav" aria-label="Liens">
+        <a href="#jeux">Jeux</a>
+        <a href="#studio">Studio</a>
+        <a href="https://play.google.com/store/apps/dev?id=8088754359282570640" target="_blank" rel="noopener noreferrer">Google Play ↗</a>
+        <a href="https://github.com/The-first-dog" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+      </nav>
+    </div>
+    <div class="footer__bottom label"><span>© <span id="year">2026</span> FantinHD</span><span>Développeur indépendant · France</span><a href="#accueil">Haut de page ↑</a></div>
+  </div>
 </footer>
-<dialog id="game-dialog" class="dialog" aria-labelledby="dialog-title">
-  <div class="dialog__top"><span id="dialog-category"></span><button class="dialog__close" type="button" aria-label="Fermer">×</button></div>
-  <div class="dialog__picture media-host" id="dialog-picture"></div>
-  <div class="dialog__body"><h2 id="dialog-title"></h2><p class="dialog__lead" id="dialog-lead"></p><p class="dialog__description" id="dialog-description"></p><div id="dialog-tags" class="dialog__tags"></div><a id="dialog-link" class="dialog__link" target="_blank" rel="noopener noreferrer" hidden>Voir le jeu ↗</a></div>
+
+<button class="fx-toggle" id="fx-toggle" type="button" aria-pressed="true" hidden>
+  <svg class="fx-on" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 3.5 L5 17 L8.6 13.6 L11 19 L13.2 18 L10.9 12.7 L15.8 12.5 Z" fill="currentColor"/><path d="M17.5 4.5 L19.5 2.5 M19 8 L21.8 8 M15 1.5 L15 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg>
+  <svg class="fx-off" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 3.5 L5 17 L8.6 13.6 L11 19 L13.2 18 L10.9 12.7 L15.8 12.5 Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="miter"/><path d="M3 21 L21 3" stroke="currentColor" stroke-width="1.6"/></svg>
+  <span class="fx-toggle__tip" id="fx-tip">Logo interactif : activé</span>
+</button>
+
+<dialog class="dialog" id="game-dialog" aria-labelledby="dialog-title">
+  <div class="dialog__media"><img id="dialog-img" alt=""></div>
+  <div class="dialog__body">
+    <p class="label" id="dialog-meta"></p>
+    <h2 id="dialog-title" class="dialog__title"></h2>
+    <p class="dialog__lead" id="dialog-lead"></p>
+    <p class="dialog__text" id="dialog-text"></p>
+    <ul class="tags" id="dialog-tags"></ul>
+    <a class="btn" id="dialog-link" target="_blank" rel="noopener noreferrer" hidden></a>
+  </div>
+  <button class="dialog__close" type="button" aria-label="Fermer">×</button>
 </dialog>
-</body></html>
+
+<!-- Logo 3D interactif : mêmes réglages que l'outil Voxel Type (assets/logo/reglages-fantinhd.txt) -->
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from "three";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+
+const S = {
+  text:"FantinHD", palette:["#FDCB0B","#FF7A10","#F6033A","#FA4FF5","#7E1AFC","#2A0BF5"], seed:7, kern:true,
+  gap:0.1, depth:1.6, opacity:1, border:0.13, bright:2,
+  rayLen:12.3, rayInt:0.44, rayDir:237, rayTilt:0, rayWidth:0.76, raySpread:2.35, rayFall:1.87,
+  bloom:0.16, bloomRadius:0.04, bloomThr:0, exposure:1.43, margin:0.06
+};
+// Aura de la souris : rayon (en cubes) et hauteur de soulèvement
+const AURA = { radius:3.6, lift:1.7 };
+
+const G = {
+  F:["######","#.....","#.....","#####.","#.....","#.....","#....."],
+  a:["......","......",".####.",".....#",".#####","#....#",".#####"],
+  n:[".....",".....","####.","#...#","#...#","#...#","#...#"],
+  t:[".#..",".#..","####",".#..",".#..",".#..","..##"],
+  i:[".","#",".","#","#","#","#"],
+  H:["#...#","#...#","#...#","#####","#...#","#...#","#...#"],
+  D:["####..","#...#.","#....#","#....#","#....#","#....#","#####."]
+};
+
+const stage = document.getElementById("hero-stage");
+const canvas = document.getElementById("logo3d");
+const toggle = document.getElementById("fx-toggle");
+const tip = document.getElementById("fx-tip");
+
+function hash(a, b, c, d){
+  let h = (a * 374761393 + b * 668265263 + c * 2147483647 + d * 1274126177) | 0;
+  h = Math.imul(h ^ (h >>> 13), 1274126177);
+  h ^= h >>> 16;
+  return (h >>> 0) / 4294967296;
+}
+const edgeRows = (gl, col) => gl.map((r, i) => r[col] === "#" ? i : -9).filter(i => i >= 0);
+const canKern = (p, n) => { const a = edgeRows(p, p[0].length - 1), b = edgeRows(n, 0); return a.length && b.length && !a.some(r => b.some(q => Math.abs(r - q) <= 1)); };
+
+const cells = []; let width = 0, prev = null;
+[...S.text].forEach((ch, i) => {
+  const gl = G[ch];
+  if (prev) width += (S.kern && canKern(prev, gl)) ? 0 : 1;
+  gl.forEach((row, r) => { for (let c = 0; c < row.length; c++) if (row[c] === "#") cells.push({ i, r, c, x:width + c, gw:row.length }); });
+  width += gl[0].length; prev = gl;
+});
+
+const P = S.palette.map(h => new THREE.Color(h));
+function mixPal(t){
+  t = Math.max(0, Math.min(P.length - 1, t));
+  const i = Math.min(Math.floor(t), P.length - 2);
+  return P[i].clone().lerp(P[i + 1], t - i);
+}
+const colorOf = cell => {
+  const u = cell.c / Math.max(1, cell.gw - 1), v = Math.min(cell.r, 6) / 6;
+  return mixPal(u * 5 - v * u * 2 + (hash(S.seed, cell.i, cell.r, cell.c) - .5) * .6);
+};
+
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:false, powerPreference:"high-performance" }); }
+catch (e) { throw e; }
+renderer.setClearColor(0x000000, 1);
+renderer.toneMapping = THREE.ReinhardToneMapping;
+renderer.toneMappingExposure = S.exposure;
+
+const scene = new THREE.Scene();
+const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 200);
+camera.position.set(0, 0, 60);
+
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(16, 16), S.bloom, S.bloomRadius, S.bloomThr);
+composer.addPass(bloom);
+composer.addPass(new OutputPass());
+
+const shared = {
+  uMouse:{ value:new THREE.Vector2(999, 999) },
+  uHover:{ value:0 },
+  uRadius:{ value:AURA.radius },
+  uLift:{ value:AURA.lift }
+};
+const liftGLSL = `
+  uniform vec2 uMouse; uniform float uHover, uRadius, uLift;
+  float auraOf(vec3 c, float rnd){
+    float f = 1. - smoothstep(0., uRadius, distance(c.xy, uMouse));
+    return f * f * (3. - 2. * f) * uHover * (.75 + .5 * rnd);
+  }`;
+
+const voxMat = new THREE.ShaderMaterial({
+  transparent:true,
+  uniforms:Object.assign({ uOpacity:{ value:S.opacity }, uBorder:{ value:S.border }, uBright:{ value:S.bright } }, shared),
+  vertexShader:`
+    attribute float aRand;
+    varying vec2 vUv; varying vec3 vColor; varying float vRand, vShade, vLift;
+    ${liftGLSL}
+    void main(){
+      vUv = uv; vColor = instanceColor; vRand = aRand;
+      vec3 c = (instanceMatrix * vec4(0., 0., 0., 1.)).xyz;
+      float f = auraOf(c, aRand); vLift = f;
+      vec4 p = instanceMatrix * vec4(position * (1. + f * .1), 1.);
+      p.xyz += vec3(f * uLift * .18, f * uLift * .55, f * uLift);
+      vec3 n = normalize(mat3(modelViewMatrix * instanceMatrix) * normal);
+      vShade = .42 + .58 * abs(n.z);
+      gl_Position = projectionMatrix * modelViewMatrix * p;
+    }`,
+  fragmentShader:`
+    uniform float uOpacity, uBorder, uBright;
+    varying vec2 vUv; varying vec3 vColor; varying float vRand, vShade, vLift;
+    void main(){
+      vec2 d = abs(vUv - .5) * 2.; float e = max(d.x, d.y);
+      float border = smoothstep(1. - uBorder - .07, 1. - uBorder, e);
+      float mott = .78 + .2 * sin(vUv.x * 5. + vRand * 6.2831) * sin(vUv.y * 4. + vRand * 3.1) + .22 * (1. - vUv.y);
+      vec3 c = vColor * mott * uBright * (1. + vLift * .8);
+      c += vec3(1.) * pow(max(0., 1. - length(vUv - vec2(.26, .78)) * 1.7), 2.) * (.14 + vLift * .25);
+      c = mix(c, mix(vColor, vec3(1.), .42 + vLift * .3) * 1.2, border);
+      gl_FragColor = vec4(c * vShade, mix(uOpacity, 1., border));
+    }`
+});
+
+const rayMat = new THREE.ShaderMaterial({
+  transparent:true, depthWrite:false, blending:THREE.AdditiveBlending,
+  uniforms:Object.assign({ uLen:{ value:S.rayLen }, uSpread:{ value:S.raySpread }, uWidth:{ value:(1 - S.gap) * S.rayWidth }, uInt:{ value:S.rayInt }, uFall:{ value:S.rayFall } }, shared),
+  vertexShader:`
+    uniform float uLen, uSpread, uWidth;
+    attribute float aRand;
+    varying float vT, vLift; varying vec2 vXY; varying vec3 vColor;
+    ${liftGLSL}
+    void main(){
+      vec3 c = (instanceMatrix * vec4(0., 0., 0., 1.)).xyz;
+      float f = auraOf(c, aRand); vLift = f;
+      vec3 pos = position; vT = pos.z; vXY = pos.xy; vColor = instanceColor;
+      pos.xy *= uWidth * mix(1., uSpread, pos.z);
+      pos.z *= uLen * (.72 + .56 * aRand) * (1. + f * .3) + .001;
+      vec4 p = instanceMatrix * vec4(pos, 1.);
+      p.xyz += vec3(f * uLift * .18, f * uLift * .55, f * uLift);
+      gl_Position = projectionMatrix * modelViewMatrix * p;
+    }`,
+  fragmentShader:`
+    uniform float uInt, uFall;
+    varying float vT, vLift; varying vec2 vXY; varying vec3 vColor;
+    void main(){
+      float side = pow(clamp(1. - 2. * min(abs(vXY.x), abs(vXY.y)), 0., 1.), 1.4);
+      float fade = pow(1. - vT, uFall) * smoothstep(0., .05, vT);
+      gl_FragColor = vec4(vColor * uInt * (1. + vLift * 1.4) * fade * side, 1.);
+    }`
+});
+
+const n = cells.length;
+const vg = new THREE.BoxGeometry(1, 1, 1);
+const rg = new THREE.BoxGeometry(1, 1, 1); rg.translate(0, 0, .5);
+const rnd = new Float32Array(n);
+cells.forEach((cell, k) => { rnd[k] = hash(S.seed + 99, cell.i, cell.r, cell.c); });
+vg.setAttribute("aRand", new THREE.InstancedBufferAttribute(rnd, 1));
+rg.setAttribute("aRand", new THREE.InstancedBufferAttribute(rnd.slice(), 1));
+const vox = new THREE.InstancedMesh(vg, voxMat, n);
+const rays = new THREE.InstancedMesh(rg, rayMat, n);
+vox.renderOrder = 1; rays.renderOrder = 2; rays.frustumCulled = false; vox.frustumCulled = false;
+
+const a = THREE.MathUtils.degToRad(S.rayDir), tl = THREE.MathUtils.degToRad(S.rayTilt);
+const D = new THREE.Vector3(Math.cos(a) * Math.cos(tl), Math.sin(a) * Math.cos(tl), -Math.sin(tl)).normalize();
+const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), D), q0 = new THREE.Quaternion();
+const m = new THREE.Matrix4(), s = 1 - S.gap;
+const pts = [];
+cells.forEach((cell, k) => {
+  const p = new THREE.Vector3(cell.x - (width - 1) / 2, 3 - cell.r, 0);
+  vox.setMatrixAt(k, m.compose(p, q0, new THREE.Vector3(s, s, S.depth)));
+  rays.setMatrixAt(k, m.compose(p, q, new THREE.Vector3(1, 1, 1)));
+  const col = colorOf(cell); vox.setColorAt(k, col); rays.setColorAt(k, col);
+  // cadrage « global » : lettres + 75 % de la longueur des rayons
+  pts.push(p.x - s / 2, p.y + s / 2 + AURA.lift * .6, p.x + s / 2, p.y - s / 2);
+  const e = p.clone().addScaledVector(D, S.rayLen * (.72 + .56 * rnd[k]) * .75);
+  const w = s * S.rayWidth * (1 + (S.raySpread - 1) * .75) / 2;
+  pts.push(e.x - w, e.y + w, e.x + w, e.y - w);
+});
+scene.add(vox, rays);
+
+let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+for (let k = 0; k < pts.length; k += 4){ x0 = Math.min(x0, pts[k]); y1 = Math.max(y1, pts[k + 1]); x1 = Math.max(x1, pts[k + 2]); y0 = Math.min(y0, pts[k + 3]); }
+const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, hw = (x1 - x0) / 2 * (1 + S.margin), hh = (y1 - y0) / 2 * (1 + S.margin);
+camera.position.set(cx, cy, 60); camera.lookAt(cx, cy, 0);
+
+let dirty = true;
+function resize(){
+  const r = stage.getBoundingClientRect();
+  const w = Math.max(1, r.width), h = Math.max(1, r.height), asp = w / h;
+  const pr = Math.min(devicePixelRatio || 1, 2);
+  renderer.setPixelRatio(pr); renderer.setSize(w, h, false);
+  composer.setPixelRatio(pr); composer.setSize(w, h);
+  const halfH = Math.max(hh, hw / asp);
+  camera.left = -halfH * asp; camera.right = halfH * asp; camera.top = halfH; camera.bottom = -halfH;
+  camera.updateProjectionMatrix();
+  dirty = true;
+}
+new ResizeObserver(resize).observe(stage);
+resize();
+
+/* ---- Interaction ---- */
+const KEY = "fantinhd-logo-dynamique";
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let enabled = !reduced;
+try { const v = localStorage.getItem(KEY); if (v !== null) enabled = v === "1"; } catch (e) {}
+function paintToggle(){
+  toggle.setAttribute("aria-pressed", String(enabled));
+  toggle.classList.toggle("is-off", !enabled);
+  const t = enabled ? "Logo interactif : activé" : "Logo interactif : désactivé";
+  toggle.setAttribute("aria-label", t); tip.textContent = t;
+}
+toggle.addEventListener("click", () => {
+  enabled = !enabled; paintToggle(); dirty = true;
+  try { localStorage.setItem(KEY, enabled ? "1" : "0"); } catch (e) {}
+});
+paintToggle();
+
+const target = new THREE.Vector2(999, 999), cur = new THREE.Vector2(999, 999);
+let inside = false;
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), hit = new THREE.Vector3();
+function track(e){
+  const r = canvas.getBoundingClientRect();
+  if (e.clientY < r.top || e.clientY > r.bottom){ inside = false; return; }
+  ndc.set((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  if (ray.ray.intersectPlane(plane, hit)){
+    if (!inside) cur.set(hit.x, hit.y);
+    target.set(hit.x, hit.y); inside = true; dirty = true;
+  }
+}
+stage.addEventListener("pointermove", track);
+stage.addEventListener("pointerdown", track);
+stage.addEventListener("pointerleave", () => { inside = false; dirty = true; });
+
+let visible = true;
+new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible) dirty = true; }).observe(stage);
+
+let shown = false;
+function loop(){
+  requestAnimationFrame(loop);
+  if (!visible || document.hidden) return;
+  const want = enabled && inside ? 1 : 0;
+  const hv = shared.uHover.value;
+  if (Math.abs(want - hv) > .001){ shared.uHover.value += (want - hv) * (reduced ? 1 : .09); dirty = true; }
+  else shared.uHover.value = want;
+  if (cur.distanceToSquared(target) > 1e-5){ cur.lerp(target, reduced ? 1 : .2); shared.uMouse.value.copy(cur); dirty = true; }
+  if (!dirty) return;
+  dirty = false;
+  composer.render();
+  if (!shown){ shown = true; stage.classList.add("is-live"); toggle.hidden = false; }
+}
+loop();
+</script>
+</body>
+</html>

@@ -1,51 +1,36 @@
 # FantinHD — Site officiel
 
-Site vitrine du développeur indépendant **FantinHD**, inspiré de la sobriété et de la mise en valeur des jeux du site [Embark Studios](https://www.embark-studios.com/). Le code et le contenu de ce site sont propres à FantinHD ; aucune image d'Embark n'est réutilisée.
+Site vitrine de **FantinHD**, développeur indépendant de jeux PC et mobile.
 
-- **Site :** https://the-first-dog.github.io/FantinHD/ (GitHub Pages doit être activé)
-- **Dépôt :** https://github.com/The-first-dog/FantinHD
+- **Site :** https://the-first-dog.github.io/FantinHD/ (GitHub Pages, branche `main`, dossier `/`)
+- **Style :** noir, typographie massive, grandes images de jeux, lignes fines. Inspiré de la sobriété des sites de studios comme Embark Studios ; tout le code, les textes et les visuels sont propres à FantinHD.
 
-## Ajouter les images
+## L'accueil : logo 3D interactif
 
-Tu n'as **rien à modifier dans le code** pour ajouter les photos. Va dans [`assets/images/`](assets/images/README.md), puis **Add file → Upload files** sur GitHub.
+Le logo de l'accueil est rendu en direct (Three.js, chargé depuis jsDelivr) avec **les réglages officiels** du logo, ceux de [`assets/logo/reglages-fantinhd.txt`](assets/logo/reglages-fantinhd.txt).
 
-| Fichier à déposer | Emplacement | Résolution recommandée |
-| --- | --- | --- |
-| `hero.jpg` | `assets/images/hero.jpg` | 2560 × 1440 px |
-| `farkle.jpg` | `assets/images/farkle.jpg` | 1600 × 1000 px |
-| `clean-glass.jpg` | `assets/images/clean-glass.jpg` | 1600 × 1000 px |
-| `3-2m.jpg` | `assets/images/3-2m.jpg` | 1600 × 1000 px |
-| `2-00-00.jpg` | `assets/images/2-00-00.jpg` | 1600 × 1000 px |
+- Quand la souris passe sur le logo, les cubes les plus proches se soulèvent dans un rayon autour d'elle et leurs rayons s'éclairent.
+- Le bouton carré en bas à droite active ou coupe cet effet. Le choix est mémorisé dans le navigateur. Avec « réduire les animations » activé dans le système, l'effet est coupé par défaut.
+- Si la 3D ne peut pas se charger (pas de WebGL, pas d'internet), l'image `assets/logo/logo-complet.png` s'affiche à la place.
 
-`hero.jpg` est facultatif : sans lui, le grand écran d'accueil est entièrement noir avec le nom FantinHD en blanc. Les jeux confidentiels n'ont pas d'image à uploader.
+Réglages de l'effet : constante `AURA` dans le script en bas de `index.html` (`radius` = rayon en cubes, `lift` = hauteur).
 
-Utilise de vraies captures d'écran ou des visuels de tes jeux. Pas d'images générées artificiellement, pas de médias du site d'Embark. Le site affiche un emplacement discret tant que les photos ne sont pas présentes. Les noms de fichiers sont sensibles à la casse. Exporte au vrai format **JPEG**, ne renomme pas simplement une image PNG.
+## Fichiers
 
-## Pages du site
+- `index.html` — structure de la page et logo 3D
+- `styles.css` — mise en page, typographie, responsive
+- `app.js` — données des jeux, fiches, menu mobile
+- `assets/logo/` — logo (lettres, complet, réseaux sociaux) et réglages officiels
+- `assets/images/visuels/` — visuels « pixels de verre » des jeux
+- `assets/images/` — [tes vraies captures, facultatives](assets/images/README.md)
+- `outils/voxel-type/` — l'outil Voxel Type et ses réglages, pour refaire le logo ou de nouveaux visuels
 
-- Accueil noir et typographique
-- Catalogue des jeux, filtrable par plateforme ou avancement
-- Farkle et Clean Glass (disponibles sur Google Play)
-- 3.2M et 2:00:00 (en développement)
-- Projets non annoncés
-- Présentation FantinHD et actualités de développement
-- Fiches détaillées et menu mobile
+## Modifier un jeu
 
-## Fichiers techniques
-
-- `index.html` — structure des pages
-- `styles.css` — typographie, mise en page, animations, responsive
-- `app.js` — données des jeux, affichage des images, filtres et fiches
-- `assets/images/` — **photos à fournir**
-
-Tout fonctionne en HTML/CSS/JavaScript, sans framework, sans tracking ni API privée. Tu peux télécharger le dépôt puis ouvrir directement `index.html` dans un navigateur.
+Dans `app.js`, tableau `games` : nom, statut, textes, lien Google Play.
 
 ## Mettre en ligne
 
 Settings → Pages → Build and deployment : **Deploy from a branch** → `main` → `/(root)`.
-
-## Modifier ou ajouter un jeu
-
-Dans `app.js`, modifie le tableau `games` et les chemins définis dans `IMAGE_FILES`.
 
 © FantinHD, tous droits réservés.
