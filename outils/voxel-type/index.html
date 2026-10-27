@@ -1,0 +1,935 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>
+<title>Voxel Type FantinHD</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout : scène WebGL plein écran, interface posée dans les coins comme un viseur, réglages repliables en haut à droite */
+:root{
+  --ink:#000000;
+  --fg:#f1efe9;
+  --mute:#9b988f;
+  --line:rgba(241,239,233,.13);
+  --line-strong:rgba(241,239,233,.46);
+  --panel:rgba(7,7,7,.9);
+  --hot:#fa4ff5;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --gut:max(16px, env(safe-area-inset-left, 0px));
+  --gut-r:max(16px, env(safe-area-inset-right, 0px));
+  --top:calc(14px + env(safe-area-inset-top, 0px));
+  --bot:calc(14px + env(safe-area-inset-bottom, 0px));
+  color-scheme:dark;
+}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0;background:var(--ink);color:var(--fg);overflow:hidden}
+body{font-family:var(--mono);font-size:12px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+#gl:active{cursor:grabbing}
+.frame{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));bottom:calc(8px + env(safe-area-inset-bottom,0px));left:calc(8px + env(safe-area-inset-left,0px));right:calc(8px + env(safe-area-inset-right,0px));border:1px solid var(--line);pointer-events:none}
+.ui{position:fixed;letter-spacing:.2em;text-transform:uppercase;font-size:11px;font-weight:500}
+.brand{top:var(--top);left:var(--gut);padding:6px 10px}
+.stats-l{bottom:var(--bot);left:var(--gut);padding:6px 10px}
+.stats-r{bottom:var(--bot);right:var(--gut-r);padding:6px 10px;text-align:right;line-height:1.6}
+.ctl{top:var(--top);right:var(--gut-r);width:min(300px, calc(100vw - 48px));display:flex;flex-direction:column;gap:8px;text-transform:none;letter-spacing:0}
+.quick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.quick button{all:unset;box-sizing:border-box;text-align:center;padding:11px 8px;border:1px solid var(--line-strong);background:rgba(0,0,0,.55);font:500 11px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;cursor:pointer;color:var(--fg);min-height:38px}
+.quick button:hover{background:rgba(241,239,233,.1)}
+.quick button.primary{background:var(--fg);color:#000}
+.quick button.primary:hover{background:#fff}
+#ctlBtn{all:unset;box-sizing:border-box;display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border:1px solid var(--line-strong);background:rgba(0,0,0,.55);font:500 11px/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;cursor:pointer;color:var(--fg)}
+#ctlBtn:hover{background:rgba(241,239,233,.08)}
+#ctlBtn:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:1px solid var(--fg);outline-offset:2px}
+#panel{border:1px solid var(--line-strong);background:var(--panel);backdrop-filter:blur(10px);max-height:calc(100vh - 190px);overflow:auto;padding:4px 14px 14px;scrollbar-width:thin}
+.sec{border-top:1px solid var(--line);padding:12px 0 4px}
+.sec:first-child{border-top:0}
+.sec h3{margin:0 0 10px;font:500 10px/1 var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--mute)}
+.row{display:grid;grid-template-columns:96px minmax(0,1fr) 40px;align-items:center;gap:8px;margin:0 0 9px}
+.row label{font-size:11px;color:var(--fg)}
+.row output{font-size:10px;color:var(--mute);text-align:right;font-variant-numeric:tabular-nums}
+.row.wide{grid-template-columns:96px minmax(0,1fr)}
+input[type=range]{width:100%;accent-color:var(--fg);height:18px;margin:0}
+select{width:100%;background:#000;color:var(--fg);border:1px solid var(--line-strong);font:400 11px var(--mono);padding:6px 6px;border-radius:0}
+input[type=checkbox]{accent-color:var(--fg);width:15px;height:15px;margin:0;justify-self:start}
+.swatches{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;margin:0 0 10px}
+.swatches input{width:100%;height:28px;padding:0;border:1px solid var(--line-strong);background:none;border-radius:0;cursor:pointer}
+.swatches input::-webkit-color-swatch-wrapper{padding:0}
+.swatches input::-webkit-color-swatch{border:0}
+.btns{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 10px}
+.btns button{all:unset;box-sizing:border-box;flex:1 1 auto;text-align:center;padding:9px 8px;border:1px solid var(--line-strong);font:500 10px/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;color:var(--fg);min-height:34px}
+.btns button:hover{background:rgba(241,239,233,.1)}
+.btns button.primary{background:var(--fg);color:#000}
+.btns button.primary:hover{background:#fff}
+.note{font-size:10.5px;line-height:1.5;color:var(--mute);margin:0 0 10px}
+.bottom{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--bot) + 6px);width:min(480px, calc(100vw - 230px))}
+#txt{box-sizing:border-box;width:100%;background:rgba(0,0,0,.55);border:1px solid var(--line-strong);color:var(--fg);font:500 14px/1 var(--mono);letter-spacing:.24em;text-align:center;padding:14px 12px;border-radius:0}
+#txt::placeholder{color:var(--mute)}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--bot) + 70px);background:var(--fg);color:#000;padding:8px 12px;font:500 11px var(--mono);letter-spacing:.08em;opacity:0;transition:opacity .2s;pointer-events:none;max-width:calc(100vw - 48px);text-align:center}
+#toast.on{opacity:1}
+.rec{color:var(--hot)}
+#err{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;color:var(--mute);font-size:12px;line-height:1.6}
+@media (max-width:640px){
+  .bottom{width:calc(100vw - 48px);bottom:calc(var(--bot) + 44px)}
+  .stats-r{line-height:1.4}
+  #panel{max-height:calc(100vh - 230px)}
+  .brand{max-width:45vw}
+}
+@media (prefers-reduced-motion:reduce){#toast{transition:none}}
+</style>
+
+<canvas id="gl" aria-label="Texte en pixels de verre, en 3D. Glisser pour tourner, molette pour zoomer, clic sur un pixel pour changer sa couleur."></canvas>
+<div class="frame" aria-hidden="true"></div>
+<div class="ui brand">FantinHD · Voxel Type</div>
+
+<div class="ui ctl">
+  <div class="quick"><button id="flatBtn" type="button" title="Remet le texte de face">À plat</button><button id="pngBtn" type="button" class="primary" title="Exporte une image PNG avec les réglages d'export">PNG ↓</button></div>
+  <button id="ctlBtn" type="button" aria-expanded="false" aria-controls="panel"><span>Réglages</span><span id="ctlSign" aria-hidden="true">+</span></button>
+  <div id="panel" hidden></div>
+</div>
+
+<div class="bottom">
+  <label for="txt" class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Texte</label>
+  <input id="txt" type="text" maxlength="40" autocomplete="off" spellcheck="false" value="FantinHD" placeholder="Tape ton texte">
+</div>
+
+<div class="ui stats-l" id="statV">Voxels · 0</div>
+<div class="ui stats-r"><div id="statF">FPS · 0</div><div id="statC">Caractères · 0</div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="err" hidden>Cette page a besoin de WebGL. Ouvre-la dans un navigateur récent (Chrome, Edge, Firefox, Safari).</div>
+
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+/* ---------- Police pixel 7 rangées (+2 pour les jambages). F, a, n, t, i, H, D = dessin exact du logo FantinHD ---------- */
+const G = {
+  A:[".###.","#...#","#...#","#####","#...#","#...#","#...#"],
+  B:["####.","#...#","#...#","####.","#...#","#...#","####."],
+  C:[".####","#....","#....","#....","#....","#....",".####"],
+  D:["####..","#...#.","#....#","#....#","#....#","#....#","#####."],
+  E:["#####","#....","#....","####.","#....","#....","#####"],
+  F:["######","#.....","#.....","#####.","#.....","#.....","#....."],
+  G:[".####","#....","#....","#..##","#...#","#...#",".####"],
+  H:["#...#","#...#","#...#","#####","#...#","#...#","#...#"],
+  I:["###",".#.",".#.",".#.",".#.",".#.","###"],
+  J:["..###","...#.","...#.","...#.","...#.","#..#.",".##.."],
+  K:["#...#","#..#.","#.#..","##...","#.#..","#..#.","#...#"],
+  L:["#....","#....","#....","#....","#....","#....","#####"],
+  M:["#...#","##.##","#.#.#","#.#.#","#...#","#...#","#...#"],
+  N:["#...#","##..#","#.#.#","#..##","#...#","#...#","#...#"],
+  O:[".###.","#...#","#...#","#...#","#...#","#...#",".###."],
+  P:["####.","#...#","#...#","####.","#....","#....","#...."],
+  Q:[".###.","#...#","#...#","#...#","#.#.#","#..#.",".##.#"],
+  R:["####.","#...#","#...#","####.","#.#..","#..#.","#...#"],
+  S:[".####","#....","#....",".###.","....#","....#","####."],
+  T:["#####","..#..","..#..","..#..","..#..","..#..","..#.."],
+  U:["#...#","#...#","#...#","#...#","#...#","#...#",".###."],
+  V:["#...#","#...#","#...#","#...#","#...#",".#.#.","..#.."],
+  W:["#...#","#...#","#...#","#.#.#","#.#.#","##.##","#...#"],
+  X:["#...#","#...#",".#.#.","..#..",".#.#.","#...#","#...#"],
+  Y:["#...#","#...#",".#.#.","..#..","..#..","..#..","..#.."],
+  Z:["#####","....#","...#.","..#..",".#...","#....","#####"],
+  a:["......","......",".####.",".....#",".#####","#....#",".#####"],
+  b:["#....","#....","####.","#...#","#...#","#...#","####."],
+  c:[".....",".....",".####","#....","#....","#....",".####"],
+  d:["....#","....#",".####","#...#","#...#","#...#",".####"],
+  e:[".....",".....",".###.","#...#","#####","#....",".####"],
+  f:["..##",".#..","####",".#..",".#..",".#..",".#.."],
+  g:[".....",".....",".####","#...#","#...#","#...#",".####","....#","####."],
+  h:["#....","#....","####.","#...#","#...#","#...#","#...#"],
+  i:[".","#",".","#","#","#","#"],
+  j:["..",".#","..",".#",".#",".#",".#",".#","#."],
+  k:["#...","#...","#..#","#.#.","##..","#.#.","#..#"],
+  l:["#.","#.","#.","#.","#.","#.",".#"],
+  m:[".....",".....","####.","#.#.#","#.#.#","#.#.#","#.#.#"],
+  n:[".....",".....","####.","#...#","#...#","#...#","#...#"],
+  o:[".....",".....",".###.","#...#","#...#","#...#",".###."],
+  p:[".....",".....","####.","#...#","#...#","#...#","####.","#....","#...."],
+  q:[".....",".....",".####","#...#","#...#","#...#",".####","....#","....#"],
+  r:["....","....","#.##","##..","#...","#...","#..."],
+  s:[".....",".....",".####","#....",".###.","....#","####."],
+  t:[".#..",".#..","####",".#..",".#..",".#..","..##"],
+  u:[".....",".....","#...#","#...#","#...#","#...#",".####"],
+  v:[".....",".....","#...#","#...#","#...#",".#.#.","..#.."],
+  w:[".....",".....","#...#","#...#","#.#.#","#.#.#",".#.#."],
+  x:[".....",".....","#...#",".#.#.","..#..",".#.#.","#...#"],
+  y:[".....",".....","#...#","#...#","#...#","#...#",".####","....#","####."],
+  z:[".....",".....","#####","...#.","..#..",".#...","#####"],
+  0:[".###.","#...#","#..##","#.#.#","##..#","#...#",".###."],
+  1:[".#.","##.",".#.",".#.",".#.",".#.","###"],
+  2:[".###.","#...#","....#","...#.","..#..",".#...","#####"],
+  3:["####.","....#","....#",".###.","....#","....#","####."],
+  4:["#...#","#...#","#...#","#####","....#","....#","....#"],
+  5:["#####","#....","#....","####.","....#","....#","####."],
+  6:[".###.","#....","#....","####.","#...#","#...#",".###."],
+  7:["#####","....#","...#.","..#..","..#..","..#..","..#.."],
+  8:[".###.","#...#","#...#",".###.","#...#","#...#",".###."],
+  9:[".###.","#...#","#...#",".####","....#","....#",".###."],
+  ".":[".",".",".",".",".",".","#"],
+  ",":[".",".",".",".",".","#","#","#"],
+  ":":[".",".","#",".",".","#","."],
+  "!":["#","#","#","#","#",".","#"],
+  "?":[".###.","#...#","....#","...#.","..#..",".....","..#.."],
+  "-":["...","...","...","###","...","...","..."],
+  "_":["....","....","....","....","....","....","####"],
+  "'":["#","#",".",".",".",".","."],
+  "/":["....#","....#","...#.","..#..",".#...","#....","#...."],
+  "+":[".....","..#..","..#..","#####","..#..","..#..","....."],
+  "#":[".#.#.",".#.#.","#####",".#.#.","#####",".#.#.",".#.#."],
+  "&":[".##..","#..#.","#.#..",".#...","#.#.#","#..#.",".##.#"],
+  "*":[".....","#.#.#",".###.","#####",".###.","#.#.#","....."]
+};
+
+const PRESETS = {
+  fantinhd:["#FDCB0B","#FF7A10","#F6033A","#FA4FF5","#7E1AFC","#2A0BF5"],
+  vitrail:["#FFC83D","#FF7B1C","#FF2F45","#FF5EC9","#8B53FF","#2E46FF"],
+  glace:["#E8FBFF","#9BE7FF","#38C6FF","#2A8BFF","#3D4DFF","#8A7CFF"],
+  braise:["#FFE08A","#FFB13B","#FF7A1A","#FF3B1F","#D9103A","#8C0A3C"],
+  blanc:["#FFFFFF","#F3F1EA","#E2E0D8","#CFCBC0","#BDB8AC","#A7A296"]
+};
+
+const DEFAULTS = {
+  text:"FantinHD", preset:"fantinhd", palette:PRESETS.fantinhd.slice(), mode:"logo", tone:"color", seed:7, kern:true,
+  gap:0.1, depth:1.6, opacity:1, border:0.13, bright:2,
+  rays:true, rayLen:12.3, rayInt:0.44, rayDir:237, rayTilt:0, rayWidth:0.76, raySpread:2.35, rayFall:1.87,
+  bloom:0.16, bloomRadius:0.04, bloomThr:0, grain:0, exposure:1.43,
+  view:"flat", lockRot:true, autoZoom:"off", zoomMargin:0.08, sway:true, speed:1.7,
+  fmt:"screen", res:"2160", bg:"transparent", overrides:{}, cam:null
+};
+const KEY = "fantinhd-voxel-type-v1";
+let S = structuredClone(DEFAULTS);
+try { const saved = JSON.parse(localStorage.getItem(KEY) || "null"); if (saved) S = Object.assign(S, saved); } catch (e) {}
+let camReady = false;
+const persist = () => { try { if (camReady) S.cam = camState(); localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- Rendu ---------- */
+const canvas = document.getElementById("gl");
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas, antialias:true, preserveDrawingBuffer:true });
+} catch (e) {
+  document.getElementById("err").hidden = false;
+  throw e;
+}
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight, false);
+renderer.setClearColor(0x000000, 1);
+renderer.toneMapping = THREE.ReinhardToneMapping;
+
+const scene = new THREE.Scene();
+const perspCam = new THREE.PerspectiveCamera(32, innerWidth / innerHeight, 0.1, 500);
+// Vue plate : caméra orthographique, aucun point de fuite (les rayons restent parallèles)
+const orthoCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 500);
+let camera = S.view === "flat" ? orthoCam : perspCam;
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+const group = new THREE.Group();
+scene.add(group);
+
+const composer = new EffectComposer(renderer);
+const renderPass = new RenderPass(scene, camera);
+composer.addPass(renderPass);
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), S.bloom, S.bloomRadius, S.bloomThr);
+composer.addPass(bloom);
+const grainPass = new ShaderPass({
+  uniforms:{ tDiffuse:{value:null}, uTime:{value:0}, uGrain:{value:S.grain} },
+  vertexShader:`varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
+  fragmentShader:`uniform sampler2D tDiffuse; uniform float uTime, uGrain; varying vec2 vUv;
+    float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898,78.233))) * 43758.5453); }
+    void main(){ vec4 c=texture2D(tDiffuse,vUv); vec2 d=vUv-.5; c.rgb*=1.-.55*dot(d,d);
+      c.rgb+=(h(vUv*vec2(1733.,977.)+uTime)-.5)*uGrain*(.15+c.rgb); gl_FragColor=c; }`
+});
+composer.addPass(grainPass);
+composer.addPass(new OutputPass());
+
+const clock0 = performance.now();
+const now = () => (performance.now() - clock0) / 1000;
+
+const voxMat = new THREE.ShaderMaterial({
+  transparent:true, depthWrite:true,
+  uniforms:{ uTime:{value:0}, uDur:{value:.55}, uOpacity:{value:S.opacity}, uBorder:{value:S.border}, uBright:{value:S.bright} },
+  vertexShader:`
+    uniform float uTime, uDur;
+    attribute float aRand; attribute float aBorn;
+    varying vec2 vUv; varying vec3 vColor; varying float vRand, vShade, vProg;
+    void main(){
+      vUv=uv; vColor=instanceColor; vRand=aRand;
+      float p=clamp((uTime-aBorn)/uDur,0.,1.); p=1.-pow(1.-p,3.); vProg=p;
+      vec3 n=normalize(mat3(modelViewMatrix*instanceMatrix)*normal);
+      vShade=.42+.58*abs(n.z);
+      gl_Position=projectionMatrix*modelViewMatrix*instanceMatrix*vec4(position*p,1.);
+    }`,
+  fragmentShader:`
+    uniform float uOpacity, uBorder, uBright;
+    varying vec2 vUv; varying vec3 vColor; varying float vRand, vShade, vProg;
+    void main(){
+      vec2 d=abs(vUv-.5)*2.; float e=max(d.x,d.y);
+      float border=smoothstep(1.-uBorder-.07,1.-uBorder,e);
+      float mott=.78+.2*sin(vUv.x*5.+vRand*6.2831)*sin(vUv.y*4.+vRand*3.1)+.22*(1.-vUv.y);
+      vec3 c=vColor*mott*uBright;
+      c+=vec3(1.)*pow(max(0.,1.-length(vUv-vec2(.26,.78))*1.7),2.)*.14;
+      c=mix(c,mix(vColor,vec3(1.),.42)*1.2,border);
+      c*=vShade;
+      gl_FragColor=vec4(c,mix(uOpacity,1.,border)*vProg);
+    }`
+});
+
+const rayMat = new THREE.ShaderMaterial({
+  transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, side:THREE.FrontSide,
+  uniforms:{ uTime:{value:0}, uDur:{value:.55}, uLen:{value:S.rayLen}, uSpread:{value:S.raySpread}, uWidth:{value:.7}, uInt:{value:S.rayInt}, uFall:{value:S.rayFall} },
+  vertexShader:`
+    uniform float uTime, uDur, uLen, uSpread, uWidth;
+    attribute float aRand; attribute float aBorn;
+    varying float vT; varying vec2 vXY; varying vec3 vColor;
+    void main(){
+      float p=clamp((uTime-aBorn-.08)/(uDur*2.2),0.,1.); p=1.-pow(1.-p,2.);
+      vec3 pos=position; vT=pos.z; vXY=pos.xy; vColor=instanceColor;
+      pos.xy*=uWidth*mix(1.,uSpread,pos.z);
+      pos.z*=uLen*(.72+.56*aRand)*p+.001;
+      gl_Position=projectionMatrix*modelViewMatrix*instanceMatrix*vec4(pos,1.);
+    }`,
+  fragmentShader:`
+    uniform float uInt, uFall;
+    varying float vT; varying vec2 vXY; varying vec3 vColor;
+    void main(){
+      float side=clamp(1.-2.*min(abs(vXY.x),abs(vXY.y)),0.,1.); side=pow(side,1.4);
+      float fade=pow(1.-vT,uFall)*smoothstep(0.,.05,vT);
+      gl_FragColor=vec4(vColor*uInt*fade*side,1.);
+    }`
+});
+
+let voxMesh = null, rayMesh = null, cells = [], layoutW = 0, charX = [], charBorn = [], prevChars = [];
+const tmpM = new THREE.Matrix4(), tmpQ = new THREE.Quaternion(), tmpV = new THREE.Vector3(), tmpS = new THREE.Vector3(), Z = new THREE.Vector3(0,0,1);
+
+function hash(a, b, c, d){
+  let h = (a * 374761393 + b * 668265263 + c * 2147483647 + d * 1274126177) | 0;
+  h = Math.imul(h ^ (h >>> 13), 1274126177);
+  h ^= h >>> 16;
+  return (h >>> 0) / 4294967296;
+}
+
+function colsOf(gl, col){ const rows = []; gl.forEach((r, i) => { if (r[col] === "#") rows.push(i); }); return rows; }
+function canKern(prev, next){
+  const a = colsOf(prev, prev[0].length - 1), b = colsOf(next, 0);
+  return a.length && b.length && !a.some(r => b.some(q => Math.abs(r - q) <= 1));
+}
+
+function layout(text){
+  const chars = [...text.normalize("NFD").replace(/[̀-ͯ]/g, "")];
+  const out = []; const xs = []; let x = 0, prev = null;
+  chars.forEach((ch, i) => {
+    const gl = G[ch] || G[ch.toUpperCase()];
+    if (!gl){ xs[i] = x; x += 3; prev = null; return; }
+    if (prev){ x += (S.kern && canKern(prev, gl)) ? 0 : 1; }
+    xs[i] = x;
+    const w = gl[0].length;
+    gl.forEach((row, r) => { for (let c = 0; c < w; c++) if (row[c] === "#") out.push({ i, r, c, x:x + c, gw:w }); });
+    x += w; prev = gl;
+  });
+  return { cells:out, width:x, chars, xs };
+}
+
+const pal = () => S.palette.map(h => new THREE.Color(h));
+function mixPal(P, t){
+  t = Math.max(0, Math.min(P.length - 1, t));
+  const i = Math.min(Math.floor(t), P.length - 2), f = t - i;
+  return P[i].clone().lerp(P[i + 1], f);
+}
+function toneOf(c, cell){
+  if (S.tone === "color") return c;
+  if (S.tone === "white"){ const v = .86 + .14 * hash(S.seed + 5, cell.i, cell.r, cell.c); return c.setRGB(v, v, v); }
+  const l = Math.min(1, Math.max(.18, Math.pow(.2126 * c.r + .7152 * c.g + .0722 * c.b, .55) * 1.15));
+  return c.setRGB(l, l, l);
+}
+function colorOf(cell, P){ return toneOf(rawColorOf(cell, P), cell); }
+function rawColorOf(cell, P){
+  const key = cell.i + ":" + cell.r + ":" + cell.c;
+  if (S.overrides[key] !== undefined) return P[S.overrides[key]].clone();
+  const rnd = hash(S.seed, cell.i, cell.r, cell.c);
+  if (S.mode === "random") return P[Math.floor(rnd * P.length)].clone();
+  if (S.mode === "gradient") return mixPal(P, cell.x / Math.max(1, layoutW - 1) * (P.length - 1) + (rnd - .5) * .5);
+  const u = cell.c / Math.max(1, cell.gw - 1), v = Math.min(cell.r, 6) / 6;
+  return mixPal(P, u * 5 - v * u * 2 + (rnd - .5) * .6);
+}
+
+function rayDirVec(){
+  const a = THREE.MathUtils.degToRad(S.rayDir), t = THREE.MathUtils.degToRad(S.rayTilt);
+  return new THREE.Vector3(Math.cos(a) * Math.cos(t), Math.sin(a) * Math.cos(t), -Math.sin(t)).normalize();
+}
+
+function updateMatrices(){
+  if (!voxMesh) return;
+  const s = 1 - S.gap;
+  tmpQ.setFromUnitVectors(Z, rayDirVec());
+  const idQ = new THREE.Quaternion();
+  cells.forEach((cell, k) => {
+    tmpV.set(cell.x - (layoutW - 1) / 2, 3 - cell.r, 0);
+    voxMesh.setMatrixAt(k, tmpM.compose(tmpV, idQ, tmpS.set(s, s, S.depth)));
+    rayMesh.setMatrixAt(k, tmpM.compose(tmpV, tmpQ, tmpS.set(1, 1, 1)));
+  });
+  voxMesh.instanceMatrix.needsUpdate = true;
+  rayMesh.instanceMatrix.needsUpdate = true;
+  voxMesh.computeBoundingSphere();
+  boundsDirty = true;
+  rayMat.uniforms.uWidth.value = s * S.rayWidth;
+}
+
+function updateColors(){
+  if (!voxMesh) return;
+  const P = pal();
+  cells.forEach((cell, k) => { const c = colorOf(cell, P); voxMesh.setColorAt(k, c); rayMesh.setColorAt(k, c); });
+  if (voxMesh.instanceColor) voxMesh.instanceColor.needsUpdate = true;
+  if (rayMesh.instanceColor) rayMesh.instanceColor.needsUpdate = true;
+}
+
+function updateBorn(){
+  const born = new Float32Array(Math.max(cells.length, 1));
+  const step = .03 / S.speed;
+  cells.forEach((cell, k) => { born[k] = charBorn[cell.i] + cell.c * step; });
+  voxMesh.geometry.setAttribute("aBorn", new THREE.InstancedBufferAttribute(born, 1));
+  rayMesh.geometry.setAttribute("aBorn", new THREE.InstancedBufferAttribute(born.slice(), 1));
+}
+
+function rebuild(){
+  const L = layout(S.text);
+  cells = L.cells; layoutW = L.width; charX = L.xs;
+  const t = now();
+  charBorn = L.chars.map((ch, i) => (prevChars[i] === ch && charBorn[i] !== undefined) ? charBorn[i] : (reduced ? -10 : t));
+  prevChars = L.chars;
+  if (voxMesh){ group.remove(voxMesh, rayMesh); voxMesh.geometry.dispose(); rayMesh.geometry.dispose(); voxMesh.dispose(); rayMesh.dispose(); }
+  const n = Math.max(cells.length, 1);
+  const vg = new THREE.BoxGeometry(1, 1, 1);
+  const rg = new THREE.BoxGeometry(1, 1, 1); rg.translate(0, 0, .5);
+  const rnd = new Float32Array(n);
+  cells.forEach((cell, k) => { rnd[k] = hash(S.seed + 99, cell.i, cell.r, cell.c); });
+  vg.setAttribute("aRand", new THREE.InstancedBufferAttribute(rnd, 1));
+  rg.setAttribute("aRand", new THREE.InstancedBufferAttribute(rnd.slice(), 1));
+  voxMesh = new THREE.InstancedMesh(vg, voxMat, n);
+  rayMesh = new THREE.InstancedMesh(rg, rayMat, n);
+  voxMesh.count = rayMesh.count = cells.length;
+  voxMesh.renderOrder = 1; rayMesh.renderOrder = 2;
+  rayMesh.frustumCulled = false;
+  rayMesh.visible = S.rays;
+  updateBorn(); updateMatrices(); updateColors();
+  group.add(voxMesh, rayMesh);
+  boundsDirty = true;
+  document.getElementById("statV").textContent = "Voxels · " + cells.length;
+  document.getElementById("statC").textContent = "Caractères · " + L.chars.length;
+}
+
+/* ---------- Caméra ---------- */
+let fitBase = 1;
+function fitDist(aspect){
+  const W = Math.max(layoutW, 6) + 3, H = 11;
+  const tv = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+  return Math.max((W / 2) / (tv * aspect), (H / 2) / tv) * 1.12;
+}
+function fitHalfH(aspect){
+  const W = Math.max(layoutW, 6) + 3, H = 11;
+  return Math.max(H / 2, (W / 2) / aspect) * 1.12;
+}
+function setOrtho(aspect){
+  const h = fitHalfH(aspect);
+  orthoCam.left = -h * aspect; orthoCam.right = h * aspect; orthoCam.top = h; orthoCam.bottom = -h;
+  orthoCam.updateProjectionMatrix();
+}
+function frame(){
+  const ty = -1.6;
+  controls.target.set(0, ty, 0);
+  perspCam.position.set(0, ty, fitDist(perspCam.aspect));
+  orthoCam.position.set(0, ty, 60);
+  orthoCam.zoom = 1;
+  setOrtho(perspCam.aspect);
+  flatAnim = null;
+  controls.update();
+}
+function setView(v){
+  const dir = camera.position.clone().sub(controls.target).normalize();
+  camera = v === "flat" ? orthoCam : perspCam;
+  const dist = v === "flat" ? 60 : fitDist(perspCam.aspect);
+  camera.position.copy(controls.target).add(dir.multiplyScalar(dist));
+  controls.object = camera;
+  renderPass.camera = camera;
+  setOrtho(perspCam.aspect);
+  controls.update();
+}
+// Zoom automatique : cadre les lettres seules, ou les lettres et leurs rayons
+let boundsDirty = true, bounds = { letters:[], global:[] };
+function computeBounds(){
+  const L = [], R = [], s = 1 - S.gap, hz = S.depth / 2, D = rayDirVec();
+  const rnd = voxMesh ? voxMesh.geometry.getAttribute("aRand") : null;
+  cells.forEach((cell, k) => {
+    const x = cell.x - (layoutW - 1) / 2, y = 3 - cell.r;
+    for (const dx of [-s / 2, s / 2]) for (const dy of [-s / 2, s / 2]) for (const dz of [-hz, hz]) L.push(new THREE.Vector3(x + dx, y + dy, dz));
+    if (S.rays && S.rayInt > 0){
+      // au-delà de 75 % de sa longueur, un rayon est presque invisible : on ne le cadre pas
+      const len = S.rayLen * (.72 + .56 * (rnd ? rnd.getX(k) : .5)) * .75;
+      const w = s * S.rayWidth * (1 + (S.raySpread - 1) * .75) / 2;
+      const e = new THREE.Vector3(x, y, 0).addScaledVector(D, len);
+      for (const dx of [-w, w]) for (const dy of [-w, w]) R.push(new THREE.Vector3(e.x + dx, e.y + dy, e.z));
+    }
+  });
+  bounds = { letters:L, global:L.concat(R) };
+  boundsDirty = false;
+}
+function autoFit(snap){
+  if (S.autoZoom === "off" || !cells.length) return;
+  if (boundsDirty) computeBounds();
+  const pts = S.autoZoom === "global" ? bounds.global : bounds.letters;
+  camera.updateMatrixWorld();
+  const r = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
+  const u = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion);
+  const f = camera.position.clone().sub(controls.target).normalize();
+  let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+  for (const p of pts){ const a = p.dot(r), b = p.dot(u); if (a < x0) x0 = a; if (a > x1) x1 = a; if (b < y0) y0 = b; if (b > y1) y1 = b; }
+  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, m = 1 + S.zoomMargin;
+  const t = controls.target;
+  const goal = t.clone().addScaledVector(r, cx - t.dot(r)).addScaledVector(u, cy - t.dot(u));
+  const k = snap ? 1 : .18;
+  if (camera === orthoCam){
+    const z = Math.min(orthoCam.top / Math.max(.01, (y1 - y0) / 2 * m), orthoCam.right / Math.max(.01, (x1 - x0) / 2 * m));
+    const d = camera.position.distanceTo(t);
+    t.lerp(goal, k);
+    camera.position.copy(t).addScaledVector(f, d);
+    orthoCam.zoom += (z - orthoCam.zoom) * k;
+    orthoCam.updateProjectionMatrix();
+  } else {
+    const tv = Math.tan(THREE.MathUtils.degToRad(perspCam.fov / 2)), a = perspCam.aspect;
+    let dist = 1;
+    for (const p of pts){
+      const rel = p.clone().sub(goal);
+      const need = rel.dot(f) + Math.max(Math.abs(rel.dot(r)) / (tv * a), Math.abs(rel.dot(u)) / tv) * m;
+      if (need > dist) dist = need;
+    }
+    const d = camera.position.distanceTo(t);
+    t.lerp(goal, k);
+    camera.position.copy(t).addScaledVector(f, d + (dist - d) * k);
+  }
+}
+function applyZoomMode(){
+  const free = S.autoZoom === "off";
+  controls.enableZoom = free; controls.enablePan = free;
+  if (!free) autoFit(true);
+}
+function camState(){
+  return { target:controls.target.toArray(), persp:perspCam.position.toArray(), ortho:orthoCam.position.toArray(), zoom:orthoCam.zoom };
+}
+function applyCam(c){
+  if (!c || !Array.isArray(c.target)) return;
+  controls.target.fromArray(c.target);
+  if (Array.isArray(c.persp)) perspCam.position.fromArray(c.persp);
+  if (Array.isArray(c.ortho)) orthoCam.position.fromArray(c.ortho);
+  orthoCam.zoom = +c.zoom || 1;
+  orthoCam.updateProjectionMatrix();
+  controls.update();
+}
+// « À plat » : la caméra revient de face en douceur, le texte arrête de se balancer
+let flatAnim = null;
+function flatten(){
+  if (S.sway){ S.sway = false; const cb = document.getElementById("c-sway"); if (cb) cb.checked = false; persist(); }
+  const from = camera.position.clone().sub(controls.target);
+  flatAnim = { from, len:from.length(), t0:performance.now() };
+  if (reduced) flatAnim.t0 -= 1000;
+}
+function stepFlat(){
+  if (!flatAnim) return;
+  const k = Math.min(1, (performance.now() - flatAnim.t0) / 450), e = 1 - Math.pow(1 - k, 3);
+  const dir = flatAnim.from.clone().normalize().lerp(new THREE.Vector3(0, 0, 1), e).normalize();
+  camera.position.copy(controls.target).add(dir.multiplyScalar(flatAnim.len));
+  camera.up.set(0, 1, 0);
+  if (k >= 1) flatAnim = null;
+}
+
+function resize(){
+  const w = innerWidth, h = innerHeight;
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(w, h, false);
+  composer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  composer.setSize(w, h);
+  perspCam.aspect = w / h;
+  perspCam.updateProjectionMatrix();
+  setOrtho(w / h);
+}
+addEventListener("resize", resize);
+
+function applyUniforms(){
+  boundsDirty = true;
+  voxMat.uniforms.uOpacity.value = S.opacity;
+  voxMat.uniforms.uBorder.value = S.border;
+  voxMat.uniforms.uBright.value = S.bright;
+  rayMat.uniforms.uLen.value = S.rayLen;
+  rayMat.uniforms.uInt.value = S.rayInt;
+  rayMat.uniforms.uSpread.value = S.raySpread;
+  rayMat.uniforms.uFall.value = S.rayFall;
+  rayMat.uniforms.uWidth.value = (1 - S.gap) * S.rayWidth;
+  voxMat.uniforms.uDur.value = rayMat.uniforms.uDur.value = .55 / S.speed;
+  bloom.strength = S.bloom; bloom.radius = S.bloomRadius; bloom.threshold = S.bloomThr;
+  grainPass.uniforms.uGrain.value = S.grain;
+  renderer.toneMappingExposure = S.exposure;
+  if (rayMesh) rayMesh.visible = S.rays;
+}
+
+function replay(){
+  const t = now() + .15, step = .03 / S.speed;
+  charBorn = charBorn.map((_, i) => t + (charX[i] || 0) * step);
+  updateBorn();
+}
+
+/* ---------- Boucle ---------- */
+let frames = 0, lastF = performance.now();
+function loop(){
+  requestAnimationFrame(loop);
+  const t = now();
+  voxMat.uniforms.uTime.value = rayMat.uniforms.uTime.value = t;
+  grainPass.uniforms.uTime.value = t % 10;
+  if (S.sway && !reduced){ group.rotation.y = Math.sin(t * .4) * .28; group.rotation.x = Math.sin(t * .27) * .07; }
+  else { group.rotation.y *= .88; group.rotation.x *= .88; }
+  stepFlat();
+  controls.update();
+  autoFit(false);
+  composer.render();
+  frames++;
+  const p = performance.now();
+  if (p - lastF > 500){ document.getElementById("statF").textContent = "FPS · " + Math.round(frames * 1000 / (p - lastF)); frames = 0; lastF = p; }
+}
+
+/* ---------- Clic sur un pixel : couleur suivante de la palette ---------- */
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+let down = null;
+canvas.addEventListener("pointerdown", e => { down = { x:e.clientX, y:e.clientY, t:performance.now() }; });
+canvas.addEventListener("pointerup", e => {
+  if (!down || !voxMesh) return;
+  const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y), dt = performance.now() - down.t;
+  down = null;
+  if (moved > 5 || dt > 400) return;
+  const r = canvas.getBoundingClientRect();
+  ndc.set((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  const hit = ray.intersectObject(voxMesh)[0];
+  if (!hit || hit.instanceId === undefined) return;
+  const cell = cells[hit.instanceId];
+  const key = cell.i + ":" + cell.r + ":" + cell.c;
+  const cur = S.overrides[key];
+  S.overrides[key] = cur === undefined ? 0 : (cur + 1) % S.palette.length;
+  updateColors(); persist();
+});
+canvas.addEventListener("dblclick", frame);
+
+/* ---------- Fichiers ---------- */
+const toastEl = document.getElementById("toast");
+let toastT;
+function toast(msg){ toastEl.textContent = msg; toastEl.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove("on"), 2600); }
+
+let dlPromise = null;
+async function saveFile(name, blob){
+  try {
+    if (window.claude && window.claude.use){
+      dlPromise = dlPromise || window.claude.use("downloads");
+      const dl = await dlPromise;
+      if (dl){ await dl.save({ filename:name, data:blob }); toast("Fichier enregistré : " + name); return; }
+    }
+  } catch (e) {
+    if (e && e.code === "declined"){ toast("Enregistrement annulé"); return; }
+    if (e && e.code === "rate_limited"){ toast("Une demande est déjà ouverte"); return; }
+  }
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  toast("Fichier enregistré : " + name);
+}
+
+function exportSize(){
+  const L = +S.res;
+  const asp = { screen:innerWidth / innerHeight, square:1, wide:16 / 9, banner:3 }[S.fmt];
+  return asp >= 1 ? [L, Math.round(L / asp)] : [Math.round(L * asp), L];
+}
+
+function renderAt(w, h){
+  const pr = renderer.getPixelRatio(), oldAsp = perspCam.aspect;
+  const saved = { t:controls.target.clone(), pp:perspCam.position.clone(), op:orthoCam.position.clone(), z:orthoCam.zoom };
+  const dir = perspCam.position.clone().sub(controls.target);
+  const k = dir.length() / fitDist(oldAsp);
+  renderer.setPixelRatio(1); renderer.setSize(w, h, false);
+  composer.setPixelRatio(1); composer.setSize(w, h);
+  perspCam.aspect = w / h; perspCam.updateProjectionMatrix();
+  perspCam.position.copy(controls.target).add(dir.setLength(fitDist(w / h) * k));
+  setOrtho(w / h);
+  autoFit(true);
+  const keepGrain = grainPass.uniforms.uGrain.value;
+  if (S.bg !== "black") grainPass.uniforms.uGrain.value = 0;
+  composer.render();
+  const out = document.createElement("canvas"); out.width = w; out.height = h;
+  const ctx = out.getContext("2d"); ctx.drawImage(renderer.domElement, 0, 0, w, h);
+  grainPass.uniforms.uGrain.value = keepGrain;
+  perspCam.position.copy(controls.target).add(dir.setLength(dir.length() / fitDist(w / h) * fitDist(oldAsp)));
+  renderer.setPixelRatio(pr); renderer.setSize(innerWidth, innerHeight, false);
+  composer.setPixelRatio(pr); composer.setSize(innerWidth, innerHeight);
+  perspCam.aspect = oldAsp; perspCam.updateProjectionMatrix();
+  setOrtho(oldAsp);
+  controls.target.copy(saved.t); perspCam.position.copy(saved.pp); orthoCam.position.copy(saved.op);
+  orthoCam.zoom = saved.z; orthoCam.updateProjectionMatrix();
+  if (S.bg !== "black"){
+    // Lumière sur fond noir → alpha = luminosité, comme un calque en mode « addition »
+    const img = ctx.getImageData(0, 0, w, h), d = img.data;
+    for (let i = 0; i < d.length; i += 4){
+      const a = Math.max(d[i], d[i + 1], d[i + 2]);
+      if (a === 0){ if (S.bg === "white"){ d[i] = d[i + 1] = d[i + 2] = d[i + 3] = 255; } else d[i + 3] = 0; continue; }
+      if (S.bg === "ink"){ d[i] = d[i + 1] = d[i + 2] = 0; d[i + 3] = a; continue; }
+      if (S.bg === "white"){ d[i] = d[i + 1] = d[i + 2] = 255 - a; d[i + 3] = 255; continue; }
+      const f = 255 / a; d[i] = Math.min(255, d[i] * f); d[i + 1] = Math.min(255, d[i + 1] * f); d[i + 2] = Math.min(255, d[i + 2] * f); d[i + 3] = a;
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+  return out;
+}
+
+const slug = () => (S.text.trim() || "voxel").replace(/[^\w-]+/g, "-").toLowerCase();
+async function exportPNG(){
+  const [w, h] = exportSize();
+  toast("Rendu " + w + " × " + h + "…");
+  await new Promise(r => setTimeout(r, 30));
+  const c = renderAt(w, h);
+  c.toBlob(b => b ? saveFile(slug() + "-" + w + "x" + h + ({ black:"", transparent:"-transparent", ink:"-noir-transparent", white:"-noir-sur-blanc" }[S.bg] || "") + ".png", b) : toast("Image trop grande pour ce navigateur, baisse la taille"), "image/png");
+}
+
+let recording = false;
+async function exportVideo(){
+  if (recording) return;
+  if (!window.MediaRecorder || !canvas.captureStream){ toast("Ce navigateur ne sait pas enregistrer de vidéo"); return; }
+  const mime = ["video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"].find(m => MediaRecorder.isTypeSupported(m));
+  if (!mime){ toast("Format WebM indisponible dans ce navigateur"); return; }
+  const stream = canvas.captureStream(60);
+  const rec = new MediaRecorder(stream, { mimeType:mime, videoBitsPerSecond:16e6 });
+  const chunks = [];
+  rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+  rec.onstop = () => {
+    recording = false;
+    document.getElementById("statV").classList.remove("rec");
+    document.getElementById("statV").textContent = "Voxels · " + cells.length;
+    saveFile(slug() + "-animation.webm", new Blob(chunks, { type:"video/webm" }));
+  };
+  recording = true;
+  document.getElementById("statV").classList.add("rec");
+  document.getElementById("statV").textContent = "● REC";
+  rec.start();
+  replay();
+  const dur = ((layoutW + 8) * .03 + .55 * 3.2) / S.speed + 1.5;
+  setTimeout(() => rec.stop(), dur * 1000);
+}
+
+function exportFavicon(){
+  const first = cells.length ? cells[0].i : -1;
+  const own = cells.map((c, k) => [c, k]).filter(([c]) => c.i === first);
+  if (!own.length){ toast("Tape au moins une lettre"); return; }
+  const P = pal();
+  const w = own[0][0].gw, rows = Math.max(7, ...own.map(([c]) => c.r + 1));
+  const size = Math.max(w, rows) + 2, ox = (size - w) / 2, oy = (size - rows) / 2;
+  const rects = own.map(([c]) => '<rect x="' + (ox + c.c) + '" y="' + (oy + c.r) + '" width="1" height="1" fill="#' + colorOf(c, P).getHexString() + '"/>').join("");
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + size + ' ' + size + '" shape-rendering="crispEdges"><rect width="' + size + '" height="' + size + '" rx="' + (size * .18) + '" fill="#0b0b0b"/>' + rects + "</svg>";
+  saveFile("favicon.svg", new Blob([svg], { type:"image/svg+xml" }));
+}
+
+function exportSettings(){
+  S.cam = camState();
+  saveFile("reglages-fantinhd.txt", new Blob([JSON.stringify(S, null, 2)], { type:"text/plain" }));
+}
+function applySettings(obj){
+  if (!obj || typeof obj !== "object") throw new Error("format");
+  const next = structuredClone(DEFAULTS);
+  for (const k of Object.keys(DEFAULTS)) if (k in obj && typeof obj[k] === typeof DEFAULTS[k] || (k in obj && DEFAULTS[k] === null)) next[k] = obj[k];
+  if (!Array.isArray(next.palette) || next.palette.length !== 6 || !next.palette.every(h => /^#[0-9a-f]{6}$/i.test(h))) next.palette = PRESETS.fantinhd.slice();
+  if (!next.overrides || typeof next.overrides !== "object") next.overrides = {};
+  S = next;
+  txt.value = S.text;
+  buildPanel(); applyUniforms(); rebuild();
+  camera = S.view === "flat" ? orthoCam : perspCam;
+  controls.object = camera; renderPass.camera = camera;
+  frame(); applyCam(S.cam);
+  controls.enableRotate = !S.lockRot;
+  applyZoomMode(); persist();
+}
+const importInput = document.createElement("input");
+importInput.type = "file"; importInput.accept = ".txt,.json,text/plain,application/json"; importInput.hidden = true; importInput.id = "importFile";
+document.body.append(importInput);
+importInput.addEventListener("change", async () => {
+  const file = importInput.files && importInput.files[0];
+  importInput.value = "";
+  if (!file) return;
+  try { applySettings(JSON.parse(await file.text())); toast("Réglages importés : " + file.name); }
+  catch (e) { toast("Ce fichier ne contient pas de réglages valides"); }
+});
+async function copySettings(){
+  const txt = JSON.stringify(S, null, 2);
+  try { await navigator.clipboard.writeText(txt); toast("Réglages copiés"); }
+  catch (e) { saveFile("reglages-voxel.json", new Blob([txt], { type:"application/json" })); }
+}
+
+/* ---------- Panneau ---------- */
+const UI = [
+  ["Couleurs", [
+    { k:"preset", t:"select", l:"Palette", o:[["fantinhd","FantinHD"],["vitrail","Vitrail"],["glace","Glace"],["braise","Braise"],["blanc","Blanc"],["perso","Perso"]] },
+    { t:"palette" },
+    { k:"mode", t:"select", l:"Répartition", o:[["logo","Logo FantinHD"],["random","Aléatoire"],["gradient","Dégradé"]] },
+    { k:"tone", t:"select", l:"Teinte", o:[["color","Couleur"],["gray","Noir et blanc"],["white","Blanc pur"]] },
+    { t:"btns", b:[["Nouvelle graine", () => { S.seed = Math.floor(Math.random() * 1e6); updateColors(); persist(); }], ["Effacer retouches", () => { S.overrides = {}; updateColors(); persist(); toast("Retouches effacées"); }]] },
+    { t:"note", x:"Clic sur un pixel : il prend la couleur suivante de la palette. Double-clic dans le vide : recadrer." }
+  ]],
+  ["Pixels", [
+    { k:"gap", l:"Espacement", min:0, max:.5, s:.01, f:"geo" },
+    { k:"depth", l:"Profondeur", min:.05, max:1.6, s:.01, f:"geo" },
+    { k:"opacity", l:"Verre", min:.1, max:1, s:.01 },
+    { k:"border", l:"Liseré", min:.04, max:.4, s:.01 },
+    { k:"bright", l:"Éclat", min:.4, max:2, s:.01 },
+    { k:"kern", t:"check", l:"Crénage auto", f:"text" }
+  ]],
+  ["Rayons", [
+    { k:"rays", t:"check", l:"Afficher" },
+    { k:"rayLen", l:"Longueur", min:0, max:30, s:.1 },
+    { k:"rayInt", l:"Intensité", min:0, max:1.2, s:.01 },
+    { k:"rayDir", l:"Direction", min:0, max:360, s:1, f:"geo" },
+    { k:"rayTilt", l:"Fuite", min:0, max:85, s:1, f:"geo" },
+    { k:"rayWidth", l:"Largeur", min:.2, max:1.6, s:.01 },
+    { k:"raySpread", l:"Ouverture", min:.5, max:4, s:.01 },
+    { k:"rayFall", l:"Atténuation", min:.3, max:5, s:.01 }
+  ]],
+  ["Lumière", [
+    { k:"bloom", l:"Halo", min:0, max:3, s:.01 },
+    { k:"bloomRadius", l:"Rayon halo", min:0, max:1, s:.01 },
+    { k:"bloomThr", l:"Seuil halo", min:0, max:1, s:.01 },
+    { k:"exposure", l:"Exposition", min:.4, max:2.2, s:.01 },
+    { k:"grain", l:"Grain", min:0, max:.2, s:.005 }
+  ]],
+  ["Vue", [
+    { k:"view", t:"select", l:"Projection", o:[["flat","Plate (sans fuite)"],["persp","Perspective"]], f:"view" },
+    { k:"lockRot", t:"check", l:"Bloquer rotation", f:"lock" },
+    { k:"autoZoom", t:"select", l:"Zoom auto", o:[["off","Désactivé"],["letters","Autour des lettres"],["global","Global (avec rayons)"]] },
+    { k:"zoomMargin", l:"Marge", min:0, max:.6, s:.01 },
+    { t:"btns", b:[["À plat", flatten], ["Recadrer", frame]] },
+    { t:"note", x:"Plate : pas de point de fuite, les rayons restent parallèles. « À plat » remet le texte de face." }
+  ]],
+  ["Animation", [
+    { k:"sway", t:"check", l:"Balancement" },
+    { k:"speed", l:"Vitesse", min:.25, max:3, s:.05, f:"born" },
+    { t:"btns", b:[["Rejouer l'apparition", replay]] }
+  ]],
+  ["Export", [
+    { k:"fmt", t:"select", l:"Format", o:[["screen","Comme l'écran"],["square","Carré 1:1 (icône)"],["wide","16:9 (vidéo)"],["banner","3:1 (bannière)"]] },
+    { k:"res", t:"select", l:"Taille", o:[["1080","1080 px"],["2160","2160 px (4K)"],["4096","4096 px"]] },
+    { k:"bg", t:"select", l:"Fond", o:[["black","Noir"],["transparent","Transparent"],["ink","Transparent, logo noir"],["white","Blanc, logo noir"]] },
+    { t:"btns", b:[["Image PNG", exportPNG, true], ["Vidéo WebM", exportVideo], ["favicon.svg", exportFavicon]] },
+    { t:"note", x:"La vidéo enregistre l'apparition à la taille de la fenêtre. Le favicon reprend la 1re lettre du texte, en pixels nets." },
+    { t:"btns", b:[["Exporter réglages .txt", exportSettings, true], ["Importer réglages", () => importInput.click()]] },
+    { t:"note", x:"Le fichier .txt garde tout : texte, couleurs, retouches de pixels, vue et zoom." },
+    { t:"btns", b:[["Copier les réglages", copySettings], ["Tout réinitialiser", () => { const txt = S.text; S = structuredClone(DEFAULTS); S.text = txt; persist(); buildPanel(); applyUniforms(); rebuild(); toast("Réglages par défaut"); }]] }
+  ]]
+];
+
+const panel = document.getElementById("panel");
+function fmtVal(v, s){ return s >= 1 ? String(Math.round(v)) : (+v).toFixed(s < .01 ? 3 : 2); }
+function onChange(item){
+  persist();
+  if (item.f === "geo") updateMatrices();
+  if (item.f === "text") rebuild();
+  if (item.f === "born") updateBorn();
+  if (item.f === "lock") controls.enableRotate = !S.lockRot;
+  applyUniforms();
+}
+function buildPanel(){
+  panel.replaceChildren();
+  for (const [title, items] of UI){
+    const sec = document.createElement("div"); sec.className = "sec";
+    const h = document.createElement("h3"); h.textContent = title; sec.append(h);
+    for (const it of items){
+      if (it.t === "note"){ const p = document.createElement("p"); p.className = "note"; p.textContent = it.x; sec.append(p); continue; }
+      if (it.t === "btns"){
+        const d = document.createElement("div"); d.className = "btns";
+        for (const [lab, fn, primary] of it.b){ const b = document.createElement("button"); b.type = "button"; b.textContent = lab; if (primary) b.className = "primary"; b.addEventListener("click", fn); d.append(b); }
+        sec.append(d); continue;
+      }
+      if (it.t === "palette"){
+        const d = document.createElement("div"); d.className = "swatches";
+        S.palette.forEach((hex, i) => {
+          const inp = document.createElement("input"); inp.type = "color"; inp.value = hex.toLowerCase(); inp.id = "sw" + i;
+          inp.setAttribute("aria-label", "Couleur " + (i + 1));
+          inp.addEventListener("input", () => { S.palette[i] = inp.value; S.preset = "perso"; const sel = document.getElementById("c-preset"); if (sel) sel.value = "perso"; updateColors(); persist(); });
+          d.append(inp);
+        });
+        sec.append(d); continue;
+      }
+      const row = document.createElement("div"); row.className = "row";
+      const lab = document.createElement("label"); lab.textContent = it.l; lab.htmlFor = "c-" + it.k; row.append(lab);
+      if (it.t === "select"){
+        row.classList.add("wide");
+        const sel = document.createElement("select"); sel.id = "c-" + it.k;
+        for (const [v, t] of it.o){ const o = document.createElement("option"); o.value = v; o.textContent = t; sel.append(o); }
+        sel.value = S[it.k];
+        sel.addEventListener("change", () => {
+          S[it.k] = sel.value;
+          if (it.k === "preset" && PRESETS[sel.value]){ S.palette = PRESETS[sel.value].slice(); S.palette.forEach((hx, i) => { const sw = document.getElementById("sw" + i); if (sw) sw.value = hx.toLowerCase(); }); }
+          if (it.k === "preset" || it.k === "mode" || it.k === "tone") updateColors();
+          if (it.k === "autoZoom") applyZoomMode();
+          if (it.k === "view") setView(sel.value);
+          persist();
+        });
+        row.append(sel);
+      } else if (it.t === "check"){
+        row.classList.add("wide");
+        const cb = document.createElement("input"); cb.type = "checkbox"; cb.id = "c-" + it.k; cb.checked = !!S[it.k];
+        cb.addEventListener("change", () => { S[it.k] = cb.checked; onChange(it); });
+        row.append(cb);
+      } else {
+        const rg = document.createElement("input"); rg.type = "range"; rg.id = "c-" + it.k; rg.min = it.min; rg.max = it.max; rg.step = it.s; rg.value = S[it.k];
+        const out = document.createElement("output"); out.htmlFor = rg.id; out.textContent = fmtVal(S[it.k], it.s);
+        rg.addEventListener("input", () => { S[it.k] = +rg.value; out.textContent = fmtVal(S[it.k], it.s); onChange(it); });
+        row.append(rg, out);
+      }
+      sec.append(row);
+    }
+    panel.append(sec);
+  }
+}
+
+document.getElementById("flatBtn").addEventListener("click", flatten);
+document.getElementById("pngBtn").addEventListener("click", exportPNG);
+const ctlBtn = document.getElementById("ctlBtn");
+ctlBtn.addEventListener("click", () => {
+  const open = panel.hidden;
+  panel.hidden = !open;
+  ctlBtn.setAttribute("aria-expanded", String(open));
+  document.getElementById("ctlSign").textContent = open ? "−" : "+";
+});
+
+const txt = document.getElementById("txt");
+txt.value = S.text;
+txt.addEventListener("input", () => {
+  const before = layoutW;
+  S.text = txt.value; persist(); rebuild();
+  if (layoutW !== before){
+    setOrtho(perspCam.aspect);
+    const d = fitDist(perspCam.aspect);
+    if (d > perspCam.position.distanceTo(controls.target) * 1.05 || layoutW < before){ const dir = perspCam.position.clone().sub(controls.target).setLength(d); perspCam.position.copy(controls.target).add(dir); }
+  }
+});
+
+buildPanel();
+applyUniforms();
+rebuild();
+frame();
+applyCam(S.cam);
+controls.enableRotate = !S.lockRot;
+applyZoomMode();
+controls.addEventListener("end", persist);
+camReady = true;
+if (!reduced) replay();
+loop();
+</script>
+</body></html>

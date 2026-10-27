@@ -1,250 +1,168 @@
 "use strict";
 /*
- * FantinHD — Tous les chemins des photos se trouvent dans IMAGE_FILES.
- * Pour remplacer les emplacements gris, ajoutez les VRAIES images à ces
- * chemins dans GitHub. Les visuels sont facultatifs : aucun n'est généré.
+ * FantinHD — données des jeux et interactions de la page.
+ * Visuels : chaque jeu a un visuel « pixels de verre » (assets/images/visuels/).
+ * Pour afficher une vraie capture à la place, dépose-la dans assets/images/ avec
+ * le nom indiqué dans `photo` : elle remplace le visuel automatiquement.
  */
-const IMAGE_FILES = {
-  hero: "assets/images/hero.jpg",
-  farkle: "assets/images/farkle.jpg",
-  clean: "assets/images/clean-glass.jpg",
-  depth: "assets/images/3-2m.jpg",
-  timer: "assets/images/2-00-00.jpg"
-};
+const PLAY_DEV = "https://play.google.com/store/apps/dev?id=8088754359282570640";
 
 const games = [
   {
-    id: "farkle",
-    name: "Farkle",
-    subtitle: "Medieval Dice Game",
-    platform: "Mobile", state: "Disponible", categories: ["mobile", "available"],
-    description: "Lance les dés, prends des risques et essaie de marquer le plus de points dans une ambiance médiévale.",
-    lead: "Un lancer de plus… ou est-ce qu'on s'arrête là ?",
-    full: "Farkle est un jeu de dés rapide fondé sur la prise de risque, la stratégie et la recherche du meilleur score. À chaque lancer, décide d'assurer tes points ou de continuer.",
-    tags: ["Android", "Jeu de dés", "Stratégie"],
-    image: IMAGE_FILES.farkle,
-    link: "https://play.google.com/store/apps/details?id=com.FantinHD.Farkle",
-    linkText: "Voir sur Google Play"
+    id:"farkle", name:"Farkle", sub:"Medieval Dice Game",
+    platform:"Mobile", state:"Disponible", available:true,
+    desc:"Lance les dés, prends des risques et marque le plus de points dans une ambiance médiévale.",
+    lead:"Un lancer de plus… ou est-ce qu'on s'arrête là ?",
+    text:"Farkle est un jeu de dés rapide fondé sur la prise de risque, la stratégie et la recherche du meilleur score. À chaque lancer, décide d'assurer tes points ou de continuer.",
+    tags:["Android", "Jeu de dés", "Stratégie"],
+    visual:"assets/images/visuels/farkle.jpg", photo:"assets/images/farkle.jpg",
+    link:"https://play.google.com/store/apps/details?id=com.FantinHD.Farkle", linkText:"Voir sur Google Play"
   },
   {
-    id: "clean",
-    name: "Clean Glass",
-    subtitle: "",
-    platform: "Mobile", state: "Disponible", categories: ["mobile", "available"],
-    description: "Nettoie des vitres et retrouve le plaisir d'une surface parfaitement propre.",
-    lead: "Une petite pause, un geste simple, une vitre impeccable.",
-    full: "Clean Glass est un jeu mobile relaxant : éponge, raclette et chiffon permettent de nettoyer progressivement les vitres. Des sons doux et des gestes simples donnent une expérience satisfaisante.",
-    tags: ["Android", "Relaxant", "Simulation"],
-    image: IMAGE_FILES.clean,
-    link: "https://play.google.com/store/apps/details?id=com.FantinHD.CleanGlass",
-    linkText: "Voir sur Google Play"
+    id:"clean", name:"Clean Glass", sub:"",
+    platform:"Mobile", state:"Disponible", available:true,
+    desc:"Nettoie des vitres et retrouve le plaisir d'une surface parfaitement propre.",
+    lead:"Une petite pause, un geste simple, une vitre impeccable.",
+    text:"Clean Glass est un jeu mobile relaxant : éponge, raclette et chiffon permettent de nettoyer progressivement les vitres. Des sons doux et des gestes simples donnent une expérience satisfaisante.",
+    tags:["Android", "Relaxant", "Simulation"],
+    visual:"assets/images/visuels/clean-glass.jpg", photo:"assets/images/clean-glass.jpg",
+    link:"https://play.google.com/store/apps/details?id=com.FantinHD.CleanGlass", linkText:"Voir sur Google Play"
   },
   {
-    id: "depth",
-    name: "3.2M",
-    subtitle: "",
-    platform: "Mobile", state: "En développement", categories: ["mobile", "development"],
-    description: "3 200 000 blocs à traverser. Des billes, de la physique et une descente qui semble sans fin.",
-    lead: "Jusqu'où une simple bille peut-elle descendre ?",
-    full: "Dans 3.2M, des billes autonomes creusent un terrain de 3 200 000 blocs. Améliorations, billes spéciales, progression et exploration s'entremêlent dans une descente vers le fond.",
-    tags: ["Android", "Idle", "Physique", "En développement"],
-    image: IMAGE_FILES.depth, link: "", linkText: ""
+    id:"depth", name:"3.2M", sub:"",
+    platform:"Mobile", state:"En développement", available:false,
+    desc:"3 200 000 blocs à traverser. Des billes, de la physique et une descente qui semble sans fin.",
+    lead:"Jusqu'où une simple bille peut-elle descendre ?",
+    text:"Dans 3.2M, des billes autonomes creusent un terrain de 3 200 000 blocs. Améliorations, billes spéciales, progression et exploration s'entremêlent dans une descente vers le fond.",
+    tags:["Android", "Idle", "Physique"],
+    visual:"assets/images/visuels/3-2m.jpg", photo:"assets/images/3-2m.jpg", link:"", linkText:""
   },
   {
-    id: "timer",
-    name: "2:00:00",
-    subtitle: "",
-    platform: "PC", state: "En développement", categories: ["pc", "development"],
-    description: "Deux heures, une seule issue. Une expérience minimaliste autour du temps et de l'incertitude.",
-    lead: "Deux heures. Une roue. Une seule issue.",
-    full: "2:00:00 est une expérience PC expérimentale centrée sur le temps et la tension de l'attente. Après un compte à rebours de deux heures, une roue intervient dans l'issue de la partie.",
-    tags: ["PC", "Expérimental", "En développement"],
-    image: IMAGE_FILES.timer, link: "", linkText: ""
+    id:"timer", name:"2:00:00", sub:"",
+    platform:"PC", state:"En développement", available:false,
+    desc:"Deux heures, une seule issue. Une expérience minimaliste autour du temps et de l'attente.",
+    lead:"Deux heures. Une roue. Une seule issue.",
+    text:"2:00:00 est une expérience PC expérimentale centrée sur le temps et la tension de l'attente. Après un compte à rebours de deux heures, une roue décide de l'issue de la partie.",
+    tags:["PC", "Expérimental"],
+    visual:"assets/images/visuels/2-00-00.jpg", photo:"assets/images/2-00-00.jpg", link:"", linkText:""
   },
   {
-    id: "secret",
-    name: "À découvrir",
-    subtitle: "",
-    platform: "Non annoncé", state: "Confidentiel", categories: ["pc", "mobile", "development"],
-    description: "D'autres idées prennent forme en coulisses. Le moment de les présenter viendra plus tard.",
-    lead: "Tout n'est pas encore prêt à être révélé.",
-    full: "Certains projets sont encore à l'état d'idée ou d'expérimentation. Leur nom, leur univers et leur progression ne sont pas annoncés.",
-    tags: ["Non annoncé", "Confidentiel"],
-    image: "", link: "", linkText: ""
+    id:"secret", name:"Non annoncé", sub:"",
+    platform:"PC & mobile", state:"Confidentiel", available:false, wide:true,
+    desc:"D'autres projets prennent forme. Leur nom et leur univers seront dévoilés plus tard.",
+    lead:"Tout n'est pas encore prêt à être montré.",
+    text:"Certains projets sont encore au stade de l'idée ou du prototype. Ils seront présentés ici quand ils seront prêts.",
+    tags:["Bientôt"],
+    visual:"assets/images/visuels/secret.jpg", photo:"", link:"", linkText:""
   }
 ];
-const byId = Object.fromEntries(games.map(game => [game.id, game]));
+const byId = Object.fromEntries(games.map(g => [g.id, g]));
 
-/* Photos optionnelles. Pas d'image de remplacement fabriquée. */
-function setMedia(host, path, label, alt) {
-  if (!host) return;
-  host.classList.remove("has-image");
-  host.replaceChildren();
-  if (path) {
-    const img = document.createElement("img");
-    img.alt = alt || "";
-    img.loading = host.classList.contains("hero__visual") ? "eager" : "lazy";
-    img.addEventListener("load", () => {
-      if (img.naturalWidth > 0) host.classList.add("has-image");
-    });
-    img.addEventListener("error", () => host.classList.remove("has-image"));
-    host.append(img);
-    img.src = path;
-  }
-  if (label) {
-    const placeholder = document.createElement("span");
-    placeholder.className = "media-placeholder";
-    const title = document.createElement("strong");
-    title.textContent = label;
-    const help = document.createElement("small");
-    help.textContent = path || "Projet confidentiel";
-    placeholder.append(title, help);
-    host.append(placeholder);
-  }
+/* Visuel par défaut, remplacé par la vraie capture si elle existe. */
+function picture(img, game){
+  img.src = game.visual;
+  if (!game.photo) return;
+  const probe = new Image();
+  probe.onload = () => { if (probe.naturalWidth > 0) img.src = game.photo; };
+  probe.src = game.photo;
 }
 
-/* Affiche chaque jeu avec une vraie zone photo à remplir. */
-const gamesList = document.querySelector("#games-list");
-for (const [index, game] of games.entries()) {
-  const article = document.createElement("article");
-  article.className = "game reveal";
-  article.dataset.categories = game.categories.join(" ");
-  const mediaButton = document.createElement("button");
-  mediaButton.className = "game__cover media-host" + (game.id === "secret" ? " game__secret" : "");
-  mediaButton.type = "button";
-  mediaButton.dataset.game = game.id;
-  mediaButton.setAttribute("aria-label", "En savoir plus sur " + game.name);
-  if (game.id === "secret") {
-    const q = document.createElement("span");
-    q.className = "question";
-    q.textContent = "?";
-    const secretLabel = document.createElement("small");
-    secretLabel.textContent = "NON ANNONCÉ";
-    mediaButton.append(q, secretLabel);
-  } else {
-    setMedia(mediaButton, game.image, game.name, "Visuel officiel de " + game.name);
-  }
-  const zoom = document.createElement("span");
-  zoom.className = "game__zoom";
-  zoom.setAttribute("aria-hidden", "true");
-  zoom.textContent = "↗";
-  mediaButton.append(zoom);
+/* ---------- Grille des jeux ---------- */
+const grid = document.getElementById("games-grid");
+for (const g of games){
+  const art = document.createElement("article");
+  art.className = "game" + (g.wide ? " game--wide" : "");
+  const btn = document.createElement("button");
+  btn.type = "button"; btn.className = "game__link"; btn.dataset.game = g.id;
+  btn.setAttribute("aria-label", g.name + " : " + g.state + ", voir la fiche");
 
-  const metadata = document.createElement("div");
-  metadata.className = "game__status";
-  const number = document.createElement("span");
-  number.textContent = String(index + 1).padStart(2, "0") + " / " + game.platform;
-  const status = document.createElement("span");
-  status.textContent = game.state;
-  metadata.append(number, status);
+  const media = document.createElement("div"); media.className = "game__media";
+  const img = document.createElement("img"); img.alt = ""; img.loading = "lazy"; img.width = 1600; img.height = 900;
+  picture(img, g);
+  const badge = document.createElement("span");
+  badge.className = "game__badge" + (g.available ? "" : " is-dev"); badge.textContent = g.state;
+  const arrow = document.createElement("span"); arrow.className = "game__arrow"; arrow.setAttribute("aria-hidden", "true"); arrow.textContent = "↗";
+  media.append(img, badge, arrow);
 
-  const title = document.createElement("h3");
-  title.textContent = game.name;
-  if (game.subtitle) {
-    const subtitle = document.createElement("span");
-    subtitle.className = "subtitle";
-    subtitle.textContent = game.subtitle;
-    title.append(subtitle);
-  }
-  const description = document.createElement("p");
-  description.textContent = game.description;
+  const meta = document.createElement("div"); meta.className = "game__meta";
+  const m1 = document.createElement("span"); m1.className = "label"; m1.textContent = g.platform;
+  const m2 = document.createElement("span"); m2.className = "label"; m2.textContent = g.state;
+  meta.append(m1, m2);
 
-  const links = document.createElement("div");
-  links.className = "game__links";
-  if (game.link) {
-    const external = document.createElement("a");
-    external.href = game.link;
-    external.target = "_blank";
-    external.rel = "noopener noreferrer";
-    external.textContent = game.linkText + " ↗";
-    links.append(external);
-  }
-  const info = document.createElement("button");
-  info.type = "button";
-  info.dataset.game = game.id;
-  info.textContent = "Découvrir le projet ↗";
-  links.append(info);
-  article.append(mediaButton, metadata, title, description, links);
-  gamesList.append(article);
+  const h = document.createElement("h3"); h.className = "game__title"; h.textContent = g.name;
+  if (g.sub){ const s = document.createElement("span"); s.className = "game__sub"; s.textContent = g.sub; h.append(s); }
+  const p = document.createElement("p"); p.className = "game__desc"; p.textContent = g.desc;
+
+  btn.append(media, meta, h, p);
+  art.append(btn);
+  grid.append(art);
+}
+const released = games.filter(g => g.available).length;
+const inDev = games.filter(g => g.state === "En développement").length;
+document.getElementById("games-count").textContent = released + " disponibles · " + inDev + " en développement";
+
+/* ---------- Chiffres du studio ---------- */
+const facts = [[String(released), "jeux disponibles sur Google Play"], [String(inDev), "jeux en développement"], ["PC + mobile", "deux plateformes"]];
+const dl = document.getElementById("facts");
+for (const [n, t] of facts){
+  const d = document.createElement("div");
+  const dt = document.createElement("dt"); dt.textContent = n;
+  const dd = document.createElement("dd"); dd.className = "label"; dd.textContent = t;
+  d.append(dt, dd); dl.append(d);
 }
 
-/* L'image d'accueil reste noire tant que hero.jpg n'a pas été ajouté. */
-setMedia(document.querySelector(".hero__visual"), IMAGE_FILES.hero, "", "");
-const dialog = document.querySelector("#game-dialog");
-let trigger = null;
-function openGame(id, element) {
-  const game = byId[id];
-  if (!game) return;
-  trigger = element || document.activeElement;
-  document.querySelector("#dialog-category").textContent = game.platform + " / " + game.state;
-  document.querySelector("#dialog-title").textContent = game.name + (game.subtitle ? " — " + game.subtitle : "");
-  document.querySelector("#dialog-lead").textContent = game.lead;
-  document.querySelector("#dialog-description").textContent = game.full;
-  const picture = document.querySelector("#dialog-picture");
-  if (game.id === "secret") setMedia(picture, "", "Projet confidentiel", "");
-  else setMedia(picture, game.image, game.name, "Visuel officiel de " + game.name);
-  const tags = document.querySelector("#dialog-tags");
-  tags.replaceChildren(...game.tags.map(tag => {
-    const item = document.createElement("span");
-    item.textContent = tag;
-    return item;
-  }));
-  const link = document.querySelector("#dialog-link");
-  link.hidden = !game.link;
-  if (game.link) {link.href = game.link;link.textContent = game.linkText + " ↗";}
-  else link.removeAttribute("href");
-  dialog.showModal();
+/* ---------- En ce moment ---------- */
+const rows = document.getElementById("rows");
+for (const id of ["depth", "timer", "secret"]){
+  const g = byId[id];
+  const li = document.createElement("li"); li.className = "row";
+  const b = document.createElement("button"); b.type = "button"; b.className = "row__btn"; b.dataset.game = id;
+  const name = document.createElement("span"); name.className = "row__name"; name.textContent = g.name;
+  const text = document.createElement("span"); text.className = "row__text"; text.textContent = g.lead;
+  const meta = document.createElement("span"); meta.className = "label"; meta.textContent = g.platform + " · " + g.state;
+  const ar = document.createElement("span"); ar.className = "row__arrow"; ar.setAttribute("aria-hidden", "true"); ar.textContent = "↗";
+  b.append(name, text, meta, ar); li.append(b); rows.append(li);
 }
-document.addEventListener("click", event => {
-  const button = event.target.closest("[data-game]");
-  if (button) openGame(button.dataset.game, button);
+
+/* ---------- Fiche ---------- */
+const dialog = document.getElementById("game-dialog");
+function openGame(id){
+  const g = byId[id]; if (!g) return;
+  picture(document.getElementById("dialog-img"), g);
+  document.getElementById("dialog-img").alt = g.photo ? "Visuel de " + g.name : "";
+  document.getElementById("dialog-meta").textContent = g.platform + " · " + g.state;
+  document.getElementById("dialog-title").textContent = g.name;
+  document.getElementById("dialog-lead").textContent = g.lead;
+  document.getElementById("dialog-text").textContent = g.text;
+  const tags = document.getElementById("dialog-tags"); tags.replaceChildren();
+  for (const t of g.tags){ const li = document.createElement("li"); li.textContent = t; tags.append(li); }
+  const link = document.getElementById("dialog-link");
+  link.hidden = !g.link;
+  if (g.link){ link.href = g.link; link.textContent = g.linkText + " ↗"; }
+  if (typeof dialog.showModal === "function") dialog.showModal(); else dialog.setAttribute("open", "");
+}
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-game]");
+  if (t) openGame(t.dataset.game);
 });
 dialog.querySelector(".dialog__close").addEventListener("click", () => dialog.close());
-dialog.addEventListener("click", event => {if (event.target === dialog) dialog.close();});
-dialog.addEventListener("close", () => {if (trigger?.isConnected) trigger.focus({preventScroll:true});});
+dialog.addEventListener("click", e => { if (e.target === dialog) dialog.close(); });
 
-/* Filtres de la grille. */
-const filters = [...document.querySelectorAll("[data-filter]")];
-const cards = [...document.querySelectorAll(".game")];
-filters.forEach(button => button.addEventListener("click", () => {
-  const value = button.dataset.filter;
-  filters.forEach(filter => {
-    const active = filter === button;
-    filter.classList.toggle("active", active);
-    filter.setAttribute("aria-pressed", String(active));
-  });
-  let visible = 0;
-  cards.forEach(card => {
-    const matches = value === "all" || card.dataset.categories.split(" ").includes(value);
-    card.hidden = !matches;
-    if (matches) visible++;
-  });
-  document.querySelector("#filter-announcement").textContent = visible + " projets affichés.";
-}));
+/* ---------- En-tête et menu mobile ---------- */
+const header = document.getElementById("header");
+const onScroll = () => header.classList.toggle("is-solid", scrollY > 24);
+addEventListener("scroll", onScroll, { passive:true }); onScroll();
 
-/* Navigation mobile. */
-const menu = document.querySelector("#menu-button");
-const mobileNav = document.querySelector("#mobile-nav");
-function closeMenu() {menu.setAttribute("aria-expanded", "false");mobileNav.hidden = true;}
-menu.addEventListener("click", () => {
-  const opening = menu.getAttribute("aria-expanded") !== "true";
-  menu.setAttribute("aria-expanded", String(opening));
-  mobileNav.hidden = !opening;
-});
-mobileNav.addEventListener("click", event => {
-  if (event.target.closest("a")) closeMenu();
-});
-document.addEventListener("keydown", event => {if (event.key === "Escape") closeMenu();});
-document.addEventListener("click", event => {if (!event.target.closest(".header")) closeMenu();});
+const menuBtn = document.getElementById("menu-btn"), menu = document.getElementById("menu");
+function setMenu(open){
+  menu.hidden = !open;
+  menuBtn.setAttribute("aria-expanded", String(open));
+  menuBtn.querySelector(".menu-btn__label").textContent = open ? "Fermer" : "Menu";
+  document.body.style.overflow = open ? "hidden" : "";
+  header.classList.toggle("is-solid", open || scrollY > 24);
+}
+menuBtn.addEventListener("click", () => setMenu(menu.hidden));
+menu.addEventListener("click", e => { if (e.target.closest("a")) setMenu(false); });
+addEventListener("keydown", e => { if (e.key === "Escape" && !menu.hidden) setMenu(false); });
 
-/* Apparitions discrètes et respect des préférences d'accessibilité. */
-const reveals = [...document.querySelectorAll(".reveal")];
-if ("IntersectionObserver" in window && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {entry.target.classList.add("visible");observer.unobserve(entry.target);}
-    });
-  }, {threshold:.05,rootMargin:"0px 0px 70px 0px"});
-  reveals.forEach(element => observer.observe(element));
-} else reveals.forEach(element => element.classList.add("visible"));
-document.querySelector("#year").textContent = new Date().getFullYear();
+document.getElementById("year").textContent = new Date().getFullYear();
