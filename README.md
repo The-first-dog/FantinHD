@@ -3,7 +3,7 @@
 Site vitrine de **FantinHD**, développeur indépendant de jeux PC et mobile.
 
 - **Site :** https://the-first-dog.github.io/FantinHD/ (GitHub Pages, branche `main`, dossier `/`)
-- **Style :** noir, typographie massive, grandes images de jeux, lignes fines. Inspiré de la sobriété des sites de studios comme Embark Studios ; tout le code, les textes et les visuels sont propres à FantinHD.
+- **Style :** sobre et centré, inspiré de la mise en page du site d'Embark Studios (titres fins avec un mot en gras, affiches verticales, actualités en bandeau). Le code, les textes et les visuels sont propres à FantinHD.
 
 ## L'accueil : logo 3D interactif
 
@@ -19,9 +19,9 @@ Réglages de l'effet : constante `AURA` dans le script en bas de `index.html` (`
 
 - `index.html` — structure de la page et logo 3D
 - `styles.css` — mise en page, typographie, responsive
-- `app.js` — données des jeux, fiches, menu mobile
+- `app.js` — jeux, actualités, menu mobile
 - `assets/logo/` — logo (lettres, complet, réseaux sociaux) et réglages officiels
-- `assets/images/visuels/` — visuels « pixels de verre » des jeux
+- `assets/images/visuels/` — affiches (2:3) et visuels (16:9) « pixels de verre » des jeux
 - `assets/images/` — [tes vraies captures, facultatives](assets/images/README.md)
 - `outils/voxel-type/` — l'outil Voxel Type et ses réglages, pour refaire le logo ou de nouveaux visuels
 
