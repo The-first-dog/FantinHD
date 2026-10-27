@@ -1,88 +1,83 @@
 "use strict";
 /*
- * FantinHD — contenu des jeux et petites interactions.
- * Affiches : assets/images/visuels/affiche-*.jpg (format 2:3).
- * Pour une vraie affiche, dépose-la dans assets/images/ avec le nom de `photo` :
- * elle remplace l'affiche automatiquement.
+ * FantinHD — affiche le contenu du dossier contenu/ et gère les petites interactions.
+ * Le contenu (textes, liens, jeux, annonces) vient de contenu/contenu.js, construit
+ * automatiquement à partir des fichiers de contenu/ : voir contenu/LISEZMOI.md.
  */
-const games = [
-  {
-    name:"Farkle", sub:"Medieval Dice Game", state:"Disponible sur Google Play",
-    intro:["Farkle est un ", "jeu de dés médiéval", " : lance les dés, garde les combinaisons qui rapportent des points, puis choisis entre sécuriser ton score ou tenter un lancer de plus."],
-    more:"Joue en solo ou en ligne avec tes amis, grimpe au classement, et personnalise tes dés avec des skins purement cosmétiques, sans avantage de jeu.",
-    poster:"assets/images/visuels/affiche-farkle.jpg", photo:"assets/images/affiche-farkle.jpg",
-    link:"https://play.google.com/store/apps/details?id=com.FantinHD.Farkle"
-  },
-  {
-    name:"Clean Glass", sub:"", state:"Disponible sur Google Play",
-    intro:["Clean Glass est un ", "jeu de nettoyage relaxant", " : éponge, raclette et chiffon font disparaître la saleté petit à petit."],
-    more:"Une ambiance ASMR, des gestes simples et une prise en main immédiate, pour une vraie pause.",
-    poster:"assets/images/visuels/affiche-clean-glass.jpg", photo:"assets/images/affiche-clean-glass.jpg",
-    link:"https://play.google.com/store/apps/details?id=com.FantinHD.CleanGlass"
-  },
-  {
-    name:"3 200 000", sub:"", state:"Android · En développement",
-    intro:["Un seul objectif : ", "détruire 3 200 000 blocs", ". Pour y arriver, il faudra faire progresser ses billes et leurs effets."],
-    more:"Billes spéciales, fusions, améliorations et missions quotidiennes sont en cours de préparation.",
-    poster:"assets/images/visuels/affiche-3-2m.jpg", photo:"assets/images/affiche-3-2m.jpg", link:""
-  },
-  {
-    name:"2:00:00", sub:"", state:"Steam · En développement",
-    intro:["2:00:00 est une ", "expérience minimaliste sur PC", " : une salle blanche, une roue et un bouton SPIN."],
-    more:"Un projet autour de l'attente et du hasard, qui sortira sur Steam. Plus de détails bientôt.",
-    poster:"assets/images/visuels/affiche-2-00-00.jpg", photo:"assets/images/affiche-2-00-00.jpg", link:""
-  }
-];
-
-/* Actualités : uniquement les grandes étapes (sorties, grosses mises à jour, annonces),
-   dans l'ordre chronologique strict : à gauche la plus récente, à droite la plus ancienne.
-   Dates au mois, validées par Fantin. */
-const news = [
-  { date:"À venir", title:"2:00:00 arrive sur Steam", text:"Une expérience minimaliste autour de l'attente et du hasard, en préparation pour Steam.", img:"assets/images/visuels/2-00-00.jpg" },
-  { date:"Octobre 2026", title:"Nouveau site FantinHD", text:"Le site officiel fait peau neuve, avec le logo en pixels de verre et tous les jeux au même endroit.", img:"assets/logo/og.jpg" },
-  { date:"Octobre 2026", title:"3 200 000 en test fermé", text:"Le jeu prend son nom définitif et entre en test fermé sur Android.", img:"assets/images/visuels/3-2m.jpg" },
-  { date:"Août 2026", title:"Farkle : boutique et nouveau look", text:"Grosse mise à jour : une boutique de skins cosmétiques et une refonte visuelle façon taverne en bois.", img:"assets/images/visuels/farkle.jpg" },
-  { date:"Juin 2026", title:"Farkle se joue en ligne", text:"Multijoueur en ligne, amis, invitations et classement : défie d'autres joueurs dans la taverne.", img:"assets/images/visuels/farkle.jpg" },
-  { date:"Juin 2026", title:"Farkle sort sur Google Play", text:"Le jeu de dés médiéval est disponible sur Android.", img:"assets/images/visuels/farkle.jpg" },
-  { date:"Mai 2026", title:"Clean Glass sort sur Google Play", text:"Le jeu de nettoyage relaxant est disponible sur Android.", img:"assets/images/visuels/clean-glass.jpg" }
-];
+const C = window.FANTINHD_CONTENU || { site:{}, liens:[], jeux:[], annonces:[] };
 
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; };
 
-function poster(img, g){
-  img.src = g.poster;
-  if (!g.photo) return;
-  const probe = new Image();
-  probe.onload = () => { if (probe.naturalWidth > 0) img.src = g.photo; };
-  probe.src = g.photo;
+/* Texte simple : **gras** et retours à la ligne, sans HTML. */
+function rich(target, text){
+  if (!target || typeof text !== "string") return;
+  target.replaceChildren();
+  text.split("\n").forEach((line, i) => {
+    if (i) target.append(document.createElement("br"));
+    line.split(/\*\*(.+?)\*\*/g).forEach((part, j) => { if (part) target.append(j % 2 ? el("strong", "", part) : part); });
+  });
+}
+function anchor(cls, label, l){
+  const a = el("a", cls, label); a.href = l.url;
+  if (l.nouvel_onglet){ a.target = "_blank"; a.rel = "noopener noreferrer"; }
+  return a;
+}
+
+/* ---------- Textes du site ---------- */
+const S = C.site || {};
+rich(document.getElementById("hero-tagline"), S.accroche);
+rich(document.getElementById("jeux-title"), S.titre_jeux);
+rich(document.getElementById("news-title"), S.titre_actualites);
+rich(document.getElementById("quote-text"), S.phrase);
+if (S.a_propos){
+  rich(document.getElementById("about-title"), S.a_propos.titre);
+  const box = document.getElementById("about-text");
+  if (Array.isArray(S.a_propos.paragraphes)){ box.replaceChildren(); for (const p of S.a_propos.paragraphes){ const e = el("p"); rich(e, p); box.append(e); } }
+  const btn = document.getElementById("about-btn");
+  if (S.a_propos.bouton && S.a_propos.bouton.url){ btn.textContent = S.a_propos.bouton.texte; btn.href = S.a_propos.bouton.url; } else btn.hidden = true;
+}
+if (S.mentions) document.getElementById("footer-legal").textContent = S.mentions.replace("{annee}", new Date().getFullYear());
+
+/* ---------- Liens : en-tête, menu mobile, pied de page ---------- */
+const head = document.getElementById("header-links"), menuNav = document.getElementById("menu-nav");
+const foot = document.getElementById("footer-links"), topLink = document.getElementById("footer-top");
+for (const l of C.liens || []){
+  if (l.en_haut) head.append(anchor("header__store", l.en_haut, l));
+  if (l.menu_mobile) menuNav.append(anchor("", l.menu_mobile, l));
+  if (l.en_bas) foot.insertBefore(anchor("", l.en_bas, l), topLink);
 }
 
 /* ---------- Jeux ---------- */
 const projects = document.getElementById("projects");
-for (const g of games){
+for (const g of C.jeux || []){
   const art = el("article", "project");
-  const wrap = g.link ? el("a", "project__poster") : el("div", "project__poster");
-  if (g.link){ wrap.href = g.link; wrap.target = "_blank"; wrap.rel = "noopener noreferrer"; wrap.setAttribute("aria-label", g.name + " sur Google Play"); }
-  const img = el("img"); img.alt = "Affiche de " + g.name; img.loading = "lazy"; img.width = 800; img.height = 1200;
-  poster(img, g); wrap.append(img);
+  const wrap = g.lien ? anchor("project__poster", "", { url:g.lien.url, nouvel_onglet:true }) : el("div", "project__poster");
+  if (g.lien) wrap.setAttribute("aria-label", g.titre + " : " + g.lien.texte);
+  const img = el("img"); img.src = g.affiche; img.alt = "Affiche de " + g.titre; img.loading = "lazy"; img.width = 800; img.height = 1200;
+  wrap.append(img);
 
   const body = el("div", "project__body");
-  const h = el("h3", "project__name", g.name);
-  if (g.sub) h.append(el("span", "project__sub", g.sub));
-  body.append(h, el("p", "project__state", g.state));
-  const p1 = el("p"); p1.append(g.intro[0], el("strong", "", g.intro[1]), g.intro[2]);
-  body.append(p1, el("p", "", g.more));
-  if (g.link){ const a = el("a", "project__link", "Voir sur Google Play"); a.href = g.link; a.target = "_blank"; a.rel = "noopener noreferrer"; body.append(a); }
+  const h = el("h3", "project__name", g.titre);
+  if (g.sous_titre) h.append(el("span", "project__sub", g.sous_titre));
+  body.append(h);
+  if (g.statut) body.append(el("p", "project__state", g.statut));
+  for (const t of g.texte || []){ const p = el("p"); rich(p, t); body.append(p); }
+  if (g.lien) body.append(anchor("project__link", g.lien.texte, { url:g.lien.url, nouvel_onglet:true }));
   art.append(wrap, body);
   projects.append(art);
 }
 
-/* ---------- Actualités ---------- */
+/* ---------- Actualités (déjà triées : la plus récente à gauche) ---------- */
 const track = document.getElementById("news-track");
-for (const n of news){
+for (const n of C.annonces || []){
   const li = el("li", "news__item");
-  const fig = el("div", "news__img"); const img = el("img"); img.src = n.img; img.alt = ""; img.loading = "lazy"; img.width = 1600; img.height = 900; fig.append(img);
-  li.append(fig, el("p", "news__date", n.date), el("h3", "", n.title), el("p", "", n.text));
+  if (n.image){
+    const fig = el("div", "news__img"); const img = el("img"); img.src = n.image; img.alt = ""; img.loading = "lazy"; img.width = 1600; img.height = 900;
+    fig.append(img); li.append(fig);
+  }
+  li.append(el("p", "news__date", n.date_affichee), el("h3", "", n.titre));
+  if (n.texte){ const p = el("p"); rich(p, n.texte); li.append(p); }
+  if (n.lien) li.append(anchor("news__link", n.lien.texte, { url:n.lien.url, nouvel_onglet:true }));
   track.append(li);
 }
 const prev = document.getElementById("news-prev"), next = document.getElementById("news-next");
@@ -116,5 +111,3 @@ const spy = new IntersectionObserver(entries => {
   }
 }, { rootMargin:"-45% 0px -50% 0px" });
 ["accueil", "jeux", "actualites", "apropos"].forEach(id => { const s = document.getElementById(id); if (s) spy.observe(s); });
-
-document.getElementById("year").textContent = new Date().getFullYear();

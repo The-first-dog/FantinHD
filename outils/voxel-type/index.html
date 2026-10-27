@@ -200,7 +200,26 @@ const DEFAULTS = {
   rays:true, rayLen:12.3, rayInt:0.44, rayDir:237, rayTilt:0, rayWidth:0.76, raySpread:2.35, rayFall:1.87,
   bloom:0.16, bloomRadius:0.04, bloomThr:0, grain:0, exposure:1.43,
   view:"flat", lockRot:true, autoZoom:"off", zoomMargin:0.08, sway:true, speed:1.7,
-  fmt:"screen", res:"2160", bg:"transparent", overrides:{}, cam:null
+  fmt:"screen", res:"2160", bg:"transparent", overrides:{}, cam:null, scene:"logo"
+};
+/* Modèles : réglages de départ pour le logo, les images d'annonce (16:9) et les affiches de jeu (2:3).
+   Chaque modèle part des réglages du logo officiel et ne change que ce qui est listé. */
+const PAL = { braise:PRESETS.braise, glace:PRESETS.glace, vitrail:PRESETS.vitrail, fantinhd:PRESETS.fantinhd };
+const ANNONCE = { sway:false, lockRot:true, view:"flat", autoZoom:"global", zoomMargin:0.6, fmt:"wide", res:"1600", bg:"black" };
+const AFFICHE = { sway:false, lockRot:true, view:"flat", autoZoom:"global", zoomMargin:0.3, rayLen:11, rayDir:250, fmt:"poster", res:"1200", bg:"black" };
+const SCENES = {
+  logo:{ nom:"Logo FantinHD", s:{} },
+  logoBlanc:{ nom:"Logo blanc sans rayons (en-tête)", s:{ rays:false, tone:"white", autoZoom:"letters", zoomMargin:0.05, fmt:"banner", res:"2400", bg:"transparent", sway:false } },
+  annonceStudio:{ nom:"Annonce — FantinHD", s:Object.assign({}, ANNONCE, { text:"FantinHD", zoomMargin:0.3 }) },
+  annonceFarkle:{ nom:"Annonce — Farkle", s:Object.assign({}, ANNONCE, { text:"Farkle", preset:"braise", palette:PAL.braise.slice(), zoomMargin:0.75 }) },
+  annonceClean:{ nom:"Annonce — Clean Glass", s:Object.assign({}, ANNONCE, { text:"Clean Glass", preset:"glace", palette:PAL.glace.slice() }) },
+  annonce3200000:{ nom:"Annonce — 3 200 000", s:Object.assign({}, ANNONCE, { text:"3 200 000", preset:"vitrail", palette:PAL.vitrail.slice(), mode:"gradient" }) },
+  annonce2h:{ nom:"Annonce — 2:00:00", s:Object.assign({}, ANNONCE, { text:"2:00:00", zoomMargin:0.75 }) },
+  annonceVierge:{ nom:"Annonce — texte libre", s:Object.assign({}, ANNONCE, { text:"Nouveau", zoomMargin:0.6 }) },
+  afficheFarkle:{ nom:"Affiche — Farkle", s:Object.assign({}, AFFICHE, { text:"Farkle", preset:"braise", palette:PAL.braise.slice() }) },
+  afficheClean:{ nom:"Affiche — Clean Glass", s:Object.assign({}, AFFICHE, { text:"Clean|Glass", preset:"glace", palette:PAL.glace.slice() }) },
+  affiche3200000:{ nom:"Affiche — 3 200 000 (3.2M)", s:Object.assign({}, AFFICHE, { text:"3.2M", preset:"vitrail", palette:PAL.vitrail.slice(), mode:"gradient" }) },
+  affiche2h:{ nom:"Affiche — 2:00:00", s:Object.assign({}, AFFICHE, { text:"2:00:00" }) }
 };
 const KEY = "fantinhd-voxel-type-v1";
 let S = structuredClone(DEFAULTS);
@@ -655,7 +674,7 @@ async function saveFile(name, blob){
 
 function exportSize(){
   const L = +S.res;
-  const asp = { screen:innerWidth / innerHeight, square:1, wide:16 / 9, banner:3 }[S.fmt];
+  const asp = { screen:innerWidth / innerHeight, square:1, wide:16 / 9, banner:3, poster:2 / 3 }[S.fmt];
   return asp >= 1 ? [L, Math.round(L / asp)] : [Math.round(L * asp), L];
 }
 
@@ -781,6 +800,10 @@ async function copySettings(){
 
 /* ---------- Panneau ---------- */
 const UI = [
+  ["Modèle", [
+    { k:"scene", t:"select", l:"Partir de", o:Object.entries(SCENES).map(([k, v]) => [k, v.nom]) },
+    { t:"note", x:"Choisis un modèle, change le texte en bas (| pour aller à la ligne), puis Export → Image PNG. Annonces : format 16:9, 1600 px. Affiches de jeu : format 2:3, 1200 px." }
+  ]],
   ["Couleurs", [
     { k:"preset", t:"select", l:"Palette", o:[["fantinhd","FantinHD"],["vitrail","Vitrail"],["glace","Glace"],["braise","Braise"],["blanc","Blanc"],["perso","Perso"]] },
     { t:"palette" },
@@ -828,7 +851,7 @@ const UI = [
     { t:"btns", b:[["Rejouer l'apparition", replay]] }
   ]],
   ["Export", [
-    { k:"fmt", t:"select", l:"Format", o:[["screen","Comme l'écran"],["square","Carré 1:1 (icône)"],["wide","16:9 (vidéo)"],["banner","3:1 (bannière)"]] },
+    { k:"fmt", t:"select", l:"Format", o:[["screen","Comme l'écran"],["square","Carré 1:1 (icône)"],["wide","16:9 (annonce, vidéo)"],["poster","2:3 (affiche de jeu)"],["banner","3:1 (bannière)"]] },
     { k:"res", t:"select", l:"Taille", o:[["1080","1080 px"],["2160","2160 px (4K)"],["4096","4096 px"]] },
     { k:"bg", t:"select", l:"Fond", o:[["black","Noir"],["transparent","Transparent"],["ink","Transparent, logo noir"],["white","Blanc, logo noir"]] },
     { t:"btns", b:[["Image PNG", exportPNG, true], ["Vidéo WebM", exportVideo], ["favicon.svg", exportFavicon]] },
@@ -883,6 +906,7 @@ function buildPanel(){
           if (it.k === "preset" && PRESETS[sel.value]){ S.palette = PRESETS[sel.value].slice(); S.palette.forEach((hx, i) => { const sw = document.getElementById("sw" + i); if (sw) sw.value = hx.toLowerCase(); }); }
           if (it.k === "preset" || it.k === "mode" || it.k === "tone") updateColors();
           if (it.k === "autoZoom") applyZoomMode();
+          if (it.k === "scene" && SCENES[sel.value]){ applySettings(Object.assign(structuredClone(DEFAULTS), SCENES[sel.value].s, { scene:sel.value })); toast("Modèle chargé : " + SCENES[sel.value].nom); }
           if (it.k === "view") setView(sel.value);
           persist();
         });

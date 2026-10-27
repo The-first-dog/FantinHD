@@ -1,0 +1,13 @@
+{
+  "titre": "Titre de l'annonce",
+  "date": "2026-12-31 18:00",
+  "afficher": "jour",
+  "etiquette": "",
+  "texte": "Une ou deux phrases pour raconter la nouvelle.",
+  "image": "image.jpg",
+  "lien": {
+    "texte": "En savoir plus",
+    "url": "https://exemple.com"
+  },
+  "publie": true
+}

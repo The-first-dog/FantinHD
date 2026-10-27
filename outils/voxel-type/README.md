@@ -1,9 +1,24 @@
 # Voxel Type
 
-Outil pour fabriquer le logo FantinHD en pixels de verre avec rayons de lumière.
+Outil pour fabriquer le logo FantinHD, les images d'annonce et les affiches de jeu, en pixels de verre avec des rayons de lumière. **Il n'est pas publié sur le site** : il reste dans le dépôt.
 
-- En ligne : https://the-first-dog.github.io/FantinHD/outils/voxel-type/
-- En local : télécharge `index.html` et ouvre-le dans Chrome ou Edge (connexion internet nécessaire pour la 3D).
-- Réglages officiels du logo : `reglages-fantinhd.txt` (Réglages → Export → Importer réglages).
+## Utilisation
 
-- Retour à la ligne : tape « | » dans le texte (ex. `Clean|Glass`). Chaque ligne est centrée.
+1. Télécharge `index.html` (bouton **Download raw file** sur GitHub) et ouvre-le dans Chrome ou Edge. Il faut une connexion internet pour la 3D.
+2. **Réglages → Modèle → Partir de** : choisis un modèle.
+   - **Logo FantinHD**, **Logo blanc sans rayons** (en-tête)
+   - **Annonce** (16:9, 1600 px) : FantinHD, Farkle, Clean Glass, 3 200 000, 2:00:00, texte libre
+   - **Affiche de jeu** (2:3, 1200 px) : Farkle, Clean Glass, 3 200 000 (3.2M), 2:00:00
+3. Change le texte en bas. Tape `|` pour aller à la ligne (ex. `Clean|Glass`) : chaque ligne est centrée.
+4. Exporte avec **PNG ↓** (en haut à droite) ou **Réglages → Export → Image PNG**.
+
+## Réglages sauvegardés
+
+Le dossier `reglages/` contient un fichier par modèle. Pour en recharger un : **Réglages → Export → Importer réglages**. Pour garder un nouveau réglage : **Exporter réglages .txt**, puis range le fichier dans `reglages/`.
+
+## Raccourcis utiles
+
+- **À plat** : remet le texte de face.
+- **Clic sur un pixel** : il prend la couleur suivante de la palette.
+- **Réglages → Vue → Zoom auto** : cadre les lettres seules ou les lettres avec leurs rayons.
+- **Réglages → Couleurs → Teinte** : couleur, noir et blanc, blanc pur.
