@@ -42,7 +42,7 @@ const news = [
   { date:"En développement", title:"2:00:00 arrive sur Steam", text:"Une expérience minimaliste autour de l'attente et du hasard, en préparation pour Steam.", img:"assets/images/visuels/2-00-00.jpg" },
   { date:"Août 2026", title:"Farkle : boutique et nouveau look", text:"Grosse mise à jour : une boutique de skins cosmétiques et une refonte visuelle façon taverne en bois.", img:"assets/images/visuels/farkle.jpg" },
   { date:"Juin 2026", title:"Farkle sort sur Google Play", text:"Le jeu de dés médiéval est disponible sur Android.", img:"assets/images/visuels/farkle.jpg" },
-  { date:"Mai 2026", title:"Clean Glass sort sur Google Play", text:"Premier jeu FantinHD sur Google Play : un jeu de nettoyage relaxant.", img:"assets/images/visuels/clean-glass.jpg" }
+  { date:"Mai 2026", title:"Clean Glass sort sur Google Play", text:"Le jeu de nettoyage relaxant est disponible sur Android.", img:"assets/images/visuels/clean-glass.jpg" }
 ];
 
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; };
