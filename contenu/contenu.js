@@ -104,7 +104,7 @@ window.FANTINHD_CONTENU = {
    "id": "2026-10-27_1900_2-00-00-steam",
    "tri": "2026-10-27T19:00",
    "date_affichee": "À venir",
-   "titre": "2:00:00 arrive sur Steam",
+   "titre": "2:00:00 prévu pour novembre sur Steam",
    "texte": "Une expérience minimaliste autour de l'attente et du hasard, en préparation pour Steam.",
    "image": "contenu/annonces/2026-10-27_1900_2-00-00-steam/image.jpg",
    "lien": null
