@@ -87,7 +87,7 @@ input[type=checkbox]{accent-color:var(--fg);width:15px;height:15px;margin:0;just
 
 <div class="bottom">
   <label for="txt" class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Texte</label>
-  <input id="txt" type="text" maxlength="40" autocomplete="off" spellcheck="false" value="FantinHD" placeholder="Tape ton texte">
+  <input id="txt" type="text" maxlength="40" autocomplete="off" spellcheck="false" value="FantinHD" placeholder="Tape ton texte (| pour aller à la ligne)">
 </div>
 
 <div class="ui stats-l" id="statV">Voxels · 0</div>
@@ -306,7 +306,7 @@ const rayMat = new THREE.ShaderMaterial({
     }`
 });
 
-let voxMesh = null, rayMesh = null, cells = [], layoutW = 0, charX = [], charBorn = [], prevChars = [];
+let voxMesh = null, rayMesh = null, cells = [], layoutW = 0, layoutCY = 3, charX = [], charBorn = [], prevChars = [];
 const tmpM = new THREE.Matrix4(), tmpQ = new THREE.Quaternion(), tmpV = new THREE.Vector3(), tmpS = new THREE.Vector3(), Z = new THREE.Vector3(0,0,1);
 
 function hash(a, b, c, d){
@@ -322,19 +322,25 @@ function canKern(prev, next){
   return a.length && b.length && !a.some(r => b.some(q => Math.abs(r - q) <= 1));
 }
 
+// « | » passe à la ligne : chaque ligne est centrée, 2 rangées d'écart entre les lignes
 function layout(text){
-  const chars = [...text.normalize("NFD").replace(/[̀-ͯ]/g, "")];
-  const out = []; const xs = []; let x = 0, prev = null;
+  const chars = [...text.normalize("NFD").replace(/[\u0300-\u036f]/g, "")];
+  const out = []; const xs = []; let x = 0, prev = null, line = 0, lineStart = 0;
+  const widths = [];
   chars.forEach((ch, i) => {
+    if (ch === "|"){ widths[line] = x; line++; x = 0; prev = null; xs[i] = 0; return; }
     const gl = G[ch] || G[ch.toUpperCase()];
     if (!gl){ xs[i] = x; x += 3; prev = null; return; }
     if (prev){ x += (S.kern && canKern(prev, gl)) ? 0 : 1; }
     xs[i] = x;
     const w = gl[0].length;
-    gl.forEach((row, r) => { for (let c = 0; c < w; c++) if (row[c] === "#") out.push({ i, r, c, x:x + c, gw:w }); });
+    gl.forEach((row, r) => { for (let c = 0; c < w; c++) if (row[c] === "#") out.push({ i, r, c, x:x + c, gw:w, line, ry:r + line * 9 }); });
     x += w; prev = gl;
   });
-  return { cells:out, width:x, chars, xs };
+  widths[line] = x;
+  const width = Math.max(...widths);
+  for (const cell of out) cell.x += (width - widths[cell.line]) / 2;
+  return { cells:out, width, rows:(line + 1) * 9 - 2, chars, xs };
 }
 
 const pal = () => S.palette.map(h => new THREE.Color(h));
@@ -371,7 +377,7 @@ function updateMatrices(){
   tmpQ.setFromUnitVectors(Z, rayDirVec());
   const idQ = new THREE.Quaternion();
   cells.forEach((cell, k) => {
-    tmpV.set(cell.x - (layoutW - 1) / 2, 3 - cell.r, 0);
+    tmpV.set(cell.x - (layoutW - 1) / 2, layoutCY - cell.ry, 0);
     voxMesh.setMatrixAt(k, tmpM.compose(tmpV, idQ, tmpS.set(s, s, S.depth)));
     rayMesh.setMatrixAt(k, tmpM.compose(tmpV, tmpQ, tmpS.set(1, 1, 1)));
   });
@@ -400,7 +406,7 @@ function updateBorn(){
 
 function rebuild(){
   const L = layout(S.text);
-  cells = L.cells; layoutW = L.width; charX = L.xs;
+  cells = L.cells; layoutW = L.width; layoutCY = (L.rows - 1) / 2; charX = L.xs;
   const t = now();
   charBorn = L.chars.map((ch, i) => (prevChars[i] === ch && charBorn[i] !== undefined) ? charBorn[i] : (reduced ? -10 : t));
   prevChars = L.chars;
@@ -428,12 +434,12 @@ function rebuild(){
 /* ---------- Caméra ---------- */
 let fitBase = 1;
 function fitDist(aspect){
-  const W = Math.max(layoutW, 6) + 3, H = 11;
+  const W = Math.max(layoutW, 6) + 3, H = layoutCY * 2 + 5;
   const tv = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
   return Math.max((W / 2) / (tv * aspect), (H / 2) / tv) * 1.12;
 }
 function fitHalfH(aspect){
-  const W = Math.max(layoutW, 6) + 3, H = 11;
+  const W = Math.max(layoutW, 6) + 3, H = layoutCY * 2 + 5;
   return Math.max(H / 2, (W / 2) / aspect) * 1.12;
 }
 function setOrtho(aspect){
@@ -467,7 +473,7 @@ function computeBounds(){
   const L = [], R = [], s = 1 - S.gap, hz = S.depth / 2, D = rayDirVec();
   const rnd = voxMesh ? voxMesh.geometry.getAttribute("aRand") : null;
   cells.forEach((cell, k) => {
-    const x = cell.x - (layoutW - 1) / 2, y = 3 - cell.r;
+    const x = cell.x - (layoutW - 1) / 2, y = layoutCY - cell.ry;
     for (const dx of [-s / 2, s / 2]) for (const dy of [-s / 2, s / 2]) for (const dz of [-hz, hz]) L.push(new THREE.Vector3(x + dx, y + dy, dz));
     if (S.rays && S.rayInt > 0){
       // au-delà de 75 % de sa longueur, un rayon est presque invisible : on ne le cadre pas
