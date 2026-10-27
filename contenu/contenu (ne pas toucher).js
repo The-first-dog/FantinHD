@@ -1,4 +1,4 @@
-// Fichier GÉNÉRÉ par outils/construire-contenu.mjs à partir du dossier contenu/.
+// Fichier GÉNÉRÉ automatiquement à partir du dossier contenu/ (NE PAS TOUCHER).
 // Ne pas le modifier à la main : il est refait automatiquement sur GitHub.
 window.FANTINHD_CONTENU = {
  "site": {

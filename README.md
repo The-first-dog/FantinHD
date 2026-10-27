@@ -14,7 +14,7 @@ Tout se passe dans le dossier [`contenu/`](contenu/LISEZMOI.md), sans toucher au
 - un jeu = un dossier dans `contenu/jeux/` ;
 - les textes généraux sont dans `contenu/site.json`.
 
-À chaque modification de `contenu/` sur GitHub, l'action « Mettre à jour le contenu du site » reconstruit `contenu/contenu.js`, et le site se met à jour en 1 à 2 minutes. Le mode d'emploi complet est dans [`contenu/LISEZMOI.md`](contenu/LISEZMOI.md).
+À chaque modification de `contenu/` sur GitHub, l'action « Mettre à jour le contenu du site » reconstruit `contenu/contenu (ne pas toucher).js`, et le site se met à jour en 1 à 2 minutes. Le mode d'emploi complet est dans [`contenu/LISEZMOI.md`](contenu/LISEZMOI.md).
 
 ## L'accueil : logo 3D interactif
 
@@ -29,16 +29,27 @@ Réglages de l'effet : constante `AURA` dans le script en bas de `index.html`.
 
 ## Fichiers
 
+### Ce que tu peux modifier
+
 | Fichier | Rôle |
 | --- | --- |
-| `index.html` | Structure de la page et logo 3D |
-| `styles.css` | Mise en page, typographie, responsive |
-| `app.js` | Affiche le contenu de `contenu/`, menu mobile, actualités |
-| `contenu/` | Tout le contenu modifiable ([mode d'emploi](contenu/LISEZMOI.md)) |
-| `assets/logo/` | Logos (complet, lettres, blanc avec aura) et image de partage |
-| `outils/construire-contenu.mjs` | Construit `contenu/contenu.js` à partir de `contenu/` |
-| `outils/voxel-type/` | Outil 3D pour fabriquer le logo, les images d'annonce et les affiches (non publié sur le site) |
-| `.github/workflows/contenu.yml` | Mise à jour automatique du contenu |
-| `_config.yml` | Dossiers exclus du site publié (`outils/`, modèles) |
+| `contenu/` | Tout le contenu : annonces, liens, jeux, textes ([mode d'emploi](contenu/LISEZMOI.md)) |
+| `assets/logo/` | Logos et image de partage (remplace une image en gardant le même nom) |
+| `outils/voxel-type/reglages/` | Réglages sauvegardés de l'outil d'images |
+
+### À ne pas toucher
+
+Les fichiers qui portent « (ne pas toucher) » dans leur nom font tourner le site. Trois autres doivent garder leur nom exact pour que GitHub les reconnaisse, ils sont donc signalés ici et par un avertissement en haut du fichier :
+
+| Fichier | Rôle |
+| --- | --- |
+| `index.html` | Structure de la page et logo 3D (nom imposé par GitHub Pages) |
+| `_config.yml` | Dossiers exclus du site publié (nom imposé par GitHub Pages) |
+| `.github/workflows/contenu.yml` | Mise à jour automatique du contenu (dossier imposé par GitHub) |
+| `styles (ne pas toucher).css` | Mise en page, typographie, responsive |
+| `app (ne pas toucher).js` | Affiche le contenu de `contenu/`, menu mobile, actualités |
+| `contenu/contenu (ne pas toucher).js` | Fabriqué automatiquement à partir de `contenu/` |
+| `outils/construire-contenu (ne pas toucher).mjs` | Fabrique le fichier ci-dessus |
+| `outils/voxel-type/index.html` | L'outil d'images : à télécharger et ouvrir, pas à modifier |
 
 © Fantin HD, tous droits réservés.
