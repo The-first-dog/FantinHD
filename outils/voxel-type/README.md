@@ -8,7 +8,7 @@ Outil pour fabriquer le logo Fantin HD, les images d'annonce et les affiches de 
 2. **Réglages → Modèle → Partir de** : choisis un modèle.
    - **Logo Fantin HD**, **Logo blanc sans rayons** (en-tête)
    - **Annonce** (16:9, 1600 px) : Fantin HD, Farkle, Clean Glass, 3 200 000, 2:00:00, texte libre
-   - **Affiche de jeu** (2:3, 1200 px) : Farkle, Clean Glass, 3 200 000 (3.2M), 2:00:00
+   - **Affiche de jeu** (2:3, 1800 px) : Farkle, Clean Glass, 3 200 000 (3.2M), 2:00:00
 3. Change le texte en bas. Tape `|` pour aller à la ligne (ex. `Clean|Glass`) : chaque ligne est centrée.
 4. Exporte avec **PNG ↓** (en haut à droite) ou **Réglages → Export → Image PNG**.
 

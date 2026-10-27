@@ -53,7 +53,7 @@ for (const g of C.jeux || []){
   const art = el("article", "project");
   const wrap = g.lien ? anchor("project__poster", "", { url:g.lien.url, nouvel_onglet:true }) : el("div", "project__poster");
   if (g.lien) wrap.setAttribute("aria-label", g.titre + " : " + g.lien.texte);
-  const img = el("img"); img.src = g.affiche; img.alt = "Affiche de " + g.titre; img.loading = "lazy"; img.width = 800; img.height = 1200;
+  const img = el("img"); img.src = g.affiche; img.alt = "Affiche de " + g.titre; img.loading = "lazy"; img.width = 1200; img.height = 1800;
   wrap.append(img);
 
   const body = el("div", "project__body");
