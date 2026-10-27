@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>FantinHD — Jeux indépendants</title>
-<meta name="description" content="FantinHD, développeur indépendant de jeux Android et PC. Farkle et Clean Glass sur Google Play, 3 200 000 en développement, 2:00:00 bientôt sur Steam.">
+<title>Fantin HD — Jeux indépendants</title>
+<meta name="description" content="Fantin HD, développeur indépendant de jeux Android et PC. Farkle et Clean Glass sur Google Play, 3 200 000 en développement, 2:00:00 bientôt sur Steam.">
 <meta name="theme-color" content="#000000">
 <meta property="og:type" content="website">
-<meta property="og:title" content="FantinHD — Jeux indépendants">
+<meta property="og:title" content="Fantin HD — Jeux indépendants">
 <meta property="og:description" content="Des jeux nés d'une simple idée.">
 <meta property="og:image" content="https://the-first-dog.github.io/FantinHD/assets/logo/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -24,7 +24,7 @@
 <header class="header" id="header">
   <div class="header__row">
     <button class="burger" id="menu-btn" type="button" aria-expanded="false" aria-controls="menu" aria-label="Ouvrir le menu"><span></span><span></span></button>
-    <a href="#accueil" class="header__logo" aria-label="FantinHD, accueil"><img src="assets/logo/logo-blanc-aura.png" alt="FantinHD" width="1400" height="395"></a>
+    <a href="#accueil" class="header__logo" aria-label="Fantin HD, accueil"><img src="assets/logo/logo-blanc-aura.png" alt="Fantin HD" width="1500" height="407"></a>
     <nav class="nav" aria-label="Navigation principale">
       <a href="#accueil" class="is-active">Accueil</a>
       <a href="#jeux">Jeux</a>
@@ -46,9 +46,9 @@
 
 <main id="main">
   <section class="hero" id="accueil" aria-labelledby="hero-title">
-    <h1 id="hero-title" class="sr-only">FantinHD</h1>
+    <h1 id="hero-title" class="sr-only">Fantin HD</h1>
     <div class="hero__stage" id="hero-stage">
-      <img class="hero__fallback" src="assets/logo/logo-complet.png" alt="Logo FantinHD : des lettres en pixels de verre colorés, avec des rayons de lumière" width="1600" height="900">
+      <img class="hero__fallback" src="assets/logo/logo-complet.png" alt="Logo Fantin HD : des lettres en pixels de verre colorés, avec des rayons de lumière" width="1600" height="900">
       <canvas class="hero__canvas" id="logo3d" aria-hidden="true"></canvas>
     </div>
     <p class="hero__tagline" id="hero-tagline">Des jeux nés d'une simple <strong>idée</strong></p>
@@ -78,7 +78,7 @@
     <div class="about__inner">
       <h2 class="about__title" id="about-title">Un développeur,<br><strong>plusieurs mondes</strong></h2>
       <div id="about-text">
-      <p>FantinHD, c'est mon nom de développeur. Je crée des jeux indépendants sur Android et je prépare mon premier jeu sur Steam, sans m'enfermer dans un genre : un jeu de dés médiéval, un jeu de nettoyage relaxant, 3 200 000 blocs à détruire, une expérience autour de l'attente et du hasard.</p>
+      <p>Fantin HD, c'est mon nom de développeur. Je crée des jeux indépendants sur Android et je prépare mon premier jeu sur Steam, sans m'enfermer dans un genre : un jeu de dés médiéval, un jeu de nettoyage relaxant, 3 200 000 blocs à détruire, une expérience autour de l'attente et du hasard.</p>
       <p>Farkle et Clean Glass sont déjà disponibles sur Google Play. 3 200 000 est en développement sur Android, et 2:00:00 sortira sur Steam.</p>
       </div>
       <a class="btn-outline" id="about-btn" href="https://play.google.com/store/apps/dev?id=8088754359282570640" target="_blank" rel="noopener noreferrer">Mes jeux sur Google Play</a>
@@ -88,8 +88,8 @@
 
 <footer class="footer">
   <div class="footer__top">
-    <p class="footer__legal" id="footer-legal">© <span id="year">2026</span> FantinHD. Farkle, Clean Glass, 3 200 000, 2:00:00 et le logo FantinHD sont des créations de FantinHD. Tous droits réservés.</p>
-    <img class="footer__logo" src="assets/logo/logo-blanc-aura.png" alt="FantinHD" width="1400" height="395" loading="lazy">
+    <p class="footer__legal" id="footer-legal">© <span id="year">2026</span> Fantin HD. Farkle, Clean Glass, 3 200 000, 2:00:00 et le logo Fantin HD sont des créations de Fantin HD. Tous droits réservés.</p>
+    <img class="footer__logo" src="assets/logo/logo-blanc-aura.png" alt="Fantin HD" width="1500" height="407" loading="lazy">
   </div>
   <nav class="footer__links" aria-label="Liens" id="footer-links">
     <a href="#accueil" id="footer-top">Haut de page</a>
@@ -115,7 +115,7 @@ import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 
 const S = {
-  text:"FantinHD", palette:["#FDCB0B","#FF7A10","#F6033A","#FA4FF5","#7E1AFC","#2A0BF5"], seed:7, kern:true,
+  text:"Fantin HD", palette:["#FDCB0B","#FF7A10","#F6033A","#FA4FF5","#7E1AFC","#2A0BF5"], seed:7, kern:true,
   gap:0.1, depth:1.6, opacity:1, border:0.13, bright:2,
   rayLen:12.3, rayInt:0.44, rayDir:237, rayTilt:0, rayWidth:0.76, raySpread:2.35, rayFall:1.87,
   bloom:0.16, bloomRadius:0.04, bloomThr:0, exposure:1.43, margin:0.5
@@ -149,6 +149,7 @@ const canKern = (p, n) => { const a = edgeRows(p, p[0].length - 1), b = edgeRows
 
 const cells = []; let width = 0, prev = null;
 [...S.text].forEach((ch, i) => {
+  if (ch === " "){ width += 3; prev = null; return; }
   const gl = G[ch];
   if (prev) width += (S.kern && canKern(prev, gl)) ? 0 : 1;
   gl.forEach((row, r) => { for (let c = 0; c < row.length; c++) if (row[c] === "#") cells.push({ i, r, c, x:width + c, gw:row.length }); });

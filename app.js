@@ -1,6 +1,6 @@
 "use strict";
 /*
- * FantinHD — affiche le contenu du dossier contenu/ et gère les petites interactions.
+ * Fantin HD — affiche le contenu du dossier contenu/ et gère les petites interactions.
  * Le contenu (textes, liens, jeux, annonces) vient de contenu/contenu.js, construit
  * automatiquement à partir des fichiers de contenu/ : voir contenu/LISEZMOI.md.
  */

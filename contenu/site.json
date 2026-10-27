@@ -6,7 +6,7 @@
   "a_propos": {
     "titre": "Un développeur,\n**plusieurs mondes**",
     "paragraphes": [
-      "FantinHD, c'est mon nom de développeur. Je crée des jeux indépendants sur Android et je prépare mon premier jeu sur Steam, sans m'enfermer dans un genre : un jeu de dés médiéval, un jeu de nettoyage relaxant, 3 200 000 blocs à détruire, une expérience autour de l'attente et du hasard.",
+      "Fantin HD, c'est mon nom de développeur. Je crée des jeux indépendants sur Android et je prépare mon premier jeu sur Steam, sans m'enfermer dans un genre : un jeu de dés médiéval, un jeu de nettoyage relaxant, 3 200 000 blocs à détruire, une expérience autour de l'attente et du hasard.",
       "Farkle et Clean Glass sont déjà disponibles sur Google Play. 3 200 000 est en développement sur Android, et 2:00:00 sortira sur Steam."
     ],
     "bouton": {
@@ -14,5 +14,5 @@
       "url": "https://play.google.com/store/apps/dev?id=8088754359282570640"
     }
   },
-  "mentions": "© {annee} FantinHD. Farkle, Clean Glass, 3 200 000, 2:00:00 et le logo FantinHD sont des créations de FantinHD. Tous droits réservés."
+  "mentions": "© {annee} Fantin HD. Farkle, Clean Glass, 3 200 000, 2:00:00 et le logo Fantin HD sont des créations de Fantin HD. Tous droits réservés."
 }

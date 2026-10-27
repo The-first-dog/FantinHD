@@ -1,9 +1,9 @@
-# FantinHD — Site officiel
+# Fantin HD — Site officiel
 
-Site vitrine de **FantinHD**, développeur indépendant de jeux Android et PC.
+Site vitrine de **Fantin HD**, développeur indépendant de jeux Android et PC.
 
 - **Site :** https://the-first-dog.github.io/FantinHD/ (GitHub Pages, branche `main`, dossier `/`)
-- **Style :** sobre et centré, inspiré de la mise en page du site d'Embark Studios. Le code, les textes et les visuels sont propres à FantinHD.
+- **Style :** sobre et centré, inspiré de la mise en page du site d'Embark Studios. Le code, les textes et les visuels sont propres à Fantin HD.
 
 ## Modifier le contenu (annonces, liens, jeux, textes)
 
@@ -41,4 +41,4 @@ Réglages de l'effet : constante `AURA` dans le script en bas de `index.html`.
 | `.github/workflows/contenu.yml` | Mise à jour automatique du contenu |
 | `_config.yml` | Dossiers exclus du site publié (`outils/`, modèles) |
 
-© FantinHD, tous droits réservés.
+© Fantin HD, tous droits réservés.

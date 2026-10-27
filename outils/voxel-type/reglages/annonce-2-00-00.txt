@@ -1,13 +1,13 @@
 {
   "text": "2:00:00",
-  "preset": "fantinhd",
+  "preset": "vide",
   "palette": [
-    "#FDCB0B",
-    "#FF7A10",
-    "#F6033A",
-    "#FA4FF5",
-    "#7E1AFC",
-    "#2A0BF5"
+    "#FFFFFF",
+    "#FAF9F6",
+    "#FDFBF4",
+    "#FFF6E5",
+    "#F2EEE3",
+    "#E9E3D6"
   ],
   "mode": "logo",
   "tone": "color",
