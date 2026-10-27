@@ -9,7 +9,7 @@ window.FANTINHD_CONTENU = {
   "a_propos": {
    "titre": "Un développeur,\n**plusieurs mondes**",
    "paragraphes": [
-    "FantinHD, c'est mon nom de développeur. Je crée des jeux indépendants sur Android et je prépare mon premier jeu sur Steam, sans m'enfermer dans un genre : un jeu de dés médiéval, un jeu de nettoyage relaxant, 3 200 000 blocs à détruire, une expérience autour de l'attente et du hasard.",
+    "Fantin HD, c'est mon nom de développeur. Je crée des jeux indépendants sur Android et je prépare mon premier jeu sur Steam, sans m'enfermer dans un genre : un jeu de dés médiéval, un jeu de nettoyage relaxant, 3 200 000 blocs à détruire, une expérience autour de l'attente et du hasard.",
     "Farkle et Clean Glass sont déjà disponibles sur Google Play. 3 200 000 est en développement sur Android, et 2:00:00 sortira sur Steam."
    ],
    "bouton": {
@@ -17,7 +17,7 @@ window.FANTINHD_CONTENU = {
     "url": "https://play.google.com/store/apps/dev?id=8088754359282570640"
    }
   },
-  "mentions": "© {annee} FantinHD. Farkle, Clean Glass, 3 200 000, 2:00:00 et le logo FantinHD sont des créations de FantinHD. Tous droits réservés."
+  "mentions": "© {annee} Fantin HD. Farkle, Clean Glass, 3 200 000, 2:00:00 et le logo Fantin HD sont des créations de Fantin HD. Tous droits réservés."
  },
  "liens": [
   {
@@ -113,7 +113,7 @@ window.FANTINHD_CONTENU = {
    "id": "2026-10-27_1800_nouveau-site",
    "tri": "2026-10-27T18:00",
    "date_affichee": "27 octobre 2026",
-   "titre": "Nouveau site FantinHD",
+   "titre": "Nouveau site Fantin HD",
    "texte": "Le site officiel fait peau neuve, avec le logo en pixels de verre et tous les jeux au même endroit.",
    "image": "contenu/annonces/2026-10-27_1800_nouveau-site/image.jpg",
    "lien": null

@@ -1,5 +1,5 @@
 {
-  "text": "FantinHD",
+  "text": "Fantin HD",
   "preset": "fantinhd",
   "palette": [
     "#FDCB0B",

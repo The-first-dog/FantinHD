@@ -1,4 +1,4 @@
-# Gérer le contenu du site FantinHD
+# Gérer le contenu du site Fantin HD
 
 Tout le contenu du site est dans ce dossier `contenu/`. Tu n'as **jamais besoin de toucher au code**.
 
