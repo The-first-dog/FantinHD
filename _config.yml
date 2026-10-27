@@ -3,6 +3,7 @@
 # L'outil Voxel Type et les modèles restent dans GitHub, mais ne sont pas accessibles en ligne.
 exclude:
   - outils
+  - icones
   - contenu/_modeles
   - .github
   - README.md

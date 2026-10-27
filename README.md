@@ -35,6 +35,7 @@ Réglages de l'effet : constante `AURA` dans le script en bas de `index.html`.
 | --- | --- |
 | `contenu/` | Tout le contenu : annonces, liens, jeux, textes ([mode d'emploi](contenu/LISEZMOI.md)) |
 | `assets/logo/` | Logos et image de partage (remplace une image en gardant le même nom) |
+| `icones/` | Icône de développeur et image d'en-tête pour Google Play ([détails](icones/LISEZMOI.md)) |
 | `outils/voxel-type/reglages/` | Réglages sauvegardés de l'outil d'images |
 
 ### À ne pas toucher
