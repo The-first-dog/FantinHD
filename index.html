@@ -300,7 +300,7 @@ cells.forEach((cell, k) => {
 scene.add(vox, rays);
 
 // Cadrage façon Embark : le nom est centré horizontalement ET verticalement dans la zone,
-// et prend 86 % de la largeur sur mobile, 52 % sur tablette, 36 % sur grand écran.
+// et prend 92 % de la largeur sur mobile, 64 % sur tablette, 48 % sur grand écran.
 // La zone contient les rayons en entier (jusqu'à ce qu'ils s'éteignent) : aucune lumière
 // n'est coupée par un bord, ce qui évite les traînées du halo sur les bords.
 let lx0 = Infinity, lx1 = -Infinity, ly0 = Infinity, ly1 = -Infinity, ry0 = Infinity;
@@ -318,8 +318,8 @@ function resize(){
   const w = Math.max(1, stage.getBoundingClientRect().width);
   if (Math.abs(w - lastW) < 1 && lastW) return;
   lastW = w;
-  const frac = w < 640 ? .86 : w < 1100 ? .52 : .36;
-  const scale = Math.min(w * frac, 760) / lettersW;           // pixels par cube
+  const frac = w < 640 ? .92 : w < 1100 ? .64 : .48;
+  const scale = Math.min(w * frac, 1000) / lettersW;           // pixels par cube
   const h = Math.round(Math.max(halfSpan * 2 * scale, 160));
   stage.style.height = h + "px";
   // la phrase remonte dans la partie basse où les rayons s'éteignent, pour rester proche du nom
