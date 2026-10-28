@@ -73,7 +73,8 @@ a.project__poster:hover img{transform:scale(1.03)}
 
 .news{position:relative;max-width:var(--max);margin:0 auto;padding:0 var(--gut-r) 0 var(--gut)}
 .news__controls{display:flex;justify-content:flex-end;gap:10px;margin-bottom:28px}
-.round{width:52px;height:52px;border-radius:50%;border:0;background:#2b2b2b;font-size:20px;cursor:pointer;transition:background .2s}
+.round{width:52px;height:52px;padding:0;display:grid;place-items:center;border-radius:50%;border:0;background:#2b2b2b;color:var(--fg);cursor:pointer;transition:background .2s}
+.round svg{display:block}
 .round:hover{background:#444}
 .round:disabled{opacity:.35;cursor:default}
 .news__track{--gap:clamp(20px, 2.4vw, 36px);list-style:none;margin:0;padding:0 0 8px;display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 3 * var(--gap)) / 4);gap:var(--gap);overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
