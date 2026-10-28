@@ -45,14 +45,14 @@ strong{font-weight:700}
 .menu a{font-size:28px;line-height:1.6;text-decoration:none}
 
 /* ---------- Accueil ---------- */
-.hero{padding:calc(var(--head) + env(safe-area-inset-top, 0px) + 24px) 0 0;text-align:center}
-.hero__stage{position:relative;height:clamp(320px, 62svh, 680px);max-width:1440px;margin:0 auto;touch-action:pan-y}
+.hero{padding:calc(var(--head) + env(safe-area-inset-top, 0px) + clamp(24px, 6vh, 72px)) 0 0;text-align:center}
+.hero__stage{position:relative;height:clamp(260px, 50svh, 560px);margin:0 auto;touch-action:pan-y;overflow:hidden}
 .hero__fallback,.hero__canvas{position:absolute;inset:0;width:100%;height:100%}
 .hero__fallback{object-fit:contain;transition:opacity .4s}
-.hero__canvas{opacity:0;transition:opacity .6s;-webkit-mask-image:radial-gradient(ellipse 72% 70% at 50% 45%, #000 55%, transparent 100%);mask-image:radial-gradient(ellipse 72% 70% at 50% 45%, #000 55%, transparent 100%)}
+.hero__canvas{opacity:0;transition:opacity .6s;-webkit-mask-image:linear-gradient(to right, transparent, #000 10%, #000 90%, transparent), linear-gradient(to bottom, transparent, #000 14%, #000 62%, transparent);-webkit-mask-composite:source-in;mask-image:linear-gradient(to right, transparent, #000 10%, #000 90%, transparent), linear-gradient(to bottom, transparent, #000 14%, #000 62%, transparent);mask-composite:intersect}
 .hero__stage.is-live .hero__canvas{opacity:1}
 .hero__stage.is-live .hero__fallback{opacity:0}
-.hero__tagline{margin:8px 0 0;padding:0 var(--gut-r) 0 var(--gut);font-size:clamp(18px, 1.6vw, 22px);line-height:1.5}
+.hero__tagline{margin:-4px 0 0;padding:0 var(--gut-r) 0 var(--gut);font-size:clamp(18px, 1.6vw, 22px);line-height:1.5}
 
 /* ---------- Blocs ---------- */
 .block{padding:clamp(96px, 12vw, 160px) 0 0}
@@ -132,8 +132,8 @@ a.project__poster:hover img{transform:scale(1.03)}
   body{font-size:16px}
   .project{grid-template-columns:minmax(0, 1fr);gap:22px}
   .project__poster{width:min(100%, 360px);margin:0 auto}
-  .news__track{grid-auto-columns:82%}
-  .news__controls{justify-content:center;order:2;margin:24px 0 0}
+  .news__track{grid-auto-columns:100%;gap:var(--gut)}
+  .news__controls{justify-content:center;order:2;margin:28px 0 0}
   .news{display:flex;flex-direction:column}
   .about__inner{padding-left:0}
   .footer__top{flex-direction:column-reverse;align-items:flex-start}
