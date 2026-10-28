@@ -299,30 +299,35 @@ cells.forEach((cell, k) => {
 });
 scene.add(vox, rays);
 
-// Cadrage façon Embark : le nom est centré et prend presque toute la largeur (86 % sur mobile,
-// 62 % sur grand écran) ; les rayons peuvent sortir sur les côtés et se fondent dans le noir.
-// La hauteur de la zone s'adapte au logo pour ne pas laisser de vide.
+// Cadrage façon Embark : le nom est centré horizontalement ET verticalement dans la zone,
+// et prend 86 % de la largeur sur mobile, 52 % sur tablette, 36 % sur grand écran.
+// La zone contient les rayons en entier (jusqu'à ce qu'ils s'éteignent) : aucune lumière
+// n'est coupée par un bord, ce qui évite les traînées du halo sur les bords.
 let lx0 = Infinity, lx1 = -Infinity, ly0 = Infinity, ly1 = -Infinity, ry0 = Infinity;
 for (let k = 0; k < pts.length; k += 8){
   lx0 = Math.min(lx0, pts[k]); ly1 = Math.max(ly1, pts[k + 1]); lx1 = Math.max(lx1, pts[k + 2]); ly0 = Math.min(ly0, pts[k + 3]);
   ry0 = Math.min(ry0, pts[k + 7]);
 }
 const lettersW = lx1 - lx0, cx = (lx0 + lx1) / 2;
-const top = ly1 + .6, bottom = ly0 - (ly0 - ry0) * .85;
+const cyL = (ly0 + ly1) / 2;
+const below = (cyL - ry0) / .75 + 1;              // les points de rayon sont à 75 % de leur longueur
+const halfSpan = Math.max(below, ly1 - cyL + 1);
 
 let dirty = true, lastW = 0;
 function resize(){
   const w = Math.max(1, stage.getBoundingClientRect().width);
   if (Math.abs(w - lastW) < 1 && lastW) return;
   lastW = w;
-  const frac = w < 640 ? .86 : w < 1100 ? .74 : .62;
-  const scale = Math.min(w * frac, 1180) / lettersW;          // pixels par cube
-  const h = Math.round(Math.min(Math.max((top - bottom) * scale, 220), innerHeight * .78));
+  const frac = w < 640 ? .86 : w < 1100 ? .52 : .36;
+  const scale = Math.min(w * frac, 760) / lettersW;           // pixels par cube
+  const h = Math.round(Math.max(halfSpan * 2 * scale, 160));
   stage.style.height = h + "px";
+  // la phrase remonte dans la partie basse où les rayons s'éteignent, pour rester proche du nom
+  const tag = document.getElementById("hero-tagline"); if (tag) tag.style.marginTop = -Math.round(h * .16) + "px";
   const pr = Math.min(devicePixelRatio || 1, 2);
   renderer.setPixelRatio(pr); renderer.setSize(w, h, false);
   composer.setPixelRatio(pr); composer.setSize(w, h);
-  const cy = (top + bottom) / 2, halfW = w / 2 / scale, halfH = h / 2 / scale;
+  const cy = cyL, halfW = w / 2 / scale, halfH = h / 2 / scale;
   camera.position.set(cx, cy, 60); camera.lookAt(cx, cy, 0);
   camera.left = -halfW; camera.right = halfW; camera.top = halfH; camera.bottom = -halfH;
   camera.updateProjectionMatrix();
