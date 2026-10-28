@@ -299,24 +299,37 @@ cells.forEach((cell, k) => {
 });
 scene.add(vox, rays);
 
-let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
-for (let k = 0; k < pts.length; k += 4){ x0 = Math.min(x0, pts[k]); y1 = Math.max(y1, pts[k + 1]); x1 = Math.max(x1, pts[k + 2]); y0 = Math.min(y0, pts[k + 3]); }
-const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, hw = (x1 - x0) / 2 * (1 + S.margin), hh = (y1 - y0) / 2 * (1 + S.margin);
-camera.position.set(cx, cy, 60); camera.lookAt(cx, cy, 0);
+// Cadrage façon Embark : le nom est centré et prend presque toute la largeur (86 % sur mobile,
+// 62 % sur grand écran) ; les rayons peuvent sortir sur les côtés et se fondent dans le noir.
+// La hauteur de la zone s'adapte au logo pour ne pas laisser de vide.
+let lx0 = Infinity, lx1 = -Infinity, ly0 = Infinity, ly1 = -Infinity, ry0 = Infinity;
+for (let k = 0; k < pts.length; k += 8){
+  lx0 = Math.min(lx0, pts[k]); ly1 = Math.max(ly1, pts[k + 1]); lx1 = Math.max(lx1, pts[k + 2]); ly0 = Math.min(ly0, pts[k + 3]);
+  ry0 = Math.min(ry0, pts[k + 7]);
+}
+const lettersW = lx1 - lx0, cx = (lx0 + lx1) / 2;
+const top = ly1 + .6, bottom = ly0 - (ly0 - ry0) * .85;
 
-let dirty = true;
+let dirty = true, lastW = 0;
 function resize(){
-  const r = stage.getBoundingClientRect();
-  const w = Math.max(1, r.width), h = Math.max(1, r.height), asp = w / h;
+  const w = Math.max(1, stage.getBoundingClientRect().width);
+  if (Math.abs(w - lastW) < 1 && lastW) return;
+  lastW = w;
+  const frac = w < 640 ? .86 : w < 1100 ? .74 : .62;
+  const scale = Math.min(w * frac, 1180) / lettersW;          // pixels par cube
+  const h = Math.round(Math.min(Math.max((top - bottom) * scale, 220), innerHeight * .78));
+  stage.style.height = h + "px";
   const pr = Math.min(devicePixelRatio || 1, 2);
   renderer.setPixelRatio(pr); renderer.setSize(w, h, false);
   composer.setPixelRatio(pr); composer.setSize(w, h);
-  const halfH = Math.max(hh, hw / asp);
-  camera.left = -halfH * asp; camera.right = halfH * asp; camera.top = halfH; camera.bottom = -halfH;
+  const cy = (top + bottom) / 2, halfW = w / 2 / scale, halfH = h / 2 / scale;
+  camera.position.set(cx, cy, 60); camera.lookAt(cx, cy, 0);
+  camera.left = -halfW; camera.right = halfW; camera.top = halfH; camera.bottom = -halfH;
   camera.updateProjectionMatrix();
   dirty = true;
 }
 new ResizeObserver(resize).observe(stage);
+addEventListener("resize", resize);
 resize();
 
 /* ---- Interaction ---- */
