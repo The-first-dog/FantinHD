@@ -9,7 +9,7 @@ window.FANTINHD_CONTENU = {
   "a_propos": {
    "titre": "Derrière **FantinHD**",
    "paragraphes": [
-    "Je suis **Fantin**, créateur de jeux indépendants derrière **FantinHD**.",
+    "Je suis **Fantin**, créateur de jeux indépendants.",
     "Mes projets naissent souvent d'une **mécanique** qui m'intrigue, d'un **défi technique** ou simplement d'une **idée** que j'ai envie de concrétiser.",
     "J'aime **expérimenter**, développer des **prototypes**, imaginer des **systèmes** et les améliorer au fil des essais. Certains projets restent simples, tandis que d'autres prennent une ampleur que je n'avais pas imaginée au départ.",
     "Je développe mes jeux **en solo**, sur **PC et mobile**, sans me limiter à un **genre** ou à une formule."
