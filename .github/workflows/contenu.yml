@@ -10,6 +10,8 @@ on:
       - "contenu/**"
       - "!contenu/contenu (ne pas toucher).js"
       - "outils/construire-contenu (ne pas toucher).mjs"
+      - "styles (ne pas toucher).css"
+      - "app (ne pas toucher).js"
   workflow_dispatch:
 
 permissions:
@@ -33,14 +35,14 @@ jobs:
       - name: Enregistrer sur main
         id: enregistrer
         run: |
-          if git diff --quiet -- "contenu/contenu (ne pas toucher).js"; then
+          if git diff --quiet -- "contenu/contenu (ne pas toucher).js" index.html; then
             echo "Le contenu est déjà à jour."
             echo "change=non" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "contenu/contenu (ne pas toucher).js"
+          git add "contenu/contenu (ne pas toucher).js" index.html
           git commit -m "Mettre à jour le contenu du site"
           git push
           echo "change=oui" >> "$GITHUB_OUTPUT"
