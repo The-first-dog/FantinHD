@@ -14,6 +14,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import crypto from "node:crypto";
 
 const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const CONTENU = path.join(RACINE, "contenu");
@@ -125,4 +126,21 @@ const js = "// Fichier GÉNÉRÉ automatiquement à partir du dossier contenu/ (
   "// Ne pas le modifier à la main : il est refait automatiquement sur GitHub.\n" +
   "window.FANTINHD_CONTENU = " + JSON.stringify(donnees, null, 1) + ";\n";
 fs.writeFileSync(SORTIE, js);
+
+/* ---------- Numéros de version dans index.html ----------
+   Chaque fichier reçoit « ?v=<empreinte> ». Quand son contenu change, l'adresse change,
+   donc les navigateurs téléchargent la nouvelle version au lieu de garder l'ancienne en mémoire. */
+const INDEX = path.join(RACINE, "index.html");
+const empreinte = f => crypto.createHash("sha1").update(fs.readFileSync(f)).digest("hex").slice(0, 10);
+let html = fs.readFileSync(INDEX, "utf8");
+for (const [fichier, adresse] of [
+  [path.join(RACINE, "styles (ne pas toucher).css"), "styles%20(ne%20pas%20toucher).css"],
+  [path.join(RACINE, "app (ne pas toucher).js"), "app%20(ne%20pas%20toucher).js"],
+  [SORTIE, "contenu/contenu%20(ne%20pas%20toucher).js"]
+]){
+  if (!fs.existsSync(fichier)) continue;
+  const motif = new RegExp(adresse.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(\\?v=[0-9a-f]+)?\"", "g");
+  html = html.replace(motif, adresse + "?v=" + empreinte(fichier) + '"');
+}
+fs.writeFileSync(INDEX, html);
 console.log(`Contenu construit : ${jeux.length} jeux, ${annonces.length} annonces, ${liens.length} liens → ${relatif(SORTIE)}`);
