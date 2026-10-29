@@ -1,13 +1,15 @@
 {
-  "accroche": "Des jeux nés d'une simple **idée**",
+  "accroche": "Une **idée**, un **prototype**, et tout ce qui vient **après**.",
   "titre_jeux": "Mes **jeux**",
   "titre_actualites": "En **ce moment**",
-  "phrase": "Je fais mes jeux seul, du premier prototype à la mise en ligne.\nChaque projet part d'une idée simple, poussée **jusqu'au bout**.",
+  "phrase": "Je **crée** des jeux indépendants sur **PC** et **mobile**. Je pars d'une idée, j'expérimente, je teste et je fais évoluer chaque projet à ma manière.",
   "a_propos": {
-    "titre": "Un développeur,\n**plusieurs mondes**",
+    "titre": "Derrière **FantinHD**",
     "paragraphes": [
-      "Fantin HD, c'est mon nom de développeur. Je crée des jeux indépendants sur Android et je prépare mon premier jeu sur Steam, sans m'enfermer dans un genre : un jeu de dés médiéval, un jeu de nettoyage relaxant, 3 200 000 blocs à détruire, une expérience autour de l'attente et du hasard.",
-      "Farkle et Clean Glass sont déjà disponibles sur Google Play. 3 200 000 est en développement sur Android, et 2:00:00 sortira sur Steam."
+      "Je suis **Fantin**, créateur de jeux indépendants derrière **FantinHD**.",
+      "Mes projets naissent souvent d'une **mécanique** qui m'intrigue, d'un **défi technique** ou simplement d'une **idée** que j'ai envie de concrétiser.",
+      "J'aime **expérimenter**, développer des **prototypes**, imaginer des **systèmes** et les améliorer au fil des essais. Certains projets restent simples, tandis que d'autres prennent une ampleur que je n'avais pas imaginée au départ.",
+      "Je développe mes jeux **en solo**, sur **PC et mobile**, sans me limiter à un **genre** ou à une formule."
     ],
     "bouton": {
       "texte": "Mes jeux sur Google Play",
