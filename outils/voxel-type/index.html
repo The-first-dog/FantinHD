@@ -73,6 +73,12 @@ input[type=checkbox]{accent-color:var(--fg);width:15px;height:15px;margin:0;just
   .brand{max-width:45vw}
 }
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
+body.is-white{background:#fff}
+body.is-white .brand,body.is-white .stats-l,body.is-white .stats-r{color:#111}
+body.is-white .frame{border-color:rgba(0,0,0,.14)}
+body.is-white #ctlBtn,body.is-white #txt,body.is-white .quick button:not(.primary){background:rgba(255,255,255,.75);color:#111;border-color:rgba(0,0,0,.4)}
+body.is-recording #gl{object-fit:contain;background:#000;cursor:default}
+body.is-recording.is-white #gl{background:#fff}
 </style>
 
 <canvas id="gl" aria-label="Texte en pixels de verre, en 3D. Glisser pour tourner, molette pour zoomer, clic sur un pixel pour changer sa couleur."></canvas>
@@ -202,7 +208,8 @@ const DEFAULTS = {
   rays:true, rayLen:12.3, rayInt:0.44, rayDir:237, rayTilt:0, rayWidth:0.76, raySpread:2.35, rayFall:1.87,
   bloom:0.16, bloomRadius:0.04, bloomThr:0, grain:0, exposure:1.43,
   view:"flat", lockRot:true, autoZoom:"off", zoomMargin:0.08, sway:true, speed:1.7,
-  fmt:"screen", res:"2160", bg:"transparent", overrides:{}, cam:null, scene:"logo"
+  fmt:"screen", res:"2160", bg:"transparent", overrides:{}, cam:null, scene:"logo",
+  vidBg:"black", vidFmt:"wide", vidRes:"1080", vidFps:"60", vidHold:2, vidFade:true, sound:true, volume:0.6, timbre:"verre"
 };
 /* Modèles : réglages de départ pour le logo, les images d'annonce (16:9) et les affiches de jeu (2:3).
    Chaque modèle part des réglages du logo officiel et ne change que ce qui est listé. */
@@ -221,7 +228,8 @@ const SCENES = {
   afficheFarkle:{ nom:"Affiche — Farkle", s:Object.assign({}, AFFICHE, { text:"Farkle", preset:"braise", palette:PAL.braise.slice() }) },
   afficheClean:{ nom:"Affiche — Clean Glass", s:Object.assign({}, AFFICHE, { text:"Clean|Glass", preset:"glace", palette:PAL.glace.slice() }) },
   affiche3200000:{ nom:"Affiche — 3 200 000 (3.2M)", s:Object.assign({}, AFFICHE, { text:"3.2M", preset:"vitrail", palette:PAL.vitrail.slice(), mode:"gradient" }) },
-  affiche2h:{ nom:"Affiche — 2:00:00", s:Object.assign({}, AFFICHE, { text:"2:00:00", preset:"vide", palette:PAL.vide.slice() }) }
+  affiche2h:{ nom:"Affiche — 2:00:00", s:Object.assign({}, AFFICHE, { text:"2:00:00", preset:"vide", palette:PAL.vide.slice() }) },
+  introJeu:{ nom:"Intro de jeu — Fantin HD (vidéo)", s:{ text:"Fantin HD", mode:"gradient", sway:false, lockRot:true, view:"flat", autoZoom:"letters", zoomMargin:0.35, vidFmt:"wide", vidRes:"1080", vidHold:2, vidFade:true, sound:true } }
 };
 const KEY = "fantinhd-voxel-type-v1";
 let S = structuredClone(DEFAULTS);
@@ -270,6 +278,23 @@ const grainPass = new ShaderPass({
 });
 composer.addPass(grainPass);
 composer.addPass(new OutputPass());
+// Fond de la vidéo : la lumière posée sur du blanc (blanc = 1 − luminosité + couleur), et fondu de fin
+const bgPass = new ShaderPass({
+  uniforms:{ tDiffuse:{value:null}, uWhite:{value:0}, uFade:{value:0} },
+  vertexShader:`varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
+  fragmentShader:`uniform sampler2D tDiffuse; uniform float uWhite, uFade; varying vec2 vUv;
+    void main(){ vec3 c=texture2D(tDiffuse,vUv).rgb*(1.-uFade); float a=max(c.r,max(c.g,c.b));
+      gl_FragColor=vec4(mix(c, clamp(c+(1.-a),0.,1.), uWhite),1.); }`
+});
+bgPass.enabled = false;
+composer.addPass(bgPass);
+let fadeStart = null;
+function applyBg(){
+  const white = S.vidBg === "white";
+  bgPass.uniforms.uWhite.value = white ? 1 : 0;
+  bgPass.enabled = white || bgPass.uniforms.uFade.value > 0;
+  document.body.classList.toggle("is-white", white);
+}
 
 const clock0 = performance.now();
 const now = () => (performance.now() - clock0) / 1000;
@@ -576,6 +601,7 @@ function stepFlat(){
 }
 
 function resize(){
+  if (recording) return;
   const w = innerWidth, h = innerHeight;
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.setSize(w, h, false);
@@ -604,10 +630,85 @@ function applyUniforms(){
   if (rayMesh) rayMesh.visible = S.rays;
 }
 
-function replay(){
-  const t = now() + .15, step = .03 / S.speed;
+function replay(delay = .15){
+  const t = now() + delay, step = .03 / S.speed;
   charBorn = charBorn.map((_, i) => t + (charX[i] || 0) * step);
   updateBorn();
+  playBirths(t - .01);
+}
+
+/* ---------- Son : chaque cube joue sa note en apparaissant ----------
+   Hauteur selon la rangée (en haut = aigu), accord qui change à chaque lettre, gamme pentatonique
+   (toutes les notes s'accordent entre elles), position stéréo selon la place du cube. */
+let actx = null, master = null, recDest = null;
+function audio(){
+  if (actx) return actx;
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) return null;
+  actx = new AC();
+  master = actx.createGain(); master.gain.value = S.volume;
+  const comp = actx.createDynamicsCompressor(); comp.threshold.value = -16; comp.ratio.value = 4;
+  // petite réverbération : échos filtrés qui s'éteignent
+  const wet = actx.createGain(); wet.gain.value = .3;
+  const delay = actx.createDelay(1); delay.delayTime.value = .17;
+  const fb = actx.createGain(); fb.gain.value = .35;
+  const lp = actx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 3000;
+  master.connect(comp); master.connect(wet); wet.connect(delay); delay.connect(lp); lp.connect(fb); fb.connect(delay); lp.connect(comp);
+  comp.connect(actx.destination);
+  recDest = actx.createMediaStreamDestination(); comp.connect(recDest);
+  return actx;
+}
+const SCALE = [0, 2, 4, 7, 9], CHORD = [0, 2, 4, 1, 3];
+const TIMBRES = {
+  verre:{ type:"sine", parts:[[1, 1, 1.5], [2.76, .32, .7], [5.4, .1, .35]] },
+  cloche:{ type:"sine", parts:[[1, 1, 2.2], [2, .45, 1.3], [3, .2, .8], [4.2, .12, .5]] },
+  harpe:{ type:"triangle", parts:[[1, 1, 1.1], [2, .25, .55]] }
+};
+function noteOf(cell){
+  const step = (6 - Math.min(cell.r, 8)) + CHORD[cell.i % CHORD.length];
+  const semis = SCALE[step % 5] + 12 * Math.floor(step / 5);
+  return 261.63 * Math.pow(2, semis / 12);
+}
+function chime(time, freq, pan, gain){
+  const T = TIMBRES[S.timbre] || TIMBRES.verre;
+  const out = actx.createGain(); out.gain.value = gain;
+  let node = out;
+  if (actx.createStereoPanner){ const p = actx.createStereoPanner(); p.pan.value = pan; out.connect(p); node = p; }
+  node.connect(master);
+  let end = time;
+  for (const [ratio, amp, decay] of T.parts){
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = T.type; o.frequency.value = freq * ratio * (1 + (Math.random() - .5) * .004);
+    g.gain.setValueAtTime(0, time);
+    g.gain.linearRampToValueAtTime(amp, time + .005);
+    g.gain.exponentialRampToValueAtTime(.0001, time + decay);
+    o.connect(g); g.connect(out);
+    o.start(time); o.stop(time + decay + .05);
+    end = Math.max(end, time + decay + .1);
+  }
+  setTimeout(() => { try { node.disconnect(); } catch (e) {} }, (end - actx.currentTime) * 1000 + 200);
+}
+function playBirths(fromTime){
+  if (!S.sound || !actx || actx.state !== "running" || !voxMesh) return;
+  const born = voxMesh.geometry.getAttribute("aBorn"), t0 = now(), base = actx.currentTime;
+  const cols = new Map();
+  cells.forEach((cell, k) => {
+    const b = born.getX(k);
+    if (b < fromTime) return;
+    const key = b.toFixed(3);
+    if (!cols.has(key)) cols.set(key, []);
+    cols.get(key).push(cell);
+  });
+  for (const [b, list] of cols){
+    const when = base + Math.max(0, +b - t0);
+    const gain = .2 / Math.sqrt(list.length);
+    for (const cell of list) chime(when, noteOf(cell), Math.max(-.7, Math.min(.7, (cell.x / Math.max(1, layoutW - 1)) * 1.4 - .7)), gain);
+  }
+}
+async function listen(){
+  const c = audio();
+  if (c){ try { await c.resume(); } catch (e) {} }
+  replay(.3);
 }
 
 /* ---------- Boucle ---------- */
@@ -617,6 +718,7 @@ function loop(){
   const t = now();
   voxMat.uniforms.uTime.value = rayMat.uniforms.uTime.value = t;
   grainPass.uniforms.uTime.value = t % 10;
+  if (fadeStart !== null){ bgPass.uniforms.uFade.value = Math.min(1, Math.max(0, (t - fadeStart) / .7)); bgPass.enabled = true; }
   if (S.sway && !reduced){ group.rotation.y = Math.sin(t * .4) * .28; group.rotation.x = Math.sin(t * .27) * .07; }
   else { group.rotation.y *= .88; group.rotation.x *= .88; }
   stepFlat();
@@ -691,12 +793,14 @@ function renderAt(w, h){
   perspCam.position.copy(controls.target).add(dir.setLength(fitDist(w / h) * k));
   setOrtho(w / h);
   autoFit(true);
+  const keepBg = bgPass.enabled; bgPass.enabled = false;
   const keepGrain = grainPass.uniforms.uGrain.value;
   if (S.bg !== "black") grainPass.uniforms.uGrain.value = 0;
   composer.render();
   const out = document.createElement("canvas"); out.width = w; out.height = h;
   const ctx = out.getContext("2d"); ctx.drawImage(renderer.domElement, 0, 0, w, h);
   grainPass.uniforms.uGrain.value = keepGrain;
+  bgPass.enabled = keepBg;
   perspCam.position.copy(controls.target).add(dir.setLength(dir.length() / fitDist(w / h) * fitDist(oldAsp)));
   renderer.setPixelRatio(pr); renderer.setSize(innerWidth, innerHeight, false);
   composer.setPixelRatio(pr); composer.setSize(innerWidth, innerHeight);
@@ -739,28 +843,59 @@ async function exportPNG(){
 }
 
 let recording = false;
+function videoSize(){
+  const L = +S.vidRes;   // plus petit côté
+  const asp = { screen:innerWidth / innerHeight, wide:16 / 9, vertical:9 / 16, square:1 }[S.vidFmt] || 16 / 9;
+  const even = n => Math.round(n / 2) * 2;
+  return asp >= 1 ? [even(L * asp), L] : [L, even(L / asp)];
+}
 async function exportVideo(){
   if (recording) return;
-  if (!window.MediaRecorder || !canvas.captureStream){ toast("Ce navigateur ne sait pas enregistrer de vidéo"); return; }
-  const mime = ["video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"].find(m => MediaRecorder.isTypeSupported(m));
-  if (!mime){ toast("Format WebM indisponible dans ce navigateur"); return; }
-  const stream = canvas.captureStream(60);
-  const rec = new MediaRecorder(stream, { mimeType:mime, videoBitsPerSecond:16e6 });
+  if (!window.MediaRecorder || !canvas.captureStream){ toast("Ce navigateur ne sait pas enregistrer de vidéo (essaie Chrome ou Edge)"); return; }
+  // MP4 seulement en H.264 + AAC (lu partout : Unity, Godot, Unreal, montage) ; sinon WebM
+  const types = ["video/mp4;codecs=avc1.640028,mp4a.40.2", "video/mp4;codecs=avc1.4d0028,mp4a.40.2", "video/mp4;codecs=avc1,mp4a.40.2", "video/webm;codecs=vp9,opus", "video/webm;codecs=vp8,opus", "video/webm"];
+  const mime = types.find(m => MediaRecorder.isTypeSupported(m));
+  if (!mime){ toast("Aucun format vidéo disponible dans ce navigateur"); return; }
+  const ext = mime.startsWith("video/mp4") ? "mp4" : "webm";
+  const [w, h] = videoSize(), fps = +S.vidFps;
+
+  // la scène passe à la taille exacte de la vidéo pendant l'enregistrement
+  const pr = renderer.getPixelRatio(), oldAsp = perspCam.aspect;
+  const saved = { t:controls.target.clone(), pp:perspCam.position.clone(), op:orthoCam.position.clone(), z:orthoCam.zoom };
+  const dir = perspCam.position.clone().sub(controls.target), k = dir.length() / fitDist(oldAsp);
+  recording = true;
+  renderer.setPixelRatio(1); renderer.setSize(w, h, false);
+  composer.setPixelRatio(1); composer.setSize(w, h);
+  perspCam.aspect = w / h; perspCam.updateProjectionMatrix();
+  perspCam.position.copy(controls.target).add(dir.setLength(fitDist(w / h) * k));
+  setOrtho(w / h); autoFit(true);
+  document.body.classList.add("is-recording");
+
+  const tracks = [...canvas.captureStream(fps).getVideoTracks()];
+  if (S.sound && audio()){ try { await actx.resume(); } catch (e) {} if (actx.state === "running") tracks.push(...recDest.stream.getAudioTracks()); }
+  const rec = new MediaRecorder(new MediaStream(tracks), { mimeType:mime, videoBitsPerSecond:w * h > 2.5e6 ? 40e6 : 20e6, audioBitsPerSecond:192000 });
   const chunks = [];
   rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
   rec.onstop = () => {
-    recording = false;
+    recording = false; fadeStart = null; bgPass.uniforms.uFade.value = 0; applyBg();
+    renderer.setPixelRatio(pr); renderer.setSize(innerWidth, innerHeight, false);
+    composer.setPixelRatio(pr); composer.setSize(innerWidth, innerHeight);
+    perspCam.aspect = oldAsp; perspCam.updateProjectionMatrix(); setOrtho(oldAsp);
+    controls.target.copy(saved.t); perspCam.position.copy(saved.pp); orthoCam.position.copy(saved.op);
+    orthoCam.zoom = saved.z; orthoCam.updateProjectionMatrix();
+    document.body.classList.remove("is-recording");
     document.getElementById("statV").classList.remove("rec");
     document.getElementById("statV").textContent = "Voxels · " + cells.length;
-    saveFile(slug() + "-animation.webm", new Blob(chunks, { type:"video/webm" }));
+    saveFile(slug() + "-intro-" + w + "x" + h + "-fond-" + (S.vidBg === "white" ? "blanc" : "noir") + "." + ext, new Blob(chunks, { type:mime.split(";")[0] }));
   };
-  recording = true;
   document.getElementById("statV").classList.add("rec");
-  document.getElementById("statV").textContent = "● REC";
+  document.getElementById("statV").textContent = "● REC " + w + "×" + h;
+  const lead = .6, reveal = ((layoutW + 6) * .03 + .55 * 2.4) / S.speed;
+  replay(lead);                         // écran vide d'abord, puis apparition de gauche à droite
   rec.start();
-  replay();
-  const dur = ((layoutW + 8) * .03 + .55 * 3.2) / S.speed + 1.5;
-  setTimeout(() => rec.stop(), dur * 1000);
+  const fadeAt = lead + reveal + S.vidHold;
+  if (S.vidFade) fadeStart = now() + fadeAt;
+  setTimeout(() => rec.stop(), (fadeAt + (S.vidFade ? .8 : 0) + .25) * 1000);
 }
 
 function exportFavicon(){
@@ -792,7 +927,7 @@ function applySettings(obj){
   controls.object = camera; renderPass.camera = camera;
   frame(); applyCam(S.cam);
   controls.enableRotate = !S.lockRot;
-  applyZoomMode(); persist();
+  applyZoomMode(); applyBg(); persist();
 }
 const importInput = document.createElement("input");
 importInput.type = "file"; importInput.accept = ".txt,.json,text/plain,application/json"; importInput.hidden = true; importInput.id = "importFile";
@@ -860,13 +995,26 @@ const UI = [
   ["Animation", [
     { k:"sway", t:"check", l:"Balancement" },
     { k:"speed", l:"Vitesse", min:.25, max:3, s:.05, f:"born" },
-    { t:"btns", b:[["Rejouer l'apparition", replay]] }
+    { t:"btns", b:[["Rejouer l'apparition", listen]] }
+  ]],
+  ["Vidéo (intro de jeu)", [
+    { k:"vidBg", t:"select", l:"Fond", o:[["black","Noir"],["white","Blanc"]] },
+    { k:"vidFmt", t:"select", l:"Format", o:[["wide","16:9 (PC, console)"],["vertical","9:16 (téléphone)"],["square","Carré 1:1"],["screen","Comme l'écran"]] },
+    { k:"vidRes", t:"select", l:"Qualité", o:[["720","720p"],["1080","1080p (conseillé)"],["1440","1440p"],["2160","4K (PC puissant)"]] },
+    { k:"vidFps", t:"select", l:"Images/s", o:[["30","30"],["60","60"]] },
+    { k:"vidHold", l:"Pause finale", min:0, max:6, s:.1 },
+    { k:"vidFade", t:"check", l:"Fondu de fin" },
+    { k:"sound", t:"check", l:"Son" },
+    { k:"volume", l:"Volume", min:0, max:1, s:.01, f:"vol" },
+    { k:"timbre", t:"select", l:"Sonorité", o:[["verre","Verre"],["cloche","Cloche douce"],["harpe","Harpe"]] },
+    { t:"btns", b:[["Écouter l'intro", listen], ["Enregistrer la vidéo", exportVideo, true]] },
+    { t:"note", x:"Chaque cube joue sa note en apparaissant. La vidéo contient : un court écran vide, l'apparition, la pause finale puis le fondu. MP4 si le navigateur le permet (Chrome, Edge récents), sinon WebM. Garde la fenêtre visible pendant l'enregistrement." }
   ]],
   ["Export", [
     { k:"fmt", t:"select", l:"Format", o:[["screen","Comme l'écran"],["square","Carré 1:1 (icône)"],["wide","16:9 (annonce, vidéo)"],["poster","2:3 (affiche de jeu)"],["banner","3:1 (bannière)"]] },
     { k:"res", t:"select", l:"Taille", o:[["1080","1080 px"],["1600","1600 px"],["1800","1800 px"],["2160","2160 px (4K)"],["4096","4096 px"]] },
     { k:"bg", t:"select", l:"Fond", o:[["black","Noir"],["transparent","Transparent"],["ink","Transparent, logo noir"],["white","Blanc, logo noir"]] },
-    { t:"btns", b:[["Image PNG", exportPNG, true], ["Vidéo WebM", exportVideo], ["favicon.svg", exportFavicon]] },
+    { t:"btns", b:[["Image PNG", exportPNG, true], ["Vidéo (voir section Vidéo)", exportVideo], ["favicon.svg", exportFavicon]] },
     { t:"note", x:"La vidéo enregistre l'apparition à la taille de la fenêtre. Le favicon reprend la 1re lettre du texte, en pixels nets." },
     { t:"btns", b:[["Exporter réglages .txt", exportSettings, true], ["Importer réglages", () => importInput.click()]] },
     { t:"note", x:"Le fichier .txt garde tout : texte, couleurs, retouches de pixels, vue et zoom." },
@@ -882,6 +1030,7 @@ function onChange(item){
   if (item.f === "text") rebuild();
   if (item.f === "born") updateBorn();
   if (item.f === "lock") controls.enableRotate = !S.lockRot;
+  if (item.f === "vol" && master) master.gain.value = S.volume;
   applyUniforms();
 }
 function buildPanel(){
@@ -918,6 +1067,7 @@ function buildPanel(){
           if (it.k === "preset" && PRESETS[sel.value]){ S.palette = PRESETS[sel.value].slice(); S.palette.forEach((hx, i) => { const sw = document.getElementById("sw" + i); if (sw) sw.value = hx.toLowerCase(); }); }
           if (it.k === "preset" || it.k === "mode" || it.k === "tone") updateColors();
           if (it.k === "autoZoom") applyZoomMode();
+          if (it.k === "vidBg") applyBg();
           if (it.k === "scene" && SCENES[sel.value]){ applySettings(Object.assign(structuredClone(DEFAULTS), SCENES[sel.value].s, { scene:sel.value })); toast("Modèle chargé : " + SCENES[sel.value].nom); }
           if (it.k === "view") setView(sel.value);
           persist();
@@ -954,7 +1104,9 @@ const txt = document.getElementById("txt");
 txt.value = S.text;
 txt.addEventListener("input", () => {
   const before = layoutW;
+  const typedAt = now() - .01;
   S.text = txt.value; persist(); rebuild();
+  playBirths(typedAt);
   if (layoutW !== before){
     setOrtho(perspCam.aspect);
     const d = fitDist(perspCam.aspect);
@@ -971,6 +1123,7 @@ controls.enableRotate = !S.lockRot;
 applyZoomMode();
 controls.addEventListener("end", persist);
 camReady = true;
+applyBg();
 if (!reduced) replay();
 loop();
 </script>

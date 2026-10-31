@@ -135,7 +135,9 @@ L'outil est dans `outils/voxel-type/` du dépôt. Il n'est **pas publié sur le 
 4. **Réglages → Export → Image PNG** (ou le bouton **PNG ↓** en haut à droite).
 5. Dépose l'image dans le dossier de l'annonce ou du jeu.
 
-Les réglages de chaque modèle sont aussi sauvegardés dans `outils/voxel-type/reglages/`. Tu peux les recharger avec **Réglages → Export → Importer réglages**.
+Les réglages de chaque modèle sont aussi sauvegardés dans `outils/voxel-type/reglages/`.
+
+Pour la **vidéo d'intro de tes jeux** (son, fond noir ou blanc, formats), voir `outils/voxel-type/README.md`. Tu peux les recharger avec **Réglages → Export → Importer réglages**.
 
 ## Vérifier sur ton PC avant de publier (facultatif)
 
