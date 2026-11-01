@@ -31,6 +31,15 @@ La vidéo contient un court écran vide, l'apparition, la pause finale puis le f
 
 Le dossier `reglages/` contient un fichier par modèle. Pour en recharger un : **Réglages → Export → Importer réglages**. Pour garder un nouveau réglage : **Exporter réglages .txt**, puis range le fichier dans `reglages/`.
 
+## Graine
+
+La **graine** fixe la petite variation de couleur de chaque cube et la longueur de chaque rayon : avec la même graine, le logo est exactement le même.
+
+- **Graine d'origine : 7.** C'est celle du logo Fantin HD sur le site et sur toutes les images.
+- **Réglages → Couleurs → Graine** : tape un nombre pour choisir une graine précise.
+- **Nouvelle graine** en tire une au hasard ; **Graine d'origine (7)** revient à celle du logo.
+- La graine est enregistrée avec tes réglages, dans le navigateur et dans le fichier `.txt`.
+
 ## Raccourcis utiles
 
 - **À plat** : remet le texte de face.
