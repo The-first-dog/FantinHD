@@ -859,6 +859,8 @@ let recording = false;
    - Séquence PNG transparente + musique WAV dans un ZIP : Godot, Unreal, After Effects, Premiere, DaVinci. */
 const LIB_ZIP = "https://cdn.jsdelivr.net/npm/fflate@0.8.2/esm/browser.js";
 const SR = 48000;
+const ALPHA_FLOOR = 6;    // luminosité en dessous de laquelle la lueur devient transparente (sur 255)
+const ALPHA_SOFT = 110;   // en dessous de cette opacité, la couleur s'assombrit progressivement
 
 function timeline(){
   const lead = .25, reveal = ((layoutW + 6) * .03 + .55 * 2.4) / S.speed;
@@ -962,7 +964,7 @@ async function exportAlphaVideo(){
       encoder = new VideoEncoder({ output:c => vOut.push({ data:chunkBytes(c), key:c.type === "key", t:c.timestamp / 1000 }), error:fail });
       encoder.configure(cfg);
       alphaEnc = new VideoEncoder({ output:c => aOut.push({ data:chunkBytes(c), key:c.type === "key", t:c.timestamp / 1000 }), error:fail });
-      alphaEnc.configure(Object.assign({}, cfg, { bitrate:Math.round(cfg.bitrate / 3) }));
+      alphaEnc.configure(Object.assign({}, cfg));   // transparence encodée avec la même qualité que l'image
       const acfg = { codec:"opus", sampleRate:SR, numberOfChannels:2, bitrate:192000 };
       if (S.sound && window.AudioEncoder && (await AudioEncoder.isConfigSupported(acfg).catch(() => ({ supported:false }))).supported){
         audioEnc = new AudioEncoder({ output:(c, meta) => {
@@ -1011,9 +1013,17 @@ async function exportAlphaVideo(){
       composer.render();
       ctx2.clearRect(0, 0, w, h); ctx2.drawImage(renderer.domElement, 0, 0, w, h);
       const img = ctx2.getImageData(0, 0, w, h), d = img.data;
+      // Transparence propre :
+      //  - la lueur presque invisible (voile du halo) devient totalement transparente ;
+      //  - là où l'image est à peine visible, la couleur glisse vers le noir : un lecteur qui ignore
+      //    la transparence (VLC, certains moteurs) montre le logo sur fond noir, sans taches de couleur.
       for (let q = 0, y = 0; q < d.length; q += 4, y++){
-        const a = Math.max(d[q], d[q + 1], d[q + 2]);
-        if (a > 0){ const m = 255 / a; d[q] = Math.min(255, d[q] * m); d[q + 1] = Math.min(255, d[q + 1] * m); d[q + 2] = Math.min(255, d[q + 2] * m); }
+        const lum = Math.max(d[q], d[q + 1], d[q + 2]);
+        const a = lum <= ALPHA_FLOOR ? 0 : Math.round((lum - ALPHA_FLOOR) * 255 / (255 - ALPHA_FLOOR));
+        if (a > 0){
+          const m = 255 / lum * Math.min(1, a / ALPHA_SOFT);
+          d[q] = Math.min(255, d[q] * m); d[q + 1] = Math.min(255, d[q + 1] * m); d[q + 2] = Math.min(255, d[q + 2] * m);
+        } else { d[q] = d[q + 1] = d[q + 2] = 0; }
         if (yuv){ yuv[y] = a; d[q + 3] = 255; } else d[q + 3] = a;
       }
       ctx2.putImageData(img, 0, 0);

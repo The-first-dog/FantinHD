@@ -32,6 +32,17 @@ Choisis **Fond → Transparent**, puis le **fichier** :
 - **WebM transparent (+ son)** : vidéo VP8 avec transparence et musique. Se lit dans Chrome, Edge, Firefox et OBS, et s'importe dans Unity (cocher la transparence dans l'import du clip vidéo).
 - **Séquence PNG + WAV (ZIP)** : une image PNG transparente par image de la vidéo, plus la musique en WAV. C'est le format universel : Godot, Unity, Unreal, After Effects, Premiere, DaVinci.
 
+**Quel fichier pour quel moteur ?**
+
+| Où | Fichier conseillé |
+| --- | --- |
+| Unity | WebM transparent (importer le clip vidéo en cochant « Keep Alpha ») |
+| Jeu web, Phaser, Capacitor (Android) | WebM transparent |
+| Godot | Séquence PNG (Godot ne lit pas le WebM) |
+| Unreal, After Effects, Premiere, DaVinci | Séquence PNG |
+
+**VLC n'affiche pas la transparence** : il montre le logo sur fond noir. C'est normal, ça ne veut pas dire que le fichier est raté. Pour voir la transparence, ouvre le WebM dans Chrome ou Edge, ou importe-le dans ton moteur de jeu.
+
 La vidéo transparente est **calculée image par image** : aucune saccade, quel que soit le nombre d'images par seconde. Le calcul prend un peu de temps, et l'avancement s'affiche en bas à gauche.
 
 La vidéo contient un court écran vide, l'apparition, la pause finale puis le fondu. Elle sort en **MP4 (H.264 + AAC)** dans Chrome ou Edge récents, sinon en **WebM**. Les deux se lisent dans Unity, Godot et les logiciels de montage. Garde la fenêtre visible pendant l'enregistrement.
