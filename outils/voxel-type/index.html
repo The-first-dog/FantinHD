@@ -212,7 +212,7 @@ const DEFAULTS = {
   bloom:0.16, bloomRadius:0.04, bloomThr:0, grain:0, exposure:1.43,
   view:"flat", lockRot:true, autoZoom:"off", zoomMargin:0.08, sway:true, speed:1.7,
   fmt:"screen", res:"2160", bg:"transparent", overrides:{}, cam:null, scene:"logo",
-  vidBg:"black", vidFmt:"wide", vidRes:"1080", vidFps:"60", vidHold:2, vidFade:true, sound:true, volume:0.6, timbre:"verre"
+  vidBg:"black", vidAlpha:"webm", vidFmt:"wide", vidRes:"1080", vidFps:"60", vidHold:2, vidFade:true, sound:true, volume:0.6, timbre:"verre"
 };
 /* Modèles : réglages de départ pour le logo, les images d'annonce (16:9) et les affiches de jeu (2:3).
    Chaque modèle part des réglages du logo officiel et ne change que ce qui est listé. */
@@ -293,14 +293,15 @@ bgPass.enabled = false;
 composer.addPass(bgPass);
 let fadeStart = null;
 function applyBg(){
-  const white = S.vidBg === "white";
+  const white = S.vidBg === "white";   // « transparent » s'affiche sur noir ; la transparence est calculée à l'export
   bgPass.uniforms.uWhite.value = white ? 1 : 0;
   bgPass.enabled = white || bgPass.uniforms.uFade.value > 0;
   document.body.classList.toggle("is-white", white);
 }
 
 const clock0 = performance.now();
-const now = () => (performance.now() - clock0) / 1000;
+let clockOverride = null, exporting = false;   // pendant un export image par image, le temps est imposé
+const now = () => clockOverride !== null ? clockOverride : (performance.now() - clock0) / 1000;
 
 const voxMat = new THREE.ShaderMaterial({
   transparent:true, depthWrite:true,
@@ -644,21 +645,25 @@ function replay(delay = .15){
    Hauteur selon la rangée (en haut = aigu), accord qui change à chaque lettre, gamme pentatonique
    (toutes les notes s'accordent entre elles), position stéréo selon la place du cube. */
 let actx = null, master = null, recDest = null;
+function buildChain(c){
+  const m = c.createGain(); m.gain.value = S.volume;
+  const comp = c.createDynamicsCompressor(); comp.threshold.value = -16; comp.ratio.value = 4;
+  // petite réverbération : échos filtrés qui s'éteignent
+  const wet = c.createGain(); wet.gain.value = .3;
+  const delay = c.createDelay(1); delay.delayTime.value = .17;
+  const fb = c.createGain(); fb.gain.value = .35;
+  const lp = c.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 3000;
+  m.connect(comp); m.connect(wet); wet.connect(delay); delay.connect(lp); lp.connect(fb); fb.connect(delay); lp.connect(comp);
+  return { master:m, out:comp };
+}
 function audio(){
   if (actx) return actx;
   const AC = window.AudioContext || window.webkitAudioContext;
   if (!AC) return null;
   actx = new AC();
-  master = actx.createGain(); master.gain.value = S.volume;
-  const comp = actx.createDynamicsCompressor(); comp.threshold.value = -16; comp.ratio.value = 4;
-  // petite réverbération : échos filtrés qui s'éteignent
-  const wet = actx.createGain(); wet.gain.value = .3;
-  const delay = actx.createDelay(1); delay.delayTime.value = .17;
-  const fb = actx.createGain(); fb.gain.value = .35;
-  const lp = actx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 3000;
-  master.connect(comp); master.connect(wet); wet.connect(delay); delay.connect(lp); lp.connect(fb); fb.connect(delay); lp.connect(comp);
-  comp.connect(actx.destination);
-  recDest = actx.createMediaStreamDestination(); comp.connect(recDest);
+  const ch = buildChain(actx); master = ch.master;
+  ch.out.connect(actx.destination);
+  recDest = actx.createMediaStreamDestination(); ch.out.connect(recDest);
   return actx;
 }
 const SCALE = [0, 2, 4, 7, 9], CHORD = [0, 2, 4, 1, 3];
@@ -672,15 +677,15 @@ function noteOf(cell){
   const semis = SCALE[step % 5] + 12 * Math.floor(step / 5);
   return 261.63 * Math.pow(2, semis / 12);
 }
-function chime(time, freq, pan, gain){
+function chime(time, freq, pan, gain, c = actx, dest = master){
   const T = TIMBRES[S.timbre] || TIMBRES.verre;
-  const out = actx.createGain(); out.gain.value = gain;
+  const out = c.createGain(); out.gain.value = gain;
   let node = out;
-  if (actx.createStereoPanner){ const p = actx.createStereoPanner(); p.pan.value = pan; out.connect(p); node = p; }
-  node.connect(master);
+  if (c.createStereoPanner){ const p = c.createStereoPanner(); p.pan.value = pan; out.connect(p); node = p; }
+  node.connect(dest);
   let end = time;
   for (const [ratio, amp, decay] of T.parts){
-    const o = actx.createOscillator(), g = actx.createGain();
+    const o = c.createOscillator(), g = c.createGain();
     o.type = T.type; o.frequency.value = freq * ratio * (1 + (Math.random() - .5) * .004);
     g.gain.setValueAtTime(0, time);
     g.gain.linearRampToValueAtTime(amp, time + .005);
@@ -689,7 +694,7 @@ function chime(time, freq, pan, gain){
     o.start(time); o.stop(time + decay + .05);
     end = Math.max(end, time + decay + .1);
   }
-  setTimeout(() => { try { node.disconnect(); } catch (e) {} }, (end - actx.currentTime) * 1000 + 200);
+  if (c === actx) setTimeout(() => { try { node.disconnect(); } catch (e) {} }, (end - actx.currentTime) * 1000 + 200);
 }
 function playBirths(fromTime){
   if (!S.sound || !actx || actx.state !== "running" || !voxMesh) return;
@@ -718,6 +723,7 @@ async function listen(){
 let frames = 0, lastF = performance.now();
 function loop(){
   requestAnimationFrame(loop);
+  if (exporting) return;
   const t = now();
   voxMat.uniforms.uTime.value = rayMat.uniforms.uTime.value = t;
   grainPass.uniforms.uTime.value = t % 10;
@@ -846,6 +852,228 @@ async function exportPNG(){
 }
 
 let recording = false;
+/* ---------- Vidéo à fond transparent ----------
+   Rendu image par image (aucune image perdue, n'importe quel nombre d'images/s).
+   Transparence = luminosité de la lumière, comme l'export PNG transparent.
+   - WebM VP8 avec transparence (+ son Opus), assemblé par l'outil : Chrome, Edge, Firefox, OBS, Unity.
+   - Séquence PNG transparente + musique WAV dans un ZIP : Godot, Unreal, After Effects, Premiere, DaVinci. */
+const LIB_ZIP = "https://cdn.jsdelivr.net/npm/fflate@0.8.2/esm/browser.js";
+const SR = 48000;
+
+function timeline(){
+  const lead = .25, reveal = ((layoutW + 6) * .03 + .55 * 2.4) / S.speed;
+  const fadeAt = lead + reveal + S.vidHold, total = fadeAt + (S.vidFade ? .75 : 0) + .1;
+  return { lead, fadeAt, total };
+}
+async function renderMelody(total, lead){
+  if (!S.sound || !window.OfflineAudioContext) return null;
+  const oc = new OfflineAudioContext(2, Math.ceil(total * SR), SR);
+  const ch = buildChain(oc); ch.out.connect(oc.destination);
+  const step = .03 / S.speed, cols = new Map();
+  cells.forEach(cell => {
+    const at = lead + (charX[cell.i] || 0) * step + cell.c * step;
+    const key = at.toFixed(4);
+    if (!cols.has(key)) cols.set(key, []);
+    cols.get(key).push(cell);
+  });
+  for (const [at, list] of cols){
+    const gain = .2 / Math.sqrt(list.length);
+    for (const cell of list) chime(+at, noteOf(cell), Math.max(-.7, Math.min(.7, (cell.x / Math.max(1, layoutW - 1)) * 1.4 - .7)), gain, oc, ch.master);
+  }
+  return oc.startRendering();
+}
+function wavOf(buf){
+  const n = buf.length, chs = buf.numberOfChannels, data = new DataView(new ArrayBuffer(44 + n * chs * 2));
+  const str = (o, t) => { for (let i = 0; i < t.length; i++) data.setUint8(o + i, t.charCodeAt(i)); };
+  str(0, "RIFF"); data.setUint32(4, 36 + n * chs * 2, true); str(8, "WAVE"); str(12, "fmt ");
+  data.setUint32(16, 16, true); data.setUint16(20, 1, true); data.setUint16(22, chs, true); data.setUint32(24, SR, true);
+  data.setUint32(28, SR * chs * 2, true); data.setUint16(32, chs * 2, true); data.setUint16(34, 16, true); str(36, "data"); data.setUint32(40, n * chs * 2, true);
+  const c = [...Array(chs)].map((_, i) => buf.getChannelData(i));
+  let o = 44;
+  for (let i = 0; i < n; i++) for (let k = 0; k < chs; k++){ data.setInt16(o, Math.max(-1, Math.min(1, c[k][i])) * 32767, true); o += 2; }
+  return new Uint8Array(data.buffer);
+}
+/* ---------- Petit assembleur WebM : VP8 + transparence (piste alpha en « BlockAdditional ») + Opus ----------
+   Les navigateurs ne savent pas encoder la transparence directement : l'image et sa transparence sont
+   encodées séparément puis réunies, exactement comme le format WebM transparent le prévoit. */
+const EB = {
+  cat(parts){ let n = 0; for (const x of parts) n += x.length; const o = new Uint8Array(n); let k = 0; for (const x of parts){ o.set(x, k); k += x.length; } return o; },
+  id(v){ const a = []; while (v > 0){ a.unshift(v & 255); v = Math.floor(v / 256); } return Uint8Array.from(a); },
+  size(n){ let len = 1; while (n >= Math.pow(2, 7 * len) - 1) len++; const b = new Uint8Array(len); let v = n; for (let i = len - 1; i >= 0; i--){ b[i] = v % 256; v = Math.floor(v / 256); } b[0] |= 1 << (8 - len); return b; },
+  el(id, parts){ const body = EB.cat(Array.isArray(parts) ? parts : [parts]); return EB.cat([EB.id(id), EB.size(body.length), body]); },
+  u(id, n){ const a = []; do { a.unshift(n % 256); n = Math.floor(n / 256); } while (n > 0); return EB.el(id, Uint8Array.from(a)); },
+  f(id, x){ const b = new Uint8Array(8); new DataView(b.buffer).setFloat64(0, x); return EB.el(id, b); },
+  s(id, t){ return EB.el(id, new TextEncoder().encode(t)); },
+  i16(n){ const b = new Uint8Array(2); new DataView(b.buffer).setInt16(0, n); return b; }
+};
+function opusHeadDefault(preSkip){
+  const b = new Uint8Array(19); b.set(new TextEncoder().encode("OpusHead")); b[8] = 1; b[9] = 2;
+  const v = new DataView(b.buffer); v.setUint16(10, preSkip, true); v.setUint32(12, SR, true);
+  return b;
+}
+function buildWebM({ w, h, fps, video, alpha, audio, opusHead, durationMs }){
+  const preSkip = opusHead ? new DataView(opusHead.buffer, opusHead.byteOffset).getUint16(10, true) : 312;
+  const head = EB.el(0x1A45DFA3, [EB.u(0x4286, 1), EB.u(0x42F7, 1), EB.u(0x42F2, 4), EB.u(0x42F3, 8), EB.s(0x4282, "webm"), EB.u(0x4287, 4), EB.u(0x4285, 2)]);
+  const info = EB.el(0x1549A966, [EB.u(0x2AD7B1, 1000000), EB.s(0x4D80, "Fantin HD Voxel Type"), EB.s(0x5741, "Fantin HD Voxel Type"), EB.f(0x4489, durationMs)]);
+  const tracks = [EB.el(0xAE, [EB.u(0xD7, 1), EB.u(0x73C5, 1), EB.u(0x83, 1), EB.s(0x86, "V_VP8"), EB.u(0x55EE, 1), EB.u(0x23E383, Math.round(1e9 / fps)),
+    EB.el(0xE0, [EB.u(0xB0, w), EB.u(0xBA, h), EB.u(0x53C0, 1)])])];
+  if (audio.length) tracks.push(EB.el(0xAE, [EB.u(0xD7, 2), EB.u(0x73C5, 2), EB.u(0x83, 2), EB.s(0x86, "A_OPUS"), EB.el(0x63A2, opusHead || opusHeadDefault(preSkip)),
+    EB.u(0x56AA, Math.round(preSkip / SR * 1e9)), EB.u(0x56BB, 80000000), EB.el(0xE1, [EB.f(0xB5, SR), EB.u(0x9F, 2)])]));
+  const keys = video.map((v, i) => v.key ? i : -1).filter(i => i >= 0);
+  const clusters = []; let ai = 0;
+  keys.forEach((start, n) => {
+    const end = n + 1 < keys.length ? keys[n + 1] : video.length;
+    const tc = video[start].t, tEnd = end < video.length ? video[end].t : Infinity;
+    const items = [];
+    for (let i = start; i < end; i++) items.push({ t:video[i].t, v:i });
+    while (ai < audio.length && audio[ai].t < tEnd){ items.push({ t:Math.max(tc, audio[ai].t), a:ai }); ai++; }
+    items.sort((x, y) => x.t - y.t);
+    const parts = [EB.u(0xE7, Math.round(tc))];
+    for (const it of items){
+      const rel = Math.max(-32768, Math.min(32767, Math.round(it.t - tc)));
+      if (it.v !== undefined){
+        const v = video[it.v];
+        const g = [EB.el(0xA1, [Uint8Array.of(0x81), EB.i16(rel), Uint8Array.of(0), v.data]),
+          EB.el(0x75A1, EB.el(0xA6, [EB.u(0xEE, 1), EB.el(0xA5, alpha[it.v].data)]))];
+        if (!v.key) g.push(EB.el(0xFB, EB.i16(-Math.max(1, Math.round(1000 / fps)))));
+        parts.push(EB.el(0xA0, g));
+      } else {
+        parts.push(EB.el(0xA3, [Uint8Array.of(0x82), EB.i16(rel), Uint8Array.of(0x80), audio[it.a].data]));
+      }
+    }
+    clusters.push(EB.el(0x1F43B675, parts));
+  });
+  return EB.cat([head, EB.el(0x18538067, [info, EB.el(0x1654AE6B, tracks), ...clusters])]);
+}
+const chunkBytes = c => { const b = new Uint8Array(c.byteLength); c.copyTo(b); return b; };
+
+async function exportAlphaVideo(){
+  const fps = +S.vidFps, [w, h] = videoSize(), kind = S.vidAlpha;
+  const { lead, fadeAt, total } = timeline();
+  const frames = Math.round(total * fps);
+  let zipLib = null, files = null, encoder = null, alphaEnc = null, audioEnc = null, encErr = null, opusHead = null;
+  const vOut = [], aOut = [], auOut = [];
+  const fail = e => { encErr = e; };
+  try {
+    if (kind === "webm"){
+      if (!window.VideoEncoder){ toast("Ce navigateur ne sait pas fabriquer de WebM : utilise Chrome ou Edge, ou choisis « Séquence PNG »"); return; }
+      const cfg = { codec:"vp8", width:w, height:h, bitrate:w * h > 2.5e6 ? 30e6 : 16e6, framerate:fps };
+      if (!(await VideoEncoder.isConfigSupported(cfg).catch(() => ({ supported:false }))).supported){ toast("Encodage VP8 indisponible ici : choisis « Séquence PNG »"); return; }
+      encoder = new VideoEncoder({ output:c => vOut.push({ data:chunkBytes(c), key:c.type === "key", t:c.timestamp / 1000 }), error:fail });
+      encoder.configure(cfg);
+      alphaEnc = new VideoEncoder({ output:c => aOut.push({ data:chunkBytes(c), key:c.type === "key", t:c.timestamp / 1000 }), error:fail });
+      alphaEnc.configure(Object.assign({}, cfg, { bitrate:Math.round(cfg.bitrate / 3) }));
+      const acfg = { codec:"opus", sampleRate:SR, numberOfChannels:2, bitrate:192000 };
+      if (S.sound && window.AudioEncoder && (await AudioEncoder.isConfigSupported(acfg).catch(() => ({ supported:false }))).supported){
+        audioEnc = new AudioEncoder({ output:(c, meta) => {
+          auOut.push({ data:chunkBytes(c), t:Math.max(0, c.timestamp / 1000) });
+          const d = meta && meta.decoderConfig && meta.decoderConfig.description;
+          if (d && !opusHead) opusHead = d instanceof ArrayBuffer ? new Uint8Array(d.slice(0)) : new Uint8Array(d.buffer.slice(d.byteOffset, d.byteOffset + d.byteLength));
+        }, error:fail });
+        audioEnc.configure(acfg);
+      }
+    } else {
+      zipLib = await import(LIB_ZIP);
+      files = {};
+    }
+  } catch (e){ toast("Impossible de préparer l'export (connexion internet ?)"); return; }
+
+  // la scène passe à la taille exacte de la vidéo, le temps est imposé image par image
+  recording = exporting = true;
+  const pr = renderer.getPixelRatio(), oldAsp = perspCam.aspect;
+  const saved = { t:controls.target.clone(), pp:perspCam.position.clone(), op:orthoCam.position.clone(), z:orthoCam.zoom };
+  const dir = perspCam.position.clone().sub(controls.target), k = dir.length() / fitDist(oldAsp);
+  renderer.setPixelRatio(1); renderer.setSize(w, h, false);
+  composer.setPixelRatio(1); composer.setSize(w, h);
+  perspCam.aspect = w / h; perspCam.updateProjectionMatrix();
+  perspCam.position.copy(controls.target).add(dir.setLength(fitDist(w / h) * k));
+  setOrtho(w / h); autoFit(true);
+  const keepGrain = grainPass.uniforms.uGrain.value; grainPass.uniforms.uGrain.value = 0;
+  bgPass.uniforms.uWhite.value = 0;
+  const T0 = 10000, step = .03 / S.speed;
+  clockOverride = T0;
+  charBorn = charBorn.map((_, i) => T0 + lead + (charX[i] || 0) * step);
+  updateBorn();
+  const c2 = document.createElement("canvas"); c2.width = w; c2.height = h;
+  const ctx2 = c2.getContext("2d", { willReadFrequently:true });
+  const yuv = encoder ? new Uint8Array(w * h * 3 / 2) : null;
+  if (yuv) yuv.fill(128, w * h);
+  const pad = String(frames).length;
+  document.getElementById("statV").classList.add("rec");
+  try {
+    for (let i = 0; i < frames; i++){
+      if (encErr) throw encErr;
+      const t = i / fps;
+      clockOverride = T0 + t;
+      voxMat.uniforms.uTime.value = rayMat.uniforms.uTime.value = clockOverride;
+      const f = S.vidFade ? Math.min(1, Math.max(0, (t - fadeAt) / .7)) : 0;
+      bgPass.uniforms.uFade.value = f; bgPass.enabled = f > 0;
+      composer.render();
+      ctx2.clearRect(0, 0, w, h); ctx2.drawImage(renderer.domElement, 0, 0, w, h);
+      const img = ctx2.getImageData(0, 0, w, h), d = img.data;
+      for (let q = 0, y = 0; q < d.length; q += 4, y++){
+        const a = Math.max(d[q], d[q + 1], d[q + 2]);
+        if (a > 0){ const m = 255 / a; d[q] = Math.min(255, d[q] * m); d[q + 1] = Math.min(255, d[q + 1] * m); d[q + 2] = Math.min(255, d[q + 2] * m); }
+        if (yuv){ yuv[y] = a; d[q + 3] = 255; } else d[q + 3] = a;
+      }
+      ctx2.putImageData(img, 0, 0);
+      if (encoder){
+        const opts = { keyFrame:i % fps === 0 }, ts = Math.round(i * 1e6 / fps), dur = Math.round(1e6 / fps);
+        const vf = new VideoFrame(c2, { timestamp:ts, duration:dur }); encoder.encode(vf, opts); vf.close();
+        const af = new VideoFrame(yuv, { format:"I420", codedWidth:w, codedHeight:h, timestamp:ts, duration:dur }); alphaEnc.encode(af, opts); af.close();
+        while (encoder.encodeQueueSize > 3 || alphaEnc.encodeQueueSize > 3) await new Promise(r => setTimeout(r, 4));
+      } else {
+        const blob = await new Promise(r => c2.toBlob(r, "image/png"));
+        files["images/image_" + String(i).padStart(pad, "0") + ".png"] = [new Uint8Array(await blob.arrayBuffer()), { level:0 }];
+      }
+      if (i % 6 === 0){
+        document.getElementById("statV").textContent = "● Calcul " + Math.round(i / frames * 100) + " %";
+        await new Promise(r => setTimeout(r, 0));
+      }
+    }
+    const melody = await renderMelody(total, lead).catch(() => null);
+    const base = slug() + "-intro-" + w + "x" + h + "-" + fps + "ips-transparent";
+    if (encoder){
+      await encoder.flush(); await alphaEnc.flush();
+      if (audioEnc && melody){
+        const L = melody.getChannelData(0), Rr = melody.getChannelData(1), size = 4800;
+        for (let o = 0; o < melody.length; o += size){
+          const n = Math.min(size, melody.length - o), planar = new Float32Array(n * 2);
+          planar.set(L.subarray(o, o + n), 0); planar.set(Rr.subarray(o, o + n), n);
+          const ad = new AudioData({ format:"f32-planar", sampleRate:SR, numberOfFrames:n, numberOfChannels:2, timestamp:Math.round(o / SR * 1e6), data:planar });
+          audioEnc.encode(ad); ad.close();
+        }
+        await audioEnc.flush();
+      }
+      if (encErr) throw encErr;
+      if (vOut.length !== aOut.length) throw new Error("pistes image et transparence de longueurs différentes");
+      const webm = buildWebM({ w, h, fps, video:vOut, alpha:aOut, audio:auOut, opusHead, durationMs:total * 1000 });
+      saveFile(base + ".webm", new Blob([webm], { type:"video/webm" }));
+    } else {
+      if (melody) files["musique.wav"] = wavOf(melody);
+      files["LISEZMOI.txt"] = new TextEncoder().encode(
+        "Intro " + w + "x" + h + ", " + fps + " images par seconde, " + frames + " images PNG transparentes (dossier images/).\n" +
+        "Musique : musique.wav (même durée que la vidéo, à démarrer en même temps que la première image).\n" +
+        "Godot : AnimatedTexture ou SpriteFrames. Unity : importer les images en Sprite. After Effects / Premiere / DaVinci : importer comme séquence d'images à " + fps + " i/s.\n");
+      saveFile(base + "-png.zip", new Blob([zipLib.zipSync(files)], { type:"application/zip" }));
+    }
+  } catch (e){
+    toast("L'export a échoué : " + (e && e.message ? e.message : e));
+  } finally {
+    clockOverride = null; exporting = false; recording = false;
+    try { encoder && encoder.close(); alphaEnc && alphaEnc.close(); audioEnc && audioEnc.close(); } catch (e) {}
+    grainPass.uniforms.uGrain.value = keepGrain; bgPass.uniforms.uFade.value = 0; applyBg();
+    renderer.setPixelRatio(pr); renderer.setSize(innerWidth, innerHeight, false);
+    composer.setPixelRatio(pr); composer.setSize(innerWidth, innerHeight);
+    perspCam.aspect = oldAsp; perspCam.updateProjectionMatrix(); setOrtho(oldAsp);
+    controls.target.copy(saved.t); perspCam.position.copy(saved.pp); orthoCam.position.copy(saved.op);
+    orthoCam.zoom = saved.z; orthoCam.updateProjectionMatrix();
+    document.getElementById("statV").classList.remove("rec");
+    document.getElementById("statV").textContent = "Voxels · " + cells.length;
+    replay();
+  }
+}
+
 function videoSize(){
   const L = +S.vidRes;   // plus petit côté
   const asp = { screen:innerWidth / innerHeight, wide:16 / 9, vertical:9 / 16, square:1 }[S.vidFmt] || 16 / 9;
@@ -854,6 +1082,7 @@ function videoSize(){
 }
 async function exportVideo(){
   if (recording) return;
+  if (S.vidBg === "transparent") return exportAlphaVideo();
   if (!window.MediaRecorder || !canvas.captureStream){ toast("Ce navigateur ne sait pas enregistrer de vidéo (essaie Chrome ou Edge)"); return; }
   // MP4 seulement en H.264 + AAC (lu partout : Unity, Godot, Unreal, montage) ; sinon WebM
   const types = ["video/mp4;codecs=avc1.640028,mp4a.40.2", "video/mp4;codecs=avc1.4d0028,mp4a.40.2", "video/mp4;codecs=avc1,mp4a.40.2", "video/webm;codecs=vp9,opus", "video/webm;codecs=vp8,opus", "video/webm"];
@@ -1004,17 +1233,18 @@ const UI = [
     { t:"btns", b:[["Rejouer l'apparition", listen]] }
   ]],
   ["Vidéo (intro de jeu)", [
-    { k:"vidBg", t:"select", l:"Fond", o:[["black","Noir"],["white","Blanc"]] },
+    { k:"vidBg", t:"select", l:"Fond", o:[["black","Noir"],["white","Blanc"],["transparent","Transparent"]] },
+    { k:"vidAlpha", t:"select", l:"Fichier transp.", o:[["webm","WebM transparent (+ son)"],["png","Séquence PNG + WAV (ZIP)"]] },
     { k:"vidFmt", t:"select", l:"Format", o:[["wide","16:9 (PC, console)"],["vertical","9:16 (téléphone)"],["square","Carré 1:1"],["screen","Comme l'écran"]] },
     { k:"vidRes", t:"select", l:"Qualité", o:[["720","720p"],["1080","1080p (conseillé)"],["1440","1440p"],["2160","4K (PC puissant)"]] },
-    { k:"vidFps", t:"select", l:"Images/s", o:[["30","30"],["60","60"]] },
+    { k:"vidFps", t:"select", l:"Images/s", o:[["24","24"],["30","30"],["36","36"],["48","48"],["60","60"]] },
     { k:"vidHold", l:"Pause finale", min:0, max:6, s:.1 },
     { k:"vidFade", t:"check", l:"Fondu de fin" },
     { k:"sound", t:"check", l:"Son" },
     { k:"volume", l:"Volume", min:0, max:1, s:.01, f:"vol" },
     { k:"timbre", t:"select", l:"Sonorité", o:[["verre","Verre"],["cloche","Cloche douce"],["harpe","Harpe"]] },
     { t:"btns", b:[["Écouter l'intro", listen], ["Enregistrer la vidéo", exportVideo, true]] },
-    { t:"note", x:"Chaque cube joue sa note en apparaissant. La vidéo contient : un court écran vide, l'apparition, la pause finale puis le fondu. MP4 si le navigateur le permet (Chrome, Edge récents), sinon WebM. Garde la fenêtre visible pendant l'enregistrement." }
+    { t:"note", x:"Chaque cube joue sa note en apparaissant. La vidéo contient : un court écran vide, l'apparition, la pause finale puis le fondu. Fond noir ou blanc : MP4 si le navigateur le permet, sinon WebM ; garde la fenêtre visible. Fond transparent : calcul image par image (WebM transparent ou séquence PNG + WAV), sans saccade." }
   ]],
   ["Export", [
     { k:"fmt", t:"select", l:"Format", o:[["screen","Comme l'écran"],["square","Carré 1:1 (icône)"],["wide","16:9 (annonce, vidéo)"],["poster","2:3 (affiche de jeu)"],["banner","3:1 (bannière)"]] },
