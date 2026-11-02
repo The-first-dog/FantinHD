@@ -17,6 +17,7 @@ Outil pour fabriquer le logo Fantin HD, les images d'annonce et les affiches de 
 1. **Réglages → Modèle → « Intro de jeu — Fantin HD (vidéo) »**.
 2. **Réglages → Vidéo (intro de jeu)** :
    - **Fond** : noir, blanc ou **transparent** ;
+   - **Noir pur (OLED)** (fond noir, activé par défaut) : la lueur presque invisible qui reste dans le fond est ramenée à 0, pour un noir vraiment éteint sur les écrans OLED ; le dégradé autour du logo ne change pas ;
    - **Format** : 16:9 (PC, console), 9:16 (téléphone), carré, ou comme l'écran ;
    - **Qualité** : 720p, 1080p (conseillé), 1440p ou 4K ;
    - **Images/s** : 24, 30, 36, 48 ou 60 ;

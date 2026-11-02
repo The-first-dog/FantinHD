@@ -212,7 +212,7 @@ const DEFAULTS = {
   bloom:0.16, bloomRadius:0.04, bloomThr:0, grain:0, exposure:1.43,
   view:"flat", lockRot:true, autoZoom:"off", zoomMargin:0.08, sway:true, speed:1.7,
   fmt:"screen", res:"2160", bg:"transparent", overrides:{}, cam:null, scene:"logo",
-  vidBg:"black", vidAlpha:"webm", vidFmt:"wide", vidRes:"1080", vidFps:"60", vidHold:2, vidFade:true, sound:true, volume:0.6, timbre:"verre"
+  vidBg:"black", vidOled:true, vidAlpha:"webm", vidFmt:"wide", vidRes:"1080", vidFps:"60", vidHold:2, vidFade:true, sound:true, volume:0.6, timbre:"verre"
 };
 /* Modèles : réglages de départ pour le logo, les images d'annonce (16:9) et les affiches de jeu (2:3).
    Chaque modèle part des réglages du logo officiel et ne change que ce qui est listé. */
@@ -283,10 +283,12 @@ composer.addPass(grainPass);
 composer.addPass(new OutputPass());
 // Fond de la vidéo : la lumière posée sur du blanc (blanc = 1 − luminosité + couleur), et fondu de fin
 const bgPass = new ShaderPass({
-  uniforms:{ tDiffuse:{value:null}, uWhite:{value:0}, uFade:{value:0} },
+  uniforms:{ tDiffuse:{value:null}, uWhite:{value:0}, uFade:{value:0}, uFloor:{value:0} },
   vertexShader:`varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
-  fragmentShader:`uniform sampler2D tDiffuse; uniform float uWhite, uFade; varying vec2 vUv;
+  fragmentShader:`uniform sampler2D tDiffuse; uniform float uWhite, uFade, uFloor; varying vec2 vUv;
     void main(){ vec3 c=texture2D(tDiffuse,vUv).rgb*(1.-uFade); float a=max(c.r,max(c.g,c.b));
+      // noir pur (OLED) : la lueur presque invisible (sous ~5/255) redescend à 0, le dégradé visible ne bouge pas
+      if (uFloor > 0.){ float k=smoothstep(uFloor*.4, uFloor*1.6, a); c*=k; a*=k; }
       gl_FragColor=vec4(mix(c, clamp(c+(1.-a),0.,1.), uWhite),1.); }`
 });
 bgPass.enabled = false;
@@ -1111,6 +1113,7 @@ async function exportVideo(){
   perspCam.aspect = w / h; perspCam.updateProjectionMatrix();
   perspCam.position.copy(controls.target).add(dir.setLength(fitDist(w / h) * k));
   setOrtho(w / h); autoFit(true);
+  if (S.vidBg === "black" && S.vidOled){ bgPass.uniforms.uFloor.value = 6 / 255; bgPass.enabled = true; }
   document.body.classList.add("is-recording");
 
   const tracks = [...canvas.captureStream(fps).getVideoTracks()];
@@ -1119,7 +1122,7 @@ async function exportVideo(){
   const chunks = [];
   rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
   rec.onstop = () => {
-    recording = false; fadeStart = null; bgPass.uniforms.uFade.value = 0; applyBg();
+    recording = false; fadeStart = null; bgPass.uniforms.uFade.value = 0; bgPass.uniforms.uFloor.value = 0; applyBg();
     renderer.setPixelRatio(pr); renderer.setSize(innerWidth, innerHeight, false);
     composer.setPixelRatio(pr); composer.setSize(innerWidth, innerHeight);
     perspCam.aspect = oldAsp; perspCam.updateProjectionMatrix(); setOrtho(oldAsp);
@@ -1244,6 +1247,7 @@ const UI = [
   ]],
   ["Vidéo (intro de jeu)", [
     { k:"vidBg", t:"select", l:"Fond", o:[["black","Noir"],["white","Blanc"],["transparent","Transparent"]] },
+    { k:"vidOled", t:"check", l:"Noir pur (OLED)" },
     { k:"vidAlpha", t:"select", l:"Fichier transp.", o:[["webm","WebM transparent (+ son)"],["png","Séquence PNG + WAV (ZIP)"]] },
     { k:"vidFmt", t:"select", l:"Format", o:[["wide","16:9 (PC, console)"],["vertical","9:16 (téléphone)"],["square","Carré 1:1"],["screen","Comme l'écran"]] },
     { k:"vidRes", t:"select", l:"Qualité", o:[["720","720p"],["1080","1080p (conseillé)"],["1440","1440p"],["2160","4K (PC puissant)"]] },
